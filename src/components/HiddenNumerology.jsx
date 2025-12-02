@@ -207,19 +207,23 @@ export default function HiddenNumerology() {
                                             const lifePathNum = results.lifePath.number;
                                             const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
                                             const description = numberDescriptions[lifePathNum]?.lifePath || '';
+                                            
+                                            // For special date, show 22/33
+                                            const displayValue = results.isSpecialDate ? '22/33' : lifePathNum;
+                                            
                                             return (
                                                 <>
                                                     <div 
                                                         className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
-                                                            isSpecialLifePath ? 'text-yellow-300' : 'text-white'
+                                                            isSpecialLifePath || results.isSpecialDate ? 'text-yellow-300' : 'text-white'
                                                         }`}
-                                                        style={isSpecialLifePath ? {
+                                                        style={(isSpecialLifePath || results.isSpecialDate) ? {
                                                             textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
                                                         } : {
                                                             textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
                                                         }}
                                                     >
-                                                        {lifePathNum}
+                                                        {displayValue}
                                                     </div>
                                                     {description && (
                                                         <p className="text-white/90 text-xs sm:text-sm">
