@@ -141,7 +141,7 @@ export function calculateLifePath(birthdate) {
     return {
         number: lifePath,
         steps: [
-            `Gimimo data: ${day}.${month}.${year}`,
+            `Gimimo data: ${month}.${day}.${year}`,
             `Mėnuo: ${month} = ${monthStr}`,
             `Diena: ${day} = ${dayStr}`,
             `Metai: ${year} = ${yearStr}`,
