@@ -18,7 +18,9 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
         { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
     ];
 
-    const handleClick = (itemId) => {
+    const handleClick = (itemId, e) => {
+        e.preventDefault();
+        e.stopPropagation();
         setActiveItem(itemId);
         if (onMenuClick) {
             onMenuClick(itemId);
@@ -47,10 +49,19 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
                             transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
                             whileHover={{ scale: 1.1, y: -2 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleClick(item.id)}
+                            onClick={(e) => handleClick(item.id, e)}
+                            onTouchStart={(e) => {
+                                e.stopPropagation();
+                            }}
+                            onTouchEnd={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleClick(item.id, e);
+                            }}
                             className={`
                                 flex flex-col items-center justify-center gap-1 px-3 sm:px-4 md:px-6 py-2 rounded-lg transition-all
                                 min-h-[60px] min-w-[60px] sm:min-w-[80px] md:min-w-[100px]
+                                touch-manipulation cursor-pointer
                                 ${activeItem === item.id
                                     ? 'bg-purple-500/40 text-white border border-purple-400/60'
                                     : 'text-white/70 hover:text-white hover:bg-purple-500/20 border border-transparent'
@@ -62,7 +73,10 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
                                     : '0 0 8px rgba(138, 43, 226, 0.4)',
                                 boxShadow: activeItem === item.id 
                                     ? '0 4px 16px 0 rgba(138, 43, 226, 0.3)' 
-                                    : 'none'
+                                    : 'none',
+                                touchAction: 'manipulation',
+                                WebkitTapHighlightColor: 'transparent',
+                                userSelect: 'none'
                             }}
                             title={item.label}
                         >
