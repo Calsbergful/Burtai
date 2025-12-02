@@ -24,7 +24,7 @@ export default function NumerologyCalculator() {
             setResults({
                 lifePath,
                 calculations: [
-                    { title: 'Gyvenimo Kelio Skaičius', steps: lifePath.steps }
+                    { title: 'Pilna Data', steps: lifePath.steps }
                 ]
             });
             
@@ -67,7 +67,7 @@ export default function NumerologyCalculator() {
                             <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
                                 <ResultCard
                                     number={results.lifePath.number}
-                                    title="Gyvenimo Kelio Skaičius"
+                                    title="Pilna Data"
                                     description={numberDescriptions[results.lifePath.number]?.lifePath || 'Aprašymas neprieinamas.'}
                                     delay={0.1}
                                 />

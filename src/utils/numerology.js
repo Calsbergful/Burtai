@@ -147,7 +147,7 @@ export function calculateLifePath(birthdate) {
             `Metai: ${year} = ${yearStr}`,
             `Suma: ${allStr} = ${total}`,
             total !== lifePath ? `${total} → ${lifePath}` : '',
-            `Gyvenimo Kelio Skaičius: ${lifePath}`
+            `Pilna Data: ${lifePath}`
         ].filter(step => step !== '')
     };
 }
