@@ -112,42 +112,39 @@ export default function Calendar({ onDateSelect }) {
                 </motion.button>
                 
                 <div className="text-center">
-                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white px-2 sm:px-4" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
-                        {monthNames[month]} {year}
-                    </h2>
-                    <div className="flex flex-col gap-1 mt-1">
+                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white px-2 sm:px-4 flex items-center justify-center gap-2" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
                         {(() => {
                             const monthAnimal = getMonthAnimal(month + 1);
-                            const animalName = monthAnimalTranslations[monthAnimal] || monthAnimal;
                             const animalEmoji = monthAnimalEmojis[monthAnimal] || '';
                             return (
-                                <p className="text-xs sm:text-sm md:text-base text-green-300/80 font-semibold" style={{ textShadow: '0 0 8px rgba(34, 197, 94, 0.5), 0 0 15px rgba(22, 163, 74, 0.3)' }}>
-                                    {animalName} {animalEmoji}
-                                </p>
+                                <span className="text-green-300/80" style={{ textShadow: '0 0 8px rgba(34, 197, 94, 0.5)' }}>
+                                    {animalEmoji}
+                                </span>
                             );
                         })()}
+                        <span>{monthNames[month]}</span>
+                        <span>{year}</span>
                         {(() => {
                             const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
                             const zodiac = getChineseZodiac(currentDateStr);
-                            const zodiacName = zodiacTranslations[zodiac.zodiac] || zodiac.zodiac;
                             const zodiacEmoji = zodiacEmojis[zodiac.zodiac] || '';
                             return (
-                                <p className="text-xs sm:text-sm md:text-base text-yellow-300/80 font-semibold" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
-                                    {zodiacName} {zodiacEmoji}
-                                </p>
+                                <span className="text-yellow-300/80" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
+                                    {zodiacEmoji}
+                                </span>
                             );
                         })()}
-                        {(() => {
-                            const westernSign = getWesternZodiac(month + 1, 15); // Use middle of month for display
-                            const signName = zodiacSignTranslations[westernSign] || westernSign;
-                            const signEmoji = zodiacSignEmojis[westernSign] || '';
-                            return (
-                                <p className="text-xs sm:text-sm md:text-base text-cyan-400/75 font-semibold" style={{ textShadow: '0 0 8px rgba(34, 211, 238, 0.4), 0 0 15px rgba(6, 182, 212, 0.3)' }}>
-                                    {signName} {signEmoji}
-                                </p>
-                            );
-                        })()}
-                    </div>
+                    </h2>
+                    {(() => {
+                        const westernSign = getWesternZodiac(month + 1, 15); // Use middle of month for display
+                        const signName = zodiacSignTranslations[westernSign] || westernSign;
+                        const signEmoji = zodiacSignEmojis[westernSign] || '';
+                        return (
+                            <p className="text-xs sm:text-sm md:text-base text-cyan-400/75 mt-1 font-semibold" style={{ textShadow: '0 0 8px rgba(34, 211, 238, 0.4), 0 0 15px rgba(6, 182, 212, 0.3)' }}>
+                                {signName} {signEmoji}
+                            </p>
+                        );
+                    })()}
                 </div>
                 
                 <motion.button
