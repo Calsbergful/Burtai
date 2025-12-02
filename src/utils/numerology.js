@@ -141,13 +141,13 @@ export function calculateLifePath(birthdate) {
     return {
         number: lifePath,
         steps: [
-            `Gimimo data: ${month}.${day}.${year}`,
-            `Mėnuo: ${month} = ${monthStr}`,
-            `Diena: ${day} = ${dayStr}`,
-            `Metai: ${year} = ${yearStr}`,
+            `${month}.${day}.${year}`,
+            `${month} = ${monthStr}`,
+            `${day} = ${dayStr}`,
+            `${year} = ${yearStr}`,
             `Suma: ${allStr} = ${total}`,
             total !== lifePath ? `${total} → ${lifePath}` : '',
-            `Pilna Data: ${lifePath}`
+            `${lifePath}`
         ].filter(step => step !== '')
     };
 }
