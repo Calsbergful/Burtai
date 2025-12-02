@@ -149,9 +149,10 @@ export default function Calendar({ onDateSelect }) {
                     const isTodayDate = isToday(day);
                     const isSelectedDate = isSelected(day);
                     const dateSum = calculateDateSum(day, month, year);
-                    // Highlight master numbers (11, 22, 33), 28, and 20 (hidden 11) in sum
-                    // Also highlight the 20th and 28th day of each month
-                    const isSpecialNumber = masterNumbers.includes(dateSum) || dateSum === 28 || dateSum === 20 || day === 20 || day === 28;
+                    // Highlight master numbers (11, 22, 33), 28, and 20 (hidden 11) in sum only
+                    const isSpecialSum = masterNumbers.includes(dateSum) || dateSum === 28 || dateSum === 20;
+                    // Highlight the 20th and 28th day numbers
+                    const isSpecialDay = day === 20 || day === 28;
                     
                     return (
                         <motion.button
@@ -180,16 +181,16 @@ export default function Calendar({ onDateSelect }) {
                                     : 'none'
                             }}
                         >
-                            <span className={day === 20 || day === 28 ? 'text-yellow-300 font-bold' : ''} style={day === 20 || day === 28 ? {
+                            <span className={isSpecialDay ? 'text-yellow-300 font-bold' : ''} style={isSpecialDay ? {
                                 textShadow: '0 0 8px rgba(251, 191, 36, 0.8), 0 0 12px rgba(245, 158, 11, 0.6)'
                             } : {}}>{day}</span>
                             <span 
                                 className={`text-[8px] sm:text-[9px] md:text-[10px] font-normal ${
-                                    isSpecialNumber 
+                                    isSpecialSum 
                                         ? 'text-yellow-300 font-bold opacity-100' 
                                         : 'opacity-70'
                                 }`}
-                                style={isSpecialNumber ? {
+                                style={isSpecialSum ? {
                                     textShadow: '0 0 8px rgba(251, 191, 36, 0.8), 0 0 12px rgba(245, 158, 11, 0.6)'
                                 } : {}}
                             >
