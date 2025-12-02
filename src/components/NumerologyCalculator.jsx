@@ -5,7 +5,6 @@ import ResultCard from './ResultCard';
 import CalculationSteps from './CalculationSteps';
 import {
     calculateLifePath,
-    numberDescriptions,
     reduceNumber,
     masterNumbers
 } from '../utils/numerology';
@@ -106,14 +105,6 @@ export default function NumerologyCalculator() {
                                             </motion.div>
                                         );
                                     })()}
-                                    <motion.p
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3, delay: 0.2 }}
-                                        className="text-gray-200 text-center text-sm sm:text-base px-4 leading-relaxed mb-4 sm:mb-6"
-                                    >
-                                        {numberDescriptions[results.lifePath.number]?.lifePath || 'Aprašymas neprieinamas.'}
-                                    </motion.p>
                                     <CalculationSteps calculations={results.calculations} />
                                 </div>
                                 
@@ -142,16 +133,6 @@ export default function NumerologyCalculator() {
                                             </motion.div>
                                         );
                                     })()}
-                                    <motion.p
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3, delay: 0.3 }}
-                                        className="text-gray-200 text-center text-sm sm:text-base px-4 leading-relaxed"
-                                    >
-                                        {numberDescriptions[results.selectedDay]?.lifePath || 
-                                         numberDescriptions[reduceNumber(results.selectedDay)]?.lifePath || 
-                                         'Pasirinkta diena kalendoriuje.'}
-                                    </motion.p>
                                 </div>
                             </div>
                         </motion.div>

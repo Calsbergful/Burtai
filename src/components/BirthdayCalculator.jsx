@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { calculateLifePath, numberDescriptions, reduceNumber, masterNumbers } from '../utils/numerology';
+import { calculateLifePath, reduceNumber, masterNumbers, calculatePersonalYear } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
 import { getWesternZodiac, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals } from '../utils/hourAnimals';
@@ -26,6 +26,9 @@ export default function BirthdayCalculator() {
                 const westernZodiacSign = getWesternZodiac(parseInt(m), parseInt(d));
                 const westernZodiac = { sign: westernZodiacSign };
                 
+                // Calculate personal year
+                const personalYear = calculatePersonalYear(parseInt(m), parseInt(d), parseInt(y));
+                
                 // Get relationships based on Chinese zodiac
                 const soulmates = soulmateRelationships[chineseZodiac.zodiac] || [];
                 const friendly = friendlyRelationships[chineseZodiac.zodiac] || [];
@@ -38,6 +41,7 @@ export default function BirthdayCalculator() {
                 
                 setResults({
                     lifePath,
+                    personalYear,
                     chineseZodiac,
                     westernZodiac,
                     friendly: friendlyAnimals,
@@ -171,16 +175,16 @@ export default function BirthdayCalculator() {
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30 space-y-6">
                         {/* Life Path Number */}
                         <div className="grid grid-cols-2 gap-4 items-center">
-                            {/* Left side - Math/Calculation */}
+                            {/* Left side - Life Path */}
                             <div className="text-left">
                                 {(() => {
                                     const lifePathNum = results.lifePath.number;
                                     const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
-                                    const description = numberDescriptions[lifePathNum]?.lifePath || '';
                                     return (
                                         <>
+                                            <div className="text-xs sm:text-sm text-white/70 mb-1">Gyvenimo Kelias</div>
                                             <div 
-                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
+                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                     isSpecialLifePath ? 'text-yellow-300' : 'text-white'
                                                 }`}
                                                 style={isSpecialLifePath ? {
@@ -191,35 +195,22 @@ export default function BirthdayCalculator() {
                                             >
                                                 {lifePathNum}
                                             </div>
-                                            {description && (
-                                                <p className="text-white/90 text-sm sm:text-base md:text-lg mb-2">
-                                                    {description}
-                                                </p>
-                                            )}
-                                            {results.lifePath.steps && results.lifePath.steps.length > 0 && (
-                                                <div className="p-3 rounded-lg bg-purple-500/10">
-                                                    <p className="text-purple-200 text-xs sm:text-sm">
-                                                        {results.lifePath.steps[0]}
-                                                    </p>
-                                                </div>
-                                            )}
                                         </>
                                     );
                                 })()}
                             </div>
 
-                            {/* Right side - Day and Description */}
+                            {/* Right side - Day */}
                             <div className="text-left md:text-right">
                                 {(() => {
                                     const dayNum = parseInt(day);
                                     const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
-                                    const reducedDay = reduceNumber(dayNum);
-                                    const description = numberDescriptions[reducedDay]?.lifePath || '';
                                     
                                     return (
                                         <>
+                                            <div className="text-xs sm:text-sm text-white/70 mb-1">Diena</div>
                                             <div 
-                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
+                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                     isSpecialDay ? 'text-yellow-300' : 'text-white'
                                                 }`}
                                                 style={isSpecialDay ? {
@@ -230,14 +221,70 @@ export default function BirthdayCalculator() {
                                             >
                                                 {dayNum}
                                             </div>
-                                            {description && (
-                                                <p className="text-white/90 text-sm sm:text-base md:text-lg">
-                                                    {description}
-                                                </p>
-                                            )}
                                         </>
                                     );
                                 })()}
+                            </div>
+                        </div>
+
+                        {/* Personal Year */}
+                        <div className="border-t border-purple-400/20 pt-4">
+                            <div className="grid grid-cols-2 gap-4 items-center">
+                                {/* Current Personal Year */}
+                                <div className="text-center">
+                                    {(() => {
+                                        const currentPY = results.personalYear.current;
+                                        const isSpecialPY = masterNumbers.includes(currentPY) || currentPY === 20 || currentPY === 28 || currentPY === 29;
+                                        return (
+                                            <>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninis Metai (Dabar)</div>
+                                                <div 
+                                                    className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                        isSpecialPY ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialPY ? {
+                                                        textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {currentPY}
+                                                </div>
+                                                <div className="text-xs text-white/60 mt-1">
+                                                    {results.personalYear.currentYear} - {results.personalYear.nextYear}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+
+                                {/* Next Personal Year */}
+                                <div className="text-center">
+                                    {(() => {
+                                        const nextPY = results.personalYear.next;
+                                        const isSpecialPY = masterNumbers.includes(nextPY) || nextPY === 20 || nextPY === 28 || nextPY === 29;
+                                        return (
+                                            <>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninis Metai (Kitas)</div>
+                                                <div 
+                                                    className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                        isSpecialPY ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialPY ? {
+                                                        textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {nextPY}
+                                                </div>
+                                                <div className="text-xs text-white/60 mt-1">
+                                                    {results.personalYear.nextYear} - {results.personalYear.nextYear + 1}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
                             </div>
                         </div>
 

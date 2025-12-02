@@ -102,6 +102,65 @@ export function reduceNumber(num) {
     return num;
 }
 
+// Reduce number for personal year (skip 2, use 11 instead)
+export function reducePersonalYear(num) {
+    if (masterNumbers.includes(num)) {
+        return num;
+    }
+    
+    while (num > 9) {
+        num = num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+        if (masterNumbers.includes(num)) {
+            return num;
+        }
+        // Skip 2, use 11 instead
+        if (num === 2) {
+            return 11;
+        }
+    }
+    // Skip 2, use 11 instead
+    if (num === 2) {
+        return 11;
+    }
+    return num;
+}
+
+// Calculate Personal Year from birthdate
+export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
+    const currentDay = today.getDate();
+    
+    // Determine the last birthday that occurred
+    let lastBirthdayYear;
+    if (currentMonth > birthMonth || (currentMonth === birthMonth && currentDay >= birthDay)) {
+        // Birthday has already occurred this year
+        lastBirthdayYear = currentYear;
+    } else {
+        // Birthday hasn't occurred yet this year
+        lastBirthdayYear = currentYear - 1;
+    }
+    
+    // Calculate current personal year (from last birthday to next birthday)
+    const currentPersonalYearDate = `${lastBirthdayYear}-${String(birthMonth).padStart(2, '0')}-${String(birthDay).padStart(2, '0')}`;
+    const currentPersonalYear = calculateLifePath(currentPersonalYearDate);
+    const currentPersonalYearNum = reducePersonalYear(currentPersonalYear.number);
+    
+    // Calculate next personal year (from next birthday to following birthday)
+    const nextBirthdayYear = lastBirthdayYear + 1;
+    const nextPersonalYearDate = `${nextBirthdayYear}-${String(birthMonth).padStart(2, '0')}-${String(birthDay).padStart(2, '0')}`;
+    const nextPersonalYear = calculateLifePath(nextPersonalYearDate);
+    const nextPersonalYearNum = reducePersonalYear(nextPersonalYear.number);
+    
+    return {
+        current: currentPersonalYearNum,
+        next: nextPersonalYearNum,
+        currentYear: lastBirthdayYear,
+        nextYear: nextBirthdayYear
+    };
+}
+
 // Convert name to numbers
 export function nameToNumbers(name) {
     return name.toUpperCase()

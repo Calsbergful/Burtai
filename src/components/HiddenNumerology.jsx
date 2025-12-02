@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { calculateLifePath, numberDescriptions, reduceNumber, masterNumbers } from '../utils/numerology';
+import { calculateLifePath, reduceNumber, masterNumbers } from '../utils/numerology';
 import { convertDate } from '../utils/dateConverter';
 
 export default function HiddenNumerology() {
@@ -212,48 +212,23 @@ export default function HiddenNumerology() {
                                         {(() => {
                                             const lifePathNum = results.lifePath.number;
                                             const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
-                                            const description = numberDescriptions[lifePathNum]?.lifePath || '';
                                             
                                             // For special date, show 22/33
                                             const displayValue = results.isSpecialDate ? '22/33' : lifePathNum;
-                                            const description22 = numberDescriptions[22]?.lifePath || '';
-                                            const description33 = numberDescriptions[33]?.lifePath || '';
                                             
                                             return (
-                                                <>
-                                                    <div 
-                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
-                                                            isSpecialLifePath || results.isSpecialDate ? 'text-yellow-300' : 'text-white'
-                                                        }`}
-                                                        style={(isSpecialLifePath || results.isSpecialDate) ? {
-                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
-                                                        } : {
-                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
-                                                        }}
-                                                    >
-                                                        {displayValue}
-                                                    </div>
-                                                    {results.isSpecialDate ? (
-                                                        <div className="space-y-2">
-                                                            {description22 && (
-                                                                <p className="text-white/90 text-xs sm:text-sm">
-                                                                    {description22}
-                                                                </p>
-                                                            )}
-                                                            {description33 && (
-                                                                <p className="text-white/90 text-xs sm:text-sm">
-                                                                    {description33}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    ) : (
-                                                        description && (
-                                                            <p className="text-white/90 text-xs sm:text-sm">
-                                                                {description}
-                                                            </p>
-                                                        )
-                                                    )}
-                                                </>
+                                                <div 
+                                                    className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                        isSpecialLifePath || results.isSpecialDate ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={(isSpecialLifePath || results.isSpecialDate) ? {
+                                                        textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {displayValue}
+                                                </div>
                                             );
                                         })()}
                                     </div>
@@ -263,13 +238,11 @@ export default function HiddenNumerology() {
                                         {(() => {
                                             const dayNum = results.convertedDate.day;
                                             const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
-                                            const reducedDay = reduceNumber(dayNum);
-                                            const description = numberDescriptions[reducedDay]?.lifePath || '';
                                             return (
                                                 <>
                                                     <div className="text-sm text-white/70 mb-2">Diena</div>
                                                     <div 
-                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                             isSpecialDay ? 'text-yellow-300' : 'text-white'
                                                         }`}
                                                         style={isSpecialDay ? {
@@ -280,11 +253,6 @@ export default function HiddenNumerology() {
                                                     >
                                                         {dayNum}
                                                     </div>
-                                                    {description && (
-                                                        <p className="text-white/90 text-xs sm:text-sm">
-                                                            {description}
-                                                        </p>
-                                                    )}
                                                 </>
                                             );
                                         })()}

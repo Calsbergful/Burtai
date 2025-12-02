@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { calculateWordValue, getLetterValue, isUpperCase, isVowel } from '../utils/letterology';
-import { numberDescriptions, masterNumbers } from '../utils/numerology';
+import { masterNumbers } from '../utils/numerology';
 
 export default function Letterology() {
     const [input, setInput] = useState('');
@@ -151,12 +151,11 @@ export default function Letterology() {
                             <div className="text-center">
                                 {(() => {
                                     const isSpecialReduced = masterNumbers.includes(results.reduced) || results.reduced === 20 || results.reduced === 28 || results.reduced === 29;
-                                    const description = numberDescriptions[results.reduced]?.lifePath || '';
                                     return (
                                         <>
                                             <div className="text-sm text-white/70 mb-2">Sumažinta</div>
                                             <div 
-                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
+                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                     isSpecialReduced ? 'text-yellow-300' : 'text-white'
                                                 }`}
                                                 style={isSpecialReduced ? {
@@ -167,11 +166,6 @@ export default function Letterology() {
                                             >
                                                 {results.reduced}
                                             </div>
-                                            {description && (
-                                                <p className="text-white/90 text-xs sm:text-sm">
-                                                    {description}
-                                                </p>
-                                            )}
                                         </>
                                     );
                                 })()}
@@ -213,12 +207,11 @@ export default function Letterology() {
                                     <div className="text-center">
                                         {(() => {
                                             const isSpecialVowelReduced = masterNumbers.includes(results.vowelReduced) || results.vowelReduced === 20 || results.vowelReduced === 28 || results.vowelReduced === 29;
-                                            const description = numberDescriptions[results.vowelReduced]?.lifePath || '';
                                             return (
                                                 <>
                                                     <div className="text-sm text-white/70 mb-2">Balsių Sumažinta</div>
                                                     <div 
-                                                        className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-2 ${
+                                                        className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                             isSpecialVowelReduced ? 'text-yellow-300' : 'text-pink-300'
                                                         }`}
                                                         style={isSpecialVowelReduced ? {
@@ -229,11 +222,6 @@ export default function Letterology() {
                                                     >
                                                         {results.vowelReduced}
                                                     </div>
-                                                    {description && (
-                                                        <p className="text-white/90 text-xs sm:text-sm">
-                                                            {description}
-                                                        </p>
-                                                    )}
                                                 </>
                                             );
                                         })()}
