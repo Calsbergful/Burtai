@@ -13,7 +13,7 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
     
     const menuItems = [
         { id: 'letterology', label: 'Raidės', icon: '🔤' },
-        { id: 'hidden-numerology', label: 'Slapta Numerologija', icon: '🔮' },
+        { id: 'hidden-numerology', label: 'Hmmm..', icon: '🔮' },
         { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
         { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
     ];
