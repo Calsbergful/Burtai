@@ -153,9 +153,6 @@ export default function HiddenNumerology() {
                         />
                     </div>
                 </div>
-                <p className="text-white/60 text-xs sm:text-sm text-center mt-4">
-                    Įveskite Grigaliaus kalendoriaus datą, kuri bus konvertuota į Kinų mėnulio kalendorių
-                </p>
             </div>
 
             {/* Loading */}
