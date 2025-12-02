@@ -83,13 +83,26 @@ export default function NumerologyCalculator() {
                         >
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 {/* Left side - Full date data */}
-                                <div>
-                                    <ResultCard
-                                        number={results.lifePath.number}
-                                        title="Pilna Data"
-                                        description={numberDescriptions[results.lifePath.number]?.lifePath || 'Aprašymas neprieinamas.'}
-                                        delay={0.1}
-                                    />
+                                <div className="flex flex-col items-center justify-center">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.3, delay: 0.1 }}
+                                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white mb-4 sm:mb-6"
+                                        style={{
+                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.6), 0 0 40px rgba(99, 102, 241, 0.4)'
+                                        }}
+                                    >
+                                        {results.lifePath.number}
+                                    </motion.div>
+                                    <motion.p
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3, delay: 0.2 }}
+                                        className="text-gray-200 text-center text-sm sm:text-base px-4 leading-relaxed mb-4 sm:mb-6"
+                                    >
+                                        {numberDescriptions[results.lifePath.number]?.lifePath || 'Aprašymas neprieinamas.'}
+                                    </motion.p>
                                     <CalculationSteps calculations={results.calculations} />
                                 </div>
                                 
