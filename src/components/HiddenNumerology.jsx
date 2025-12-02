@@ -177,16 +177,6 @@ export default function HiddenNumerology() {
                                 <div className="text-lg sm:text-xl font-bold text-yellow-300 mb-2" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
                                     {results.chineseLunar.monthAnimal} {results.chineseLunar.month}-{results.chineseLunar.day}-{results.chineseLunar.yearNumber}
                                 </div>
-                                {results.chineseLunar.isLeapMonth && (
-                                    <div className="text-xs text-yellow-200/70 mt-1">
-                                        {results.chineseLunar.month}th Month of the year {results.chineseLunar.yearNumber} is a leap month
-                                    </div>
-                                )}
-                                {!results.chineseLunar.isLeapMonth && (
-                                    <div className="text-xs text-yellow-200/70 mt-1">
-                                        {results.chineseLunar.month}th Month of the year {results.chineseLunar.yearNumber} is not a leap month
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>
