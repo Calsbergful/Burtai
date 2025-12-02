@@ -2,16 +2,15 @@
 import { reduceNumber, masterNumbers } from './numerology';
 
 // Vowels for calculation
-export const vowels = ['A', 'E', 'I', 'O', 'U', 'Y'];
+export const vowels = ['A', 'E', 'I', 'O', 'U'];
 
-// Vowel values (A=1, E=5, I=9, O=6, U=3, Y=7)
+// Vowel values (A=1, E=5, I=9, O=6, U=3)
 export const vowelValues = {
     'A': 1,
     'E': 5,
     'I': 9,
     'O': 6,
-    'U': 3,
-    'Y': 7
+    'U': 3
 };
 
 // Letter to number mapping (A=1, B=2, ..., Z=26)
