@@ -96,7 +96,7 @@ export default function HiddenNumerology() {
             }}
         >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 sm:mb-8 text-white" style={{ textShadow: '0 0 20px rgba(138, 43, 226, 0.6)' }}>
-                Slapta Numerologija
+                Hmmm..
             </h2>
 
             {/* Date Input */}
