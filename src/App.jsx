@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
+import BirthdayCalculator from './components/BirthdayCalculator'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 
@@ -11,6 +12,8 @@ function App() {
   const handleMenuClick = (menuId) => {
     if (menuId === 'friendly-enemy-hours') {
       setActiveView('hours');
+    } else if (menuId === 'life-path-settings') {
+      setActiveView('birthday');
     } else {
       setActiveView('calculator');
     }
@@ -66,7 +69,7 @@ function App() {
             >
               <NumerologyCalculator />
             </motion.div>
-          ) : (
+          ) : activeView === 'hours' ? (
             <motion.div
               key="hours"
               initial={{ opacity: 0, y: 20 }}
@@ -76,11 +79,25 @@ function App() {
             >
               <FriendlyEnemyHours />
             </motion.div>
+          ) : (
+            <motion.div
+              key="birthday"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <BirthdayCalculator />
+            </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      <FooterMenu onMenuClick={handleMenuClick} activeMenuId={activeView === 'hours' ? 'friendly-enemy-hours' : null} />
+      <FooterMenu onMenuClick={handleMenuClick} activeMenuId={
+        activeView === 'hours' ? 'friendly-enemy-hours' : 
+        activeView === 'birthday' ? 'life-path-settings' : 
+        null
+      } />
     </div>
   )
 }
