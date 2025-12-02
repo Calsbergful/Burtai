@@ -357,6 +357,71 @@ export default function BirthdayCalculator() {
                             </div>
                         )}
 
+                        {/* Personal Day */}
+                        {results.personalYear.day && (
+                            <div className="border-t border-purple-400/20 pt-4">
+                                <div className="grid grid-cols-2 gap-4 items-center">
+                                    {/* Current Personal Day */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const personalDay = results.personalYear.day;
+                                            const isSpecialDay = masterNumbers.includes(personalDay) || personalDay === 20 || personalDay === 28 || personalDay === 29;
+                                            
+                                            return (
+                                                <>
+                                                    <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninė Diena</div>
+                                                    <div 
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                            isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                                        }`}
+                                                        style={isSpecialDay ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                        }}
+                                                    >
+                                                        {personalDay}
+                                                    </div>
+                                                    <div className="text-xs text-white/60 mt-1">
+                                                        {results.personalYear.dayNumber}
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
+
+                                    {/* Next Personal Day */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const nextPersonalDay = results.personalYear.nextDay;
+                                            const isSpecialDay = masterNumbers.includes(nextPersonalDay) || nextPersonalDay === 20 || nextPersonalDay === 28 || nextPersonalDay === 29;
+                                            
+                                            return (
+                                                <>
+                                                    <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninė Diena</div>
+                                                    <div 
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                            isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                                        }`}
+                                                        style={isSpecialDay ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                        }}
+                                                    >
+                                                        {nextPersonalDay}
+                                                    </div>
+                                                    <div className="text-xs text-white/60 mt-1">
+                                                        {results.personalYear.nextDayNumber}
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Zodiac Signs and Relationships */}
                         <div className="border-t border-purple-400/20 pt-4">
                             <div className="flex items-center justify-between gap-4 sm:gap-6 md:gap-8 flex-wrap">

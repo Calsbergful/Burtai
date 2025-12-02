@@ -196,6 +196,26 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         nextPersonalMonthNum = reducePersonalYear(nextPersonalMonthSum);
     }
     
+    // Calculate personal day (personal month + day of month)
+    const currentDay = today.getDate();
+    const personalDaySum = personalMonthNum + currentDay;
+    const personalDayNum = reducePersonalYear(personalDaySum);
+    
+    // Calculate next personal day
+    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+    let nextDayNumber, nextPersonalDaySum, nextPersonalDayNum;
+    if (currentDay === daysInMonth) {
+        // If today is the last day of the month, next day is first day of next month
+        nextDayNumber = 1;
+        nextPersonalDaySum = nextPersonalMonthNum + nextDayNumber;
+        nextPersonalDayNum = reducePersonalYear(nextPersonalDaySum);
+    } else {
+        // Otherwise, next day is still in current month
+        nextDayNumber = currentDay + 1;
+        nextPersonalDaySum = personalMonthNum + nextDayNumber;
+        nextPersonalDayNum = reducePersonalYear(nextPersonalDaySum);
+    }
+    
     return {
         current: currentPersonalYearNum,
         next: nextPersonalYearNum,
@@ -204,7 +224,11 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         month: personalMonthNum,
         monthNumber: currentMonth,
         nextMonth: nextPersonalMonthNum,
-        nextMonthNumber: nextMonthNumber
+        nextMonthNumber: nextMonthNumber,
+        day: personalDayNum,
+        dayNumber: currentDay,
+        nextDay: nextPersonalDayNum,
+        nextDayNumber: nextDayNumber
     };
 }
 
