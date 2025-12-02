@@ -66,14 +66,14 @@ export default function Calendar({ onDateSelect }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-md mx-auto"
+            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-md md:max-w-2xl lg:max-w-3xl mx-auto"
             style={{
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
             }}
         >
             {/* Calendar Header */}
-            <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <div className="flex items-center justify-between mb-2 sm:mb-3 md:mb-2">
                 <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -104,11 +104,11 @@ export default function Calendar({ onDateSelect }) {
             </div>
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-1.5 sm:mb-2">
+            <div className="grid grid-cols-7 gap-0.5 sm:gap-1 md:gap-2 mb-1.5 sm:mb-2 md:mb-1.5">
                 {dayNames.map((dayName, index) => (
                     <div
                         key={index}
-                        className="text-center text-[10px] sm:text-xs font-semibold text-white/70 py-0.5 sm:py-1"
+                        className="text-center text-[10px] sm:text-xs md:text-sm font-semibold text-white/70 py-0.5 sm:py-1 md:py-0.5"
                         style={{ textShadow: '0 0 8px rgba(138, 43, 226, 0.4)' }}
                     >
                         {dayName}
@@ -117,7 +117,7 @@ export default function Calendar({ onDateSelect }) {
             </div>
 
             {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
+            <div className="grid grid-cols-7 gap-0.5 sm:gap-1 md:gap-2">
                 {/* Empty cells for days before the first day of the month */}
                 {Array.from({ length: firstDayOfMonth }).map((_, index) => (
                     <div key={`empty-${index}`} className="aspect-square" />
@@ -135,7 +135,7 @@ export default function Calendar({ onDateSelect }) {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleDateClick(day)}
                             className={`
-                                aspect-square rounded-md sm:rounded-lg transition-all text-white cursor-pointer min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] text-xs sm:text-sm font-medium
+                                aspect-square rounded-md sm:rounded-lg transition-all text-white cursor-pointer min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px] md:min-h-[48px] md:min-w-[48px] text-xs sm:text-sm md:text-base font-medium
                                 ${isSelectedDate
                                     ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg'
                                     : isTodayDate
@@ -157,16 +157,6 @@ export default function Calendar({ onDateSelect }) {
                 })}
             </div>
 
-            {selectedDate && (
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-2 sm:mt-3 text-center text-white/80 text-[10px] sm:text-xs px-2"
-                    style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.4)' }}
-                >
-                    Pasirinkta data: {selectedDate.toLocaleDateString('lt-LT')}
-                </motion.div>
-            )}
         </motion.div>
     );
 }
