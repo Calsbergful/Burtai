@@ -30,13 +30,13 @@ export default function NumerologyCalculator() {
             
             setIsCalculating(false);
             
-            // Scroll to results with smooth behavior
+            // Scroll to results with smooth behavior, but keep calendar in view
             setTimeout(() => {
                 const resultsElement = document.getElementById('results');
                 if (resultsElement) {
                     resultsElement.scrollIntoView({ 
                         behavior: 'smooth', 
-                        block: 'start',
+                        block: 'nearest',
                         inline: 'nearest'
                     });
                 }
@@ -46,7 +46,13 @@ export default function NumerologyCalculator() {
 
     return (
         <div className="w-full max-w-6xl mx-auto mb-8 md:mb-12 lg:mb-16">
-            <Calendar onDateSelect={handleDateSelect} />
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+            >
+                <Calendar onDateSelect={handleDateSelect} />
+            </motion.div>
 
                 <AnimatePresence>
                     {results && (
