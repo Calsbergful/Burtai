@@ -4,6 +4,7 @@ import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
 import BirthdayCalculator from './components/BirthdayCalculator'
 import Letterology from './components/Letterology'
+import HiddenNumerology from './components/HiddenNumerology'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 
@@ -17,6 +18,8 @@ function App() {
       setActiveView('birthday');
     } else if (menuId === 'letterology') {
       setActiveView('letterology');
+    } else if (menuId === 'hidden-numerology') {
+      setActiveView('hidden-numerology');
     } else {
       setActiveView('calculator');
     }
@@ -110,6 +113,7 @@ function App() {
         activeView === 'hours' ? 'friendly-enemy-hours' : 
         activeView === 'birthday' ? 'life-path-settings' : 
         activeView === 'letterology' ? 'letterology' :
+        activeView === 'hidden-numerology' ? 'hidden-numerology' :
         null
       } />
     </div>
