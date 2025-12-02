@@ -194,7 +194,6 @@ export default function HiddenNumerology() {
                                             const description = numberDescriptions[lifePathNum]?.lifePath || '';
                                             return (
                                                 <>
-                                                    <div className="text-sm text-white/70 mb-2">Gyvenimo Kelio Skaičius</div>
                                                     <div 
                                                         className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
                                                             isSpecialLifePath ? 'text-yellow-300' : 'text-white'
