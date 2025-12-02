@@ -6,7 +6,7 @@ export default function FooterMenu({ onMenuClick }) {
     
     const menuItems = [
         { id: 'letterology', label: 'Raidės', icon: '📝' },
-        { id: 'hidden-numerology', label: 'Paslėpta Numerologija', icon: '🔮' },
+        { id: 'hidden-numerology', label: 'Slapta Numerologija', icon: '🔮' },
         { id: 'life-path-settings', label: 'Gyvenimo Kelio Skaičiavimo Nustatymai', icon: '⚙️' },
         { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
     ];
