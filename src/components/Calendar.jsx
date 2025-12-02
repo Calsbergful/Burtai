@@ -66,7 +66,7 @@ export default function Calendar({ onDateSelect }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 shadow-2xl shadow-purple-500/30 border border-purple-500/20"
+            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-md mx-auto"
             style={{
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
