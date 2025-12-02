@@ -6,7 +6,8 @@ import CalculationSteps from './CalculationSteps';
 import {
     calculateLifePath,
     numberDescriptions,
-    reduceNumber
+    reduceNumber,
+    masterNumbers
 } from '../utils/numerology';
 
 export default function NumerologyCalculator() {
@@ -84,17 +85,27 @@ export default function NumerologyCalculator() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 {/* Left side - Full date data */}
                                 <div className="flex flex-col items-center justify-center">
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ duration: 0.3, delay: 0.1 }}
-                                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white mb-4 sm:mb-6"
-                                        style={{
-                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.6), 0 0 40px rgba(99, 102, 241, 0.4)'
-                                        }}
-                                    >
-                                        {results.lifePath.number}
-                                    </motion.div>
+                                    {(() => {
+                                        const lifePathNum = results.lifePath.number;
+                                        const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 28 || lifePathNum === 20 || lifePathNum === 29;
+                                        return (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ duration: 0.3, delay: 0.1 }}
+                                                className={`text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-4 sm:mb-6 ${
+                                                    isSpecialLifePath ? 'text-yellow-300' : 'text-white'
+                                                }`}
+                                                style={isSpecialLifePath ? {
+                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(245, 158, 11, 0.6), 0 0 60px rgba(217, 119, 6, 0.4)'
+                                                } : {
+                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.6), 0 0 40px rgba(99, 102, 241, 0.4)'
+                                                }}
+                                            >
+                                                {lifePathNum}
+                                            </motion.div>
+                                        );
+                                    })()}
                                     <motion.p
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -108,17 +119,29 @@ export default function NumerologyCalculator() {
                                 
                                 {/* Right side - Selected calendar day number */}
                                 <div className="flex flex-col items-center justify-center">
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ duration: 0.3, delay: 0.2 }}
-                                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white mb-4 sm:mb-6"
-                                        style={{
-                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.6), 0 0 40px rgba(99, 102, 241, 0.4)'
-                                        }}
-                                    >
-                                        {results.selectedDay}
-                                    </motion.div>
+                                    {(() => {
+                                        const selectedDayNum = results.selectedDay;
+                                        const reducedDay = reduceNumber(selectedDayNum);
+                                        const isSpecialDay = masterNumbers.includes(selectedDayNum) || selectedDayNum === 28 || selectedDayNum === 20 || selectedDayNum === 29 ||
+                                                           masterNumbers.includes(reducedDay) || reducedDay === 28 || reducedDay === 20 || reducedDay === 29;
+                                        return (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ duration: 0.3, delay: 0.2 }}
+                                                className={`text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-4 sm:mb-6 ${
+                                                    isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                                }`}
+                                                style={isSpecialDay ? {
+                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(245, 158, 11, 0.6), 0 0 60px rgba(217, 119, 6, 0.4)'
+                                                } : {
+                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.6), 0 0 40px rgba(99, 102, 241, 0.4)'
+                                                }}
+                                            >
+                                                {selectedDayNum}
+                                            </motion.div>
+                                        );
+                                    })()}
                                     <motion.p
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
