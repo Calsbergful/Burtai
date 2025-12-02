@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { getChineseZodiac, isChineseNewYear, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
 import { getWesternZodiac, isZodiacSignStart, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
+import { getMonthAnimal, monthAnimalTranslations, monthAnimalEmojis } from '../utils/monthAnimals';
 
 const masterNumbers = [11, 22, 33];
 
@@ -115,6 +116,16 @@ export default function Calendar({ onDateSelect }) {
                         {monthNames[month]} {year}
                     </h2>
                     <div className="flex flex-col gap-1 mt-1">
+                        {(() => {
+                            const monthAnimal = getMonthAnimal(month + 1);
+                            const animalName = monthAnimalTranslations[monthAnimal] || monthAnimal;
+                            const animalEmoji = monthAnimalEmojis[monthAnimal] || '';
+                            return (
+                                <p className="text-xs sm:text-sm md:text-base text-green-300/80 font-semibold" style={{ textShadow: '0 0 8px rgba(34, 197, 94, 0.5), 0 0 15px rgba(22, 163, 74, 0.3)' }}>
+                                    {animalName} {animalEmoji}
+                                </p>
+                            );
+                        })()}
                         {(() => {
                             const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
                             const zodiac = getChineseZodiac(currentDateStr);
