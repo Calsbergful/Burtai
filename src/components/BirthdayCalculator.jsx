@@ -189,18 +189,9 @@ export default function BirthdayCalculator() {
                         {/* Zodiac Signs and Relationships */}
                         <div className="border-t border-purple-400/20 pt-4">
                             <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 flex-wrap">
-                                {/* Chinese Zodiac with Friendly */}
+                                {/* Chinese Zodiac with Friendly on left and Enemies on right */}
                                 <div className="flex items-center gap-3 sm:gap-4">
-                                    <div className="text-center">
-                                        <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
-                                            {zodiacEmojis[results.chineseZodiac.zodiac]}
-                                        </div>
-                                        <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
-                                            {zodiacTranslations[results.chineseZodiac.zodiac]}
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Friendly (including soulmates) */}
+                                    {/* Friendly (including soulmates) - LEFT side */}
                                     {results.friendly.length > 0 && (
                                         <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
                                             {results.friendly.map((animal, index) => {
@@ -232,11 +223,18 @@ export default function BirthdayCalculator() {
                                             })}
                                         </div>
                                     )}
-                                </div>
-
-                                {/* Western Zodiac with Enemies */}
-                                <div className="flex items-center gap-3 sm:gap-4">
-                                    {/* Enemies */}
+                                    
+                                    {/* Chinese Zodiac - CENTER */}
+                                    <div className="text-center">
+                                        <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
+                                            {zodiacEmojis[results.chineseZodiac.zodiac]}
+                                        </div>
+                                        <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                            {zodiacTranslations[results.chineseZodiac.zodiac]}
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Enemies - RIGHT side */}
                                     {results.enemies.length > 0 && (
                                         <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
                                             {results.enemies.map((animal, index) => (
@@ -253,14 +251,15 @@ export default function BirthdayCalculator() {
                                             ))}
                                         </div>
                                     )}
-                                    
-                                    <div className="text-center">
-                                        <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
-                                            {zodiacSignEmojis[results.westernZodiac.sign]}
-                                        </div>
-                                        <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
-                                            {zodiacSignTranslations[results.westernZodiac.sign]}
-                                        </div>
+                                </div>
+
+                                {/* Western Zodiac */}
+                                <div className="text-center">
+                                    <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
+                                        {zodiacSignEmojis[results.westernZodiac.sign]}
+                                    </div>
+                                    <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
+                                        {zodiacSignTranslations[results.westernZodiac.sign]}
                                     </div>
                                 </div>
                             </div>
