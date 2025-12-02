@@ -174,28 +174,19 @@ export default function HiddenNumerology() {
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
                         <div className="space-y-4">
                             <div className="text-center">
-                                <div className="text-sm text-white/70 mb-2">English Date</div>
-                                <div className="text-xl sm:text-2xl font-bold text-white">
-                                    {results.gregorianDate}
+                                <div className="text-lg sm:text-xl font-bold text-yellow-300 mb-2" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
+                                    {results.chineseLunar.monthName} ({results.chineseLunar.month}th month), {results.chineseLunar.day}, {results.chineseLunar.yearNumber}
                                 </div>
-                            </div>
-                            <div className="border-t border-purple-400/20 pt-4">
-                                <div className="text-center">
-                                    <div className="text-sm text-white/70 mb-2">Chinese Date</div>
-                                    <div className="text-lg sm:text-xl font-bold text-yellow-300 mb-2" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
-                                        {results.chineseLunar.monthName} ({results.chineseLunar.month}th month), {results.chineseLunar.day}, {results.chineseLunar.yearNumber}
+                                {results.chineseLunar.isLeapMonth && (
+                                    <div className="text-xs text-yellow-200/70 mt-1">
+                                        {results.chineseLunar.month}th Month of the year {results.chineseLunar.yearNumber} is a leap month
                                     </div>
-                                    {results.chineseLunar.isLeapMonth && (
-                                        <div className="text-xs text-yellow-200/70 mt-1">
-                                            {results.chineseLunar.month}th Month of the year {results.chineseLunar.yearNumber} is a leap month
-                                        </div>
-                                    )}
-                                    {!results.chineseLunar.isLeapMonth && (
-                                        <div className="text-xs text-yellow-200/70 mt-1">
-                                            {results.chineseLunar.month}th Month of the year {results.chineseLunar.yearNumber} is not a leap month
-                                        </div>
-                                    )}
-                                </div>
+                                )}
+                                {!results.chineseLunar.isLeapMonth && (
+                                    <div className="text-xs text-yellow-200/70 mt-1">
+                                        {results.chineseLunar.month}th Month of the year {results.chineseLunar.yearNumber} is not a leap month
+                                    </div>
+                                )}
                             </div>
                             <div className="border-t border-purple-400/20 pt-4">
                                 <div className="text-center">
