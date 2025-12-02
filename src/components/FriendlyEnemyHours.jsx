@@ -197,6 +197,7 @@ export default function FriendlyEnemyHours() {
                         })}
                     </div>
                 </motion.div>
+                </div>
             </div>
             )}
         </motion.div>
