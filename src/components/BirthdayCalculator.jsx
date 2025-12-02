@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { calculateLifePath, numberDescriptions, reduceNumber } from '../utils/numerology';
+import { calculateLifePath, numberDescriptions, reduceNumber, masterNumbers } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
 import { getWesternZodiac, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals } from '../utils/hourAnimals';
@@ -187,18 +187,33 @@ export default function BirthdayCalculator() {
 
                             {/* Right side - Day and Description */}
                             <div className="text-left md:text-right">
-                                <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '0 0 20px rgba(138, 43, 226, 0.8)' }}>
-                                    {parseInt(day)}
-                                </div>
                                 {(() => {
                                     const dayNum = parseInt(day);
+                                    const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
                                     const reducedDay = reduceNumber(dayNum);
                                     const description = numberDescriptions[reducedDay]?.lifePath || '';
-                                    return description ? (
-                                        <p className="text-white/90 text-sm sm:text-base md:text-lg">
-                                            {description}
-                                        </p>
-                                    ) : null;
+                                    
+                                    return (
+                                        <>
+                                            <div 
+                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
+                                                    isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                                }`}
+                                                style={isSpecialDay ? {
+                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                } : {
+                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                }}
+                                            >
+                                                {dayNum}
+                                            </div>
+                                            {description && (
+                                                <p className="text-white/90 text-sm sm:text-base md:text-lg">
+                                                    {description}
+                                                </p>
+                                            )}
+                                        </>
+                                    );
                                 })()}
                             </div>
                         </div>
