@@ -5,37 +5,86 @@ import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chi
 import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals } from '../utils/hourAnimals';
 
 export default function BirthdayCalculator() {
-    const [birthdate, setBirthdate] = useState('');
+    const [month, setMonth] = useState('');
+    const [day, setDay] = useState('');
+    const [year, setYear] = useState('');
     const [results, setResults] = useState(null);
 
-    const handleDateChange = (e) => {
-        const date = e.target.value;
-        setBirthdate(date);
-        
-        if (date) {
-            const lifePath = calculateLifePath(date);
-            const chineseZodiac = getChineseZodiac(date);
+    const calculateResults = (m, d, y) => {
+        if (m && d && y) {
+            // Format date as YYYY-MM-DD
+            const monthStr = String(m).padStart(2, '0');
+            const dayStr = String(d).padStart(2, '0');
+            const date = `${y}-${monthStr}-${dayStr}`;
             
-            // Get relationships based on Chinese zodiac
-            const soulmates = soulmateRelationships[chineseZodiac.zodiac] || [];
-            const friendly = friendlyRelationships[chineseZodiac.zodiac] || [];
-            const enemies = enemyRelationships[chineseZodiac.zodiac] || [];
-            
-            // Combine soulmates with friendly, but mark soulmates
-            const allFriendly = [...friendly, ...soulmates];
-            const friendlyAnimals = hourAnimals.filter(ha => allFriendly.includes(ha.animal));
-            const soulmateAnimals = hourAnimals.filter(ha => soulmates.includes(ha.animal));
-            
-            setResults({
-                lifePath,
-                chineseZodiac,
-                friendly: friendlyAnimals,
-                soulmateAnimals: soulmateAnimals.map(ha => ha.animal), // Store just the animal names for easy checking
-                enemies: hourAnimals.filter(ha => enemies.includes(ha.animal))
-            });
+            // Validate date
+            const dateObj = new Date(y, m - 1, d);
+            if (dateObj.getFullYear() == y && dateObj.getMonth() == m - 1 && dateObj.getDate() == d) {
+                const lifePath = calculateLifePath(date);
+                const chineseZodiac = getChineseZodiac(date);
+                
+                // Get relationships based on Chinese zodiac
+                const soulmates = soulmateRelationships[chineseZodiac.zodiac] || [];
+                const friendly = friendlyRelationships[chineseZodiac.zodiac] || [];
+                const enemies = enemyRelationships[chineseZodiac.zodiac] || [];
+                
+                // Combine soulmates with friendly, but mark soulmates
+                const allFriendly = [...friendly, ...soulmates];
+                const friendlyAnimals = hourAnimals.filter(ha => allFriendly.includes(ha.animal));
+                const soulmateAnimals = hourAnimals.filter(ha => soulmates.includes(ha.animal));
+                
+                setResults({
+                    lifePath,
+                    chineseZodiac,
+                    friendly: friendlyAnimals,
+                    soulmateAnimals: soulmateAnimals.map(ha => ha.animal),
+                    enemies: hourAnimals.filter(ha => enemies.includes(ha.animal))
+                });
+            } else {
+                setResults(null);
+            }
         } else {
             setResults(null);
         }
+    };
+
+    const handleMonthChange = (e) => {
+        const value = e.target.value.replace(/\D/g, '').slice(0, 2);
+        setMonth(value);
+        
+        if (value.length === 2) {
+            const monthNum = parseInt(value);
+            if (monthNum >= 1 && monthNum <= 12) {
+                document.getElementById('day-input')?.focus();
+            }
+        }
+        
+        calculateResults(value, day, year);
+    };
+
+    const handleDayChange = (e) => {
+        const value = e.target.value.replace(/\D/g, '').slice(0, 2);
+        setDay(value);
+        
+        if (value.length === 2) {
+            const dayNum = parseInt(value);
+            if (dayNum >= 1 && dayNum <= 31) {
+                document.getElementById('year-input')?.focus();
+            }
+        }
+        
+        calculateResults(month, value, year);
+    };
+
+    const handleYearChange = (e) => {
+        const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+        setYear(value);
+        
+        if (value.length === 4) {
+            document.getElementById('year-input')?.blur();
+        }
+        
+        calculateResults(month, day, value);
     };
 
     return (
@@ -56,17 +105,60 @@ export default function BirthdayCalculator() {
             {/* Date Input */}
             <div className="mb-6 sm:mb-8">
                 <label className="block text-lg sm:text-xl font-semibold text-white mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}>
-                    Pasirinkite Gimimo Datą
+                    Įveskite Gimimo Datą
                 </label>
-                <input
-                    type="date"
-                    value={birthdate}
-                    onChange={handleDateChange}
-                    className="w-full max-w-md mx-auto block px-4 py-3 rounded-xl bg-purple-500/20 border border-purple-400/40 text-white text-center text-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    style={{
-                        boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.2)'
-                    }}
-                />
+                <div className="flex justify-center items-center gap-2 sm:gap-4 max-w-md mx-auto">
+                    <div className="flex flex-col items-center">
+                        <label className="text-sm text-white/70 mb-2">Mėnuo</label>
+                        <input
+                            id="month-input"
+                            type="text"
+                            inputMode="numeric"
+                            value={month}
+                            onChange={handleMonthChange}
+                            placeholder="MM"
+                            maxLength={2}
+                            className="w-16 sm:w-20 px-3 py-3 rounded-xl bg-purple-500/20 border border-purple-400/40 text-white text-center text-xl sm:text-2xl font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            style={{
+                                boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.2)'
+                            }}
+                        />
+                    </div>
+                    <span className="text-white text-2xl sm:text-3xl mt-6">.</span>
+                    <div className="flex flex-col items-center">
+                        <label className="text-sm text-white/70 mb-2">Diena</label>
+                        <input
+                            id="day-input"
+                            type="text"
+                            inputMode="numeric"
+                            value={day}
+                            onChange={handleDayChange}
+                            placeholder="DD"
+                            maxLength={2}
+                            className="w-16 sm:w-20 px-3 py-3 rounded-xl bg-purple-500/20 border border-purple-400/40 text-white text-center text-xl sm:text-2xl font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            style={{
+                                boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.2)'
+                            }}
+                        />
+                    </div>
+                    <span className="text-white text-2xl sm:text-3xl mt-6">.</span>
+                    <div className="flex flex-col items-center">
+                        <label className="text-sm text-white/70 mb-2">Metai</label>
+                        <input
+                            id="year-input"
+                            type="text"
+                            inputMode="numeric"
+                            value={year}
+                            onChange={handleYearChange}
+                            placeholder="YYYY"
+                            maxLength={4}
+                            className="w-20 sm:w-24 px-3 py-3 rounded-xl bg-purple-500/20 border border-purple-400/40 text-white text-center text-xl sm:text-2xl font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            style={{
+                                boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.2)'
+                            }}
+                        />
+                    </div>
+                </div>
             </div>
 
             {/* Results */}
