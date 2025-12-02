@@ -170,61 +170,62 @@ export default function HiddenNumerology() {
                     transition={{ duration: 0.4, delay: 0.2 }}
                     className="space-y-6"
                 >
-                    {/* Date Conversion Info */}
+                    {/* Combined Results and Calculation */}
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
-                        <div className="space-y-4">
+                        <div className="space-y-6">
+                            {/* Chinese Lunar Date */}
                             <div className="text-center">
                                 <div className="text-lg sm:text-xl font-bold text-yellow-300 mb-2" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
                                     {results.chineseLunar.month}-{results.chineseLunar.day}-{results.chineseLunar.yearNumber}
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    {/* Life Path Calculation */}
-                    <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
-                        <div className="grid grid-cols-2 gap-4 items-center">
-                            {/* Life Path Number */}
-                            <div className="text-center">
-                                {(() => {
-                                    const lifePathNum = results.lifePath.number;
-                                    const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
-                                    const description = numberDescriptions[lifePathNum]?.lifePath || '';
-                                    return (
-                                        <>
-                                            <div className="text-sm text-white/70 mb-2">Gyvenimo Kelio Skaičius</div>
-                                            <div 
-                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
-                                                    isSpecialLifePath ? 'text-yellow-300' : 'text-white'
-                                                }`}
-                                                style={isSpecialLifePath ? {
-                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
-                                                } : {
-                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
-                                                }}
-                                            >
-                                                {lifePathNum}
-                                            </div>
-                                            {description && (
-                                                <p className="text-white/90 text-xs sm:text-sm">
-                                                    {description}
-                                                </p>
-                                            )}
-                                        </>
-                                    );
-                                })()}
-                            </div>
-
-                            {/* Calculation Steps */}
-                            <div className="text-center">
-                                <div className="text-sm text-white/70 mb-2">Skaičiavimas</div>
-                                {results.lifePath.steps && results.lifePath.steps.length > 0 && (
-                                    <div className="p-3 rounded-lg bg-purple-500/10">
-                                        <p className="text-purple-200 text-xs sm:text-sm text-left">
-                                            {results.lifePath.steps[0]}
-                                        </p>
+                            {/* Life Path Calculation */}
+                            <div className="border-t border-purple-400/20 pt-6">
+                                <div className="grid grid-cols-2 gap-4 items-center">
+                                    {/* Life Path Number */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const lifePathNum = results.lifePath.number;
+                                            const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
+                                            const description = numberDescriptions[lifePathNum]?.lifePath || '';
+                                            return (
+                                                <>
+                                                    <div className="text-sm text-white/70 mb-2">Gyvenimo Kelio Skaičius</div>
+                                                    <div 
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
+                                                            isSpecialLifePath ? 'text-yellow-300' : 'text-white'
+                                                        }`}
+                                                        style={isSpecialLifePath ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                        }}
+                                                    >
+                                                        {lifePathNum}
+                                                    </div>
+                                                    {description && (
+                                                        <p className="text-white/90 text-xs sm:text-sm">
+                                                            {description}
+                                                        </p>
+                                                    )}
+                                                </>
+                                            );
+                                        })()}
                                     </div>
-                                )}
+
+                                    {/* Calculation Steps */}
+                                    <div className="text-center">
+                                        <div className="text-sm text-white/70 mb-2">Skaičiavimas</div>
+                                        {results.lifePath.steps && results.lifePath.steps.length > 0 && (
+                                            <div className="p-3 rounded-lg bg-purple-500/10">
+                                                <p className="text-purple-200 text-xs sm:text-sm text-left">
+                                                    {results.lifePath.steps[0]}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
