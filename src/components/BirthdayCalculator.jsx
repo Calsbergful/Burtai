@@ -171,9 +171,6 @@ export default function BirthdayCalculator() {
                 >
                     {/* Life Path Number */}
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
-                        <h3 className="text-xl sm:text-2xl font-bold text-purple-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.6)' }}>
-                            Gyvenimo Kelio Skaičius
-                        </h3>
                         <div className="text-center mb-4">
                             <div className="text-6xl sm:text-7xl md:text-8xl font-bold text-white mb-2" style={{ textShadow: '0 0 20px rgba(138, 43, 226, 0.8)' }}>
                                 {results.lifePath.number}
