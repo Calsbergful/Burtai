@@ -34,6 +34,22 @@ export const zodiacTranslations = {
     'Pig': 'Kiaulė'
 };
 
+// Emojis for each zodiac animal
+export const zodiacEmojis = {
+    'Rat': '🐭',
+    'Ox': '🐂',
+    'Tiger': '🐅',
+    'Rabbit': '🐰',
+    'Dragon': '🐉',
+    'Snake': '🐍',
+    'Horse': '🐴',
+    'Goat': '🐐',
+    'Monkey': '🐵',
+    'Rooster': '🐓',
+    'Dog': '🐕',
+    'Pig': '🐷'
+};
+
 // Get Chinese zodiac for a given date
 export function getChineseZodiac(dateString) {
     const [year, month, day] = dateString.split('-').map(Number);

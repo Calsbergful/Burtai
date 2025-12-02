@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { getChineseZodiac, isChineseNewYear, zodiacTranslations } from '../utils/chineseZodiac';
+import { getChineseZodiac, isChineseNewYear, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
 
 const masterNumbers = [11, 22, 33];
 
@@ -116,9 +116,11 @@ export default function Calendar({ onDateSelect }) {
                     {(() => {
                         const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
                         const zodiac = getChineseZodiac(currentDateStr);
+                        const zodiacName = zodiacTranslations[zodiac.zodiac] || zodiac.zodiac;
+                        const zodiacEmoji = zodiacEmojis[zodiac.zodiac] || '';
                         return (
                             <p className="text-xs sm:text-sm md:text-base text-yellow-300/80 mt-1 font-semibold" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
-                                {zodiacTranslations[zodiac.zodiac] || zodiac.zodiac}
+                                {zodiacName} {zodiacEmoji}
                             </p>
                         );
                     })()}
