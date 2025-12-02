@@ -141,9 +141,10 @@ export function calculateLifePath(birthdate) {
     return {
         number: lifePath,
         steps: [
-            `Suma: ${allStr} = ${total}`,
-            total !== lifePath ? `${total} → ${lifePath}` : ''
-        ].filter(step => step !== '')
+            total !== lifePath 
+                ? `Suma: ${allStr} = ${total} = ${lifePath}`
+                : `Suma: ${allStr} = ${total}`
+        ]
     };
 }
 
