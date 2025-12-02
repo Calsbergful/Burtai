@@ -251,7 +251,7 @@ export default function BirthdayCalculator() {
                                                     {currentPY}
                                                 </div>
                                                 <div className="text-xs text-white/60 mt-1">
-                                                    {results.personalYear.currentYear} - {results.personalYear.nextYear}
+                                                    {new Date().getFullYear()}
                                                 </div>
                                             </>
                                         );
@@ -279,7 +279,7 @@ export default function BirthdayCalculator() {
                                                     {nextPY}
                                                 </div>
                                                 <div className="text-xs text-white/60 mt-1">
-                                                    {results.personalYear.nextYear} - {results.personalYear.nextYear + 1}
+                                                    {new Date().getFullYear() + 1}
                                                 </div>
                                             </>
                                         );
