@@ -210,6 +210,8 @@ export default function HiddenNumerology() {
                                             
                                             // For special date, show 22/33
                                             const displayValue = results.isSpecialDate ? '22/33' : lifePathNum;
+                                            const description22 = numberDescriptions[22]?.lifePath || '';
+                                            const description33 = numberDescriptions[33]?.lifePath || '';
                                             
                                             return (
                                                 <>
@@ -225,10 +227,25 @@ export default function HiddenNumerology() {
                                                     >
                                                         {displayValue}
                                                     </div>
-                                                    {description && (
-                                                        <p className="text-white/90 text-xs sm:text-sm">
-                                                            {description}
-                                                        </p>
+                                                    {results.isSpecialDate ? (
+                                                        <div className="space-y-2">
+                                                            {description22 && (
+                                                                <p className="text-white/90 text-xs sm:text-sm">
+                                                                    {description22}
+                                                                </p>
+                                                            )}
+                                                            {description33 && (
+                                                                <p className="text-white/90 text-xs sm:text-sm">
+                                                                    {description33}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        description && (
+                                                            <p className="text-white/90 text-xs sm:text-sm">
+                                                                {description}
+                                                            </p>
+                                                        )
                                                     )}
                                                 </>
                                             );
