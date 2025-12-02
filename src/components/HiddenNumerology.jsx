@@ -188,14 +188,6 @@ export default function HiddenNumerology() {
                                     </div>
                                 )}
                             </div>
-                            <div className="border-t border-purple-400/20 pt-4">
-                                <div className="text-center">
-                                    <div className="text-sm text-white/70 mb-2">Chinese Year Name</div>
-                                    <div className="text-lg sm:text-xl font-bold text-yellow-300" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
-                                        {results.chineseLunar.yearName}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
