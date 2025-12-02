@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { getHourAnimal, getFriendlyHours, getEnemyHours, formatHour, hourAnimalEmojis } from '../utils/hourAnimals';
+import { getHourAnimal, getFriendlyHours, getEnemyHours, formatHour, formatHourRange, hourAnimalEmojis } from '../utils/hourAnimals';
 
 export default function FriendlyEnemyHours() {
     const [selectedHour, setSelectedHour] = useState(new Date().getHours());
@@ -93,9 +93,7 @@ export default function FriendlyEnemyHours() {
                     </h4>
                     <div className="space-y-2">
                         {friendlyHours.map((hourAnimal, index) => {
-                            const hourRange = hourAnimal.start > hourAnimal.end 
-                                ? `${formatHour(hourAnimal.start)} - ${formatHour(hourAnimal.end)}`
-                                : `${formatHour(hourAnimal.start)} - ${formatHour(hourAnimal.end)}`;
+                            const hourRange = formatHourRange(hourAnimal.start, hourAnimal.end);
                             return (
                                 <motion.div
                                     key={index}
@@ -131,9 +129,7 @@ export default function FriendlyEnemyHours() {
                     </h4>
                     <div className="space-y-2">
                         {enemyHours.map((hourAnimal, index) => {
-                            const hourRange = hourAnimal.start > hourAnimal.end 
-                                ? `${formatHour(hourAnimal.start)} - ${formatHour(hourAnimal.end)}`
-                                : `${formatHour(hourAnimal.start)} - ${formatHour(hourAnimal.end)}`;
+                            const hourRange = formatHourRange(hourAnimal.start, hourAnimal.end);
                             return (
                                 <motion.div
                                     key={index}
