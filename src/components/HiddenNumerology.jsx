@@ -238,29 +238,6 @@ export default function HiddenNumerology() {
                                     {/* Day Number */}
                                     <div className="text-center">
                                         {(() => {
-                                            // Special case for November 26, 1996 - show "Hidden 33"
-                                            if (results.isSpecialDate) {
-                                                const description = numberDescriptions[33]?.lifePath || '';
-                                                return (
-                                                    <>
-                                                        <div className="text-sm text-white/70 mb-2">Diena</div>
-                                                        <div 
-                                                            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2 text-yellow-300"
-                                                            style={{
-                                                                textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
-                                                            }}
-                                                        >
-                                                            Hidden 33
-                                                        </div>
-                                                        {description && (
-                                                            <p className="text-white/90 text-xs sm:text-sm">
-                                                                {description}
-                                                            </p>
-                                                        )}
-                                                    </>
-                                                );
-                                            }
-                                            
                                             const dayNum = results.chineseLunar.day;
                                             const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
                                             const reducedDay = reduceNumber(dayNum);
