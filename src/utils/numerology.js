@@ -102,14 +102,23 @@ export function reduceNumber(num) {
     return num;
 }
 
-// Reduce number for personal year (skip 2, use 11 instead)
+// Reduce number for personal year (skip 2, use 11 instead; keep 28 as 28)
 export function reducePersonalYear(num) {
+    // Keep 28 as 28 (don't reduce it)
+    if (num === 28) {
+        return 28;
+    }
+    
     if (masterNumbers.includes(num)) {
         return num;
     }
     
     while (num > 9) {
         num = num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+        // Keep 28 as 28
+        if (num === 28) {
+            return 28;
+        }
         if (masterNumbers.includes(num)) {
             return num;
         }
