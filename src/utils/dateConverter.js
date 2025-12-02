@@ -118,8 +118,24 @@ const getMonthDesignation = (month, year) => {
 
 // Convert date to alternate calendar system
 export function convertDate(gregorianDate) {
+    // Validate input
+    if (!gregorianDate || typeof gregorianDate !== 'string') {
+        return null;
+    }
+    
     // Parse date (YYYY-MM-DD)
-    const [year, month, day] = gregorianDate.split('-').map(Number);
+    const parts = gregorianDate.split('-');
+    if (parts.length !== 3) {
+        return null;
+    }
+    
+    const [year, month, day] = parts.map(Number);
+    
+    // Validate parsed values
+    if (isNaN(year) || isNaN(month) || isNaN(day)) {
+        return null;
+    }
+    
     const dateObj = new Date(year, month - 1, day);
     
     // Find reference date for the given year
