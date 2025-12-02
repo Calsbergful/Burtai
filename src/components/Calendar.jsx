@@ -148,6 +148,8 @@ export default function Calendar({ onDateSelect }) {
                 {days.map((day, index) => {
                     const isTodayDate = isToday(day);
                     const isSelectedDate = isSelected(day);
+                    const dateSum = calculateDateSum(day, month, year);
+                    const isMasterOr28 = masterNumbers.includes(dateSum) || dateSum === 28;
                     
                     return (
                         <motion.button
@@ -177,8 +179,17 @@ export default function Calendar({ onDateSelect }) {
                             }}
                         >
                             <span>{day}</span>
-                            <span className="text-[8px] sm:text-[9px] md:text-[10px] opacity-70 font-normal">
-                                {calculateDateSum(day, month, year)}
+                            <span 
+                                className={`text-[8px] sm:text-[9px] md:text-[10px] font-normal ${
+                                    isMasterOr28 
+                                        ? 'text-yellow-300 font-bold opacity-100' 
+                                        : 'opacity-70'
+                                }`}
+                                style={isMasterOr28 ? {
+                                    textShadow: '0 0 8px rgba(251, 191, 36, 0.8), 0 0 12px rgba(245, 158, 11, 0.6)'
+                                } : {}}
+                            >
+                                {dateSum}
                             </span>
                         </motion.button>
                     );
