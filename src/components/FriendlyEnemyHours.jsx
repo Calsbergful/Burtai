@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { hourAnimals, getFriendlyHours, getEnemyHours, formatHourRange, hourAnimalEmojis } from '../utils/hourAnimals';
+import { hourAnimals, getFriendlyHours, getEnemyHours, getSoulmateHours, formatHourRange, hourAnimalEmojis } from '../utils/hourAnimals';
 
 export default function FriendlyEnemyHours() {
     const [selectedAnimal, setSelectedAnimal] = useState(null);
+    const soulmateHours = selectedAnimal ? getSoulmateHours(selectedAnimal.animal) : [];
     const friendlyHours = selectedAnimal ? getFriendlyHours(selectedAnimal.animal) : [];
     const enemyHours = selectedAnimal ? getEnemyHours(selectedAnimal.animal) : [];
 
@@ -83,9 +84,48 @@ export default function FriendlyEnemyHours() {
                 </motion.div>
             )}
 
-            {/* Friendly and Enemy Hours */}
+            {/* Soulmate, Friendly and Enemy Hours */}
             {selectedAnimal && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+                {/* Soulmate Hours */}
+                {soulmateHours.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.1 }}
+                        className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-pink-400/40"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(219, 39, 119, 0.2) 100%)',
+                            boxShadow: '0 4px 16px 0 rgba(236, 72, 153, 0.3)'
+                        }}
+                    >
+                        <h4 className="text-lg sm:text-xl font-bold text-pink-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(236, 72, 153, 0.6)' }}>
+                            Sielos Draugai ⭐
+                        </h4>
+                        <div className="space-y-2">
+                            {soulmateHours.map((hourAnimal, index) => {
+                                const hourRange = formatHourRange(hourAnimal.start, hourAnimal.end);
+                                return (
+                                    <motion.div
+                                        key={index}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
+                                        className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-pink-500/25"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-3xl">{hourAnimalEmojis[hourAnimal.animal]}</span>
+                                            <span className="text-white font-semibold text-lg">{hourAnimal.name}</span>
+                                        </div>
+                                        <span className="text-pink-300 font-medium">{hourRange}</span>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Friendly Hours */}
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}

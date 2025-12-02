@@ -31,6 +31,12 @@ export const hourAnimalEmojis = {
     'Pig': '🐷'
 };
 
+// Soulmate relationships (special bond - Ox and Rat are the only soulmates)
+export const soulmateRelationships = {
+    'Rat': ['Ox'],
+    'Ox': ['Rat']
+};
+
 // Friendly relationships (compatible animals)
 export const friendlyRelationships = {
     'Rat': ['Dragon', 'Monkey'],
@@ -46,6 +52,12 @@ export const friendlyRelationships = {
     'Dog': ['Tiger', 'Horse'],
     'Pig': ['Cat', 'Goat']
 };
+
+// Get soulmate hours for a given animal
+export function getSoulmateHours(animal) {
+    const soulmates = soulmateRelationships[animal] || [];
+    return hourAnimals.filter(ha => soulmates.includes(ha.animal));
+}
 
 // Enemy relationships (incompatible animals)
 export const enemyRelationships = {
