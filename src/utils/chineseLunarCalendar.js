@@ -265,6 +265,10 @@ export function convertToChineseLunar(gregorianDate) {
     // Get month name with stem and branch
     const monthName = getChineseMonthName(chineseMonth, chineseYear);
     
+    // Extract animal name from month name (e.g., "Ji-Hai (Pig)" -> "Pig")
+    const monthAnimalMatch = monthName.match(/\(([^)]+)\)/);
+    const monthAnimal = monthAnimalMatch ? monthAnimalMatch[1] : '';
+    
     return {
         year: chineseYear,
         month: chineseMonth,
@@ -272,8 +276,9 @@ export function convertToChineseLunar(gregorianDate) {
         yearName: yearName.fullName,
         yearNumber: yearName.yearNumber,
         monthName: monthName,
+        monthAnimal: monthAnimal,
         isLeapMonth: isLeapMonth,
-        formatted: `${monthName} (${chineseMonth}th month), ${chineseDay}, ${yearName.yearNumber}`
+        formatted: `${monthAnimal} (${chineseMonth}th month), ${chineseDay}, ${yearName.yearNumber}`
     };
 }
 
@@ -308,6 +313,10 @@ function getApproximateChineseLunar(year, month, day) {
     
     const monthName = getChineseMonthName(chineseMonth, year);
     
+    // Extract animal name from month name
+    const monthAnimalMatch = monthName.match(/\(([^)]+)\)/);
+    const monthAnimal = monthAnimalMatch ? monthAnimalMatch[1] : '';
+    
     return {
         year: year,
         month: chineseMonth,
@@ -315,8 +324,9 @@ function getApproximateChineseLunar(year, month, day) {
         yearName: yearName.fullName,
         yearNumber: yearName.yearNumber,
         monthName: monthName,
+        monthAnimal: monthAnimal,
         isLeapMonth: false,
-        formatted: `${monthName} (${chineseMonth}th month), ${chineseDay}, ${yearName.yearNumber}`
+        formatted: `${monthAnimal} (${chineseMonth}th month), ${chineseDay}, ${yearName.yearNumber}`
     };
 }
 
