@@ -25,20 +25,16 @@ export default function NumerologyCalculator() {
             
             const lifePath = calculateLifePath(selectedDate);
             
-            // Calculate current day's data
-            const today = new Date();
-            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-            const todayLifePath = calculateLifePath(todayStr);
+            // Extract day number from selected date
+            const [, , dayPart] = selectedDate.split('-');
+            const selectedDay = parseInt(dayPart, 10);
             
             setResults({
                 lifePath,
-                todayLifePath,
+                selectedDay: selectedDay,
                 selectedDate: selectedDate,
                 calculations: [
                     { title: 'Pilna Data', steps: lifePath.steps }
-                ],
-                todayCalculations: [
-                    { title: 'Šiandienos Data', steps: todayLifePath.steps }
                 ]
             });
             
@@ -96,15 +92,19 @@ export default function NumerologyCalculator() {
                                     <CalculationSteps calculations={results.calculations} />
                                 </div>
                                 
-                                {/* Right side - Current calendar day data */}
-                                <div>
-                                    <ResultCard
-                                        number={results.todayLifePath.number}
-                                        title="Šiandienos Data"
-                                        description={numberDescriptions[results.todayLifePath.number]?.lifePath || 'Aprašymas neprieinamas.'}
-                                        delay={0.2}
-                                    />
-                                    <CalculationSteps calculations={results.todayCalculations} />
+                                {/* Right side - Selected calendar day number */}
+                                <div className="flex flex-col items-center justify-center">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.3, delay: 0.2 }}
+                                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white"
+                                        style={{
+                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.6), 0 0 40px rgba(99, 102, 241, 0.4)'
+                                        }}
+                                    >
+                                        {results.selectedDay}
+                                    </motion.div>
                                 </div>
                             </div>
                         </motion.div>
