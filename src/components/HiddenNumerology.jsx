@@ -25,8 +25,11 @@ export default function HiddenNumerology() {
                 const chineseLunar = convertToChineseLunar(gregorianDate);
                 
                 if (chineseLunar) {
+                    // Format Chinese lunar date as YYYY-MM-DD for calculation
+                    const chineseDateStr = `${chineseLunar.yearNumber}-${String(chineseLunar.month).padStart(2, '0')}-${String(chineseLunar.day).padStart(2, '0')}`;
+                    
                     // Calculate life path using Chinese lunar date
-                    const lifePath = calculateLifePath(chineseLunar.formatted);
+                    const lifePath = calculateLifePath(chineseDateStr);
                     
                     setResults({
                         gregorianDate,
