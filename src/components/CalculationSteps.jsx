@@ -12,7 +12,6 @@ export default function CalculationSteps({ calculations }) {
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.15)'
             }}
         >
-            <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-white px-2" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.5)' }}>Skaičiavimo Detalės</h3>
             <div className="space-y-4 sm:space-y-6">
                 {calculations.map((calc, index) => (
                     <motion.div
