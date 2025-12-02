@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { getChineseZodiac, isChineseNewYear, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
+import { getWesternZodiac, isZodiacSignStart, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 
 const masterNumbers = [11, 22, 33];
 
@@ -113,17 +114,29 @@ export default function Calendar({ onDateSelect }) {
                     <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white px-2 sm:px-4" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
                         {monthNames[month]} {year}
                     </h2>
-                    {(() => {
-                        const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-                        const zodiac = getChineseZodiac(currentDateStr);
-                        const zodiacName = zodiacTranslations[zodiac.zodiac] || zodiac.zodiac;
-                        const zodiacEmoji = zodiacEmojis[zodiac.zodiac] || '';
-                        return (
-                            <p className="text-xs sm:text-sm md:text-base text-yellow-300/80 mt-1 font-semibold" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
-                                {zodiacName} {zodiacEmoji}
-                            </p>
-                        );
-                    })()}
+                    <div className="flex flex-col gap-1 mt-1">
+                        {(() => {
+                            const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+                            const zodiac = getChineseZodiac(currentDateStr);
+                            const zodiacName = zodiacTranslations[zodiac.zodiac] || zodiac.zodiac;
+                            const zodiacEmoji = zodiacEmojis[zodiac.zodiac] || '';
+                            return (
+                                <p className="text-xs sm:text-sm md:text-base text-yellow-300/80 font-semibold" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
+                                    {zodiacName} {zodiacEmoji}
+                                </p>
+                            );
+                        })()}
+                        {(() => {
+                            const westernSign = getWesternZodiac(month + 1, 15); // Use middle of month for display
+                            const signName = zodiacSignTranslations[westernSign] || westernSign;
+                            const signEmoji = zodiacSignEmojis[westernSign] || '';
+                            return (
+                                <p className="text-xs sm:text-sm md:text-base text-purple-300/80 font-semibold" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}>
+                                    {signName} {signEmoji}
+                                </p>
+                            );
+                        })()}
+                    </div>
                 </div>
                 
                 <motion.button
@@ -171,6 +184,8 @@ export default function Calendar({ onDateSelect }) {
                     // Check if this is Chinese New Year
                     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const isZodiacNewYear = isChineseNewYear(dateStr);
+                    // Check if this is Western zodiac sign start
+                    const isWesternZodiacStart = isZodiacSignStart(month + 1, day);
                     
                     return (
                         <motion.button
@@ -188,6 +203,8 @@ export default function Calendar({ onDateSelect }) {
                                 flex flex-col items-center justify-center
                                 ${isZodiacNewYear
                                     ? 'bg-gradient-to-br from-yellow-500/40 to-orange-500/40 text-white border-2 border-yellow-400/60 shadow-lg'
+                                    : isWesternZodiacStart
+                                    ? 'bg-gradient-to-br from-purple-500/40 to-indigo-500/40 text-white border-2 border-purple-400/60 shadow-lg'
                                     : isSelectedDate
                                     ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg'
                                     : isTodayDate
