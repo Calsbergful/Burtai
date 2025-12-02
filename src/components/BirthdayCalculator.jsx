@@ -193,32 +193,24 @@ export default function BirthdayCalculator() {
                     </div>
 
                     {/* Zodiac Signs */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Chinese Zodiac */}
-                        <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-yellow-400/30">
-                            <h3 className="text-xl sm:text-2xl font-bold text-yellow-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
-                                Kinų Zodiakas
-                            </h3>
+                    <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
+                        <div className="flex items-center justify-center gap-6 sm:gap-8 md:gap-12">
+                            {/* Chinese Zodiac */}
                             <div className="text-center">
-                                <div className="text-6xl sm:text-7xl mb-2">
+                                <div className="text-6xl sm:text-7xl md:text-8xl mb-2">
                                     {zodiacEmojis[results.chineseZodiac.zodiac]}
                                 </div>
-                                <div className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                <div className="text-xl sm:text-2xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
                                     {zodiacTranslations[results.chineseZodiac.zodiac]}
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Western Zodiac */}
-                        <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-cyan-400/30">
-                            <h3 className="text-xl sm:text-2xl font-bold text-cyan-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(34, 211, 238, 0.6)' }}>
-                                Vakarų Zodiakas
-                            </h3>
+                            {/* Western Zodiac */}
                             <div className="text-center">
-                                <div className="text-6xl sm:text-7xl mb-2">
+                                <div className="text-6xl sm:text-7xl md:text-8xl mb-2">
                                     {zodiacSignEmojis[results.westernZodiac.sign]}
                                 </div>
-                                <div className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
+                                <div className="text-xl sm:text-2xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
                                     {zodiacSignTranslations[results.westernZodiac.sign]}
                                 </div>
                             </div>
