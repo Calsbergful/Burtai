@@ -68,15 +68,6 @@ export default function NumerologyCalculator() {
                                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
                             }}
                         >
-                            <motion.h2
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6 md:mb-8 text-white px-2"
-                                style={{ textShadow: '0 0 20px rgba(138, 43, 226, 0.6)' }}
-                            >
-                                Gyvenimo Kelio Skaičius
-                            </motion.h2>
-
                             <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
                                 <ResultCard
                                     number={results.lifePath.number}
