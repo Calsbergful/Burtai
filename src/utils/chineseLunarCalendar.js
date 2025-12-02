@@ -13,33 +13,32 @@ const zodiacAnimals = ['Rat', 'Ox', 'Tiger', 'Cat', 'Dragon', 'Snake', 'Horse', 
 
 // Get Chinese year name (Heavenly Stem + Earthly Branch)
 export function getChineseYearName(gregorianYear) {
-    // Chinese calendar year starts from 2697 BC (or 2698 BC depending on source)
-    // For practical purposes, we calculate from a known reference point
-    // 2025 is Yi Si (Snake) year
-    const referenceYear = 2025;
-    const referenceStemIndex = 1; // Yi
-    const referenceBranchIndex = 5; // Si (Snake)
+    // Chinese calendar year starts from 2698 BC
+    // Calculate Chinese year number: 2698 + gregorian year
+    const chineseYearNumber = 2698 + gregorianYear;
     
-    const yearDiff = gregorianYear - referenceYear;
-    const stemIndex = (referenceStemIndex + yearDiff) % 10;
-    const branchIndex = (referenceBranchIndex + yearDiff) % 12;
+    // The 60-year cycle: Heavenly Stems (10) × Earthly Branches (12) = 60 years
+    // Calculate position in the 60-year cycle
+    const cyclePosition = (chineseYearNumber - 1) % 60;
     
-    // Handle negative years
-    const adjustedStemIndex = stemIndex < 0 ? stemIndex + 10 : stemIndex;
-    const adjustedBranchIndex = branchIndex < 0 ? branchIndex + 12 : branchIndex;
+    // Heavenly Stem index (0-9)
+    const stemIndex = cyclePosition % 10;
+    // Earthly Branch index (0-11)
+    const branchIndex = cyclePosition % 12;
     
-    const stem = heavenlyStems[adjustedStemIndex];
-    const branch = earthlyBranches[adjustedBranchIndex];
-    const animal = zodiacAnimals[adjustedBranchIndex];
+    const stem = heavenlyStems[stemIndex];
+    const branch = earthlyBranches[branchIndex];
+    const animal = zodiacAnimals[branchIndex];
     
-    // Calculate Chinese year number (approximately 2697 + gregorian year)
-    const chineseYearNumber = 2697 + gregorianYear;
+    // Format: "Bing Zi (Rat)" - stem + branch name + (animal)
+    const branchName = branch.split(' ')[0]; // Get "Zi" from "Zi (Rat)"
     
     return {
         stem,
         branch,
+        branchName,
         animal,
-        fullName: `${stem} ${branch.split(' ')[0]} (${animal})`,
+        fullName: `${stem} ${branchName} (${animal})`,
         yearNumber: chineseYearNumber
     };
 }
@@ -60,11 +59,33 @@ const chineseNewYearDates = {
     '2030': '2030-02-03',
 };
 
-// Month names in Chinese calendar (simplified - actual months vary)
-const chineseMonthNames = [
-    'Zi (Rat)', 'Chou (Ox)', 'Yin (Tiger)', 'Mao (Cat)', 'Chen (Dragon)', 'Si (Snake)',
-    'Wu (Horse)', 'Wei (Goat)', 'Shen (Monkey)', 'You (Rooster)', 'Xu (Dog)', 'Hai (Pig)'
-];
+// Month names in Chinese calendar - Heavenly Stem + Earthly Branch combinations
+// These vary by year, but we'll use a simplified approach based on the month number
+const getChineseMonthName = (month, year) => {
+    // Simplified: use earthly branch for month name
+    // Actual Chinese months use stem+branch combinations that vary by year
+    const monthBranches = [
+        'Zi (Rat)', 'Chou (Ox)', 'Yin (Tiger)', 'Mao (Cat)', 'Chen (Dragon)', 'Si (Snake)',
+        'Wu (Horse)', 'Wei (Goat)', 'Shen (Monkey)', 'You (Rooster)', 'Xu (Dog)', 'Hai (Pig)'
+    ];
+    
+    // For more accuracy, we'd need to calculate based on the year's stem
+    // For now, using a simplified mapping
+    const yearName = getChineseYearName(year);
+    const yearStemIndex = heavenlyStems.indexOf(yearName.stem);
+    
+    // Calculate month stem (varies by year)
+    const monthStemIndex = (yearStemIndex + 2) % 10; // Month stems start 2 positions ahead
+    const monthStem = heavenlyStems[monthStemIndex];
+    
+    // Month branch (simplified - actual calculation is more complex)
+    const monthBranchIndex = (month - 1) % 12;
+    const monthBranch = monthBranches[monthBranchIndex];
+    const monthBranchName = monthBranch.split(' ')[0];
+    const monthAnimal = zodiacAnimals[monthBranchIndex];
+    
+    return `${monthStem}-${monthBranchName} (${monthAnimal})`;
+};
 
 // Convert Gregorian date to Chinese lunar date
 export function convertToChineseLunar(gregorianDate) {
@@ -135,8 +156,8 @@ export function convertToChineseLunar(gregorianDate) {
     // Get Chinese year name
     const yearName = getChineseYearName(chineseYear);
     
-    // Get month name (simplified - using earthly branch cycle)
-    const monthName = chineseMonthNames[(chineseMonth - 1) % 12];
+    // Get month name with stem and branch
+    const monthName = getChineseMonthName(chineseMonth, chineseYear);
     
     return {
         year: chineseYear,
@@ -146,16 +167,23 @@ export function convertToChineseLunar(gregorianDate) {
         yearNumber: yearName.yearNumber,
         monthName: monthName,
         isLeapMonth: isLeapMonth,
-        formatted: `${yearName.fullName} (${chineseMonth}th month), ${chineseDay}, ${yearName.yearNumber}`
+        formatted: `${monthName} (${chineseMonth}th month), ${chineseDay}, ${yearName.yearNumber}`
     };
 }
 
 // Fallback approximate calculation
 function getApproximateChineseLunar(year, month, day) {
     const yearName = getChineseYearName(year);
-    // Very simplified: assume month 10 for December
-    const chineseMonth = month === 12 ? 10 : Math.max(1, month - 2);
-    const monthName = chineseMonthNames[(chineseMonth - 1) % 12];
+    // Very simplified: assume month 10 for December, month 10 for November
+    let chineseMonth;
+    if (month === 12) {
+        chineseMonth = 10;
+    } else if (month === 11) {
+        chineseMonth = 10;
+    } else {
+        chineseMonth = Math.max(1, month - 2);
+    }
+    const monthName = getChineseMonthName(chineseMonth, year);
     
     return {
         year: year,
@@ -165,7 +193,7 @@ function getApproximateChineseLunar(year, month, day) {
         yearNumber: yearName.yearNumber,
         monthName: monthName,
         isLeapMonth: false,
-        formatted: `${yearName.fullName} (${chineseMonth}th month), ${day}, ${yearName.yearNumber}`
+        formatted: `${monthName} (${chineseMonth}th month), ${day}, ${yearName.yearNumber}`
     };
 }
 
