@@ -176,7 +176,7 @@ export default function BirthdayCalculator() {
                         {/* Life Path Number */}
                         <div className="grid grid-cols-2 gap-4 items-center">
                             {/* Left side - Life Path */}
-                            <div className="text-left">
+                            <div className="text-center">
                                 {(() => {
                                     const lifePathNum = results.lifePath.number;
                                     const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
@@ -201,7 +201,7 @@ export default function BirthdayCalculator() {
                             </div>
 
                             {/* Right side - Day */}
-                            <div className="text-left md:text-right">
+                            <div className="text-center">
                                 {(() => {
                                     const dayNum = parseInt(day);
                                     const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
