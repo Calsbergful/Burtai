@@ -40,7 +40,7 @@ export default function Letterology() {
                     type="text"
                     value={input}
                     onChange={handleInputChange}
-                    placeholder="Pvz.: Gedic"
+                    placeholder="Pvz.: gedic"
                     className="w-full max-w-md mx-auto block px-4 py-3 rounded-xl bg-purple-500/20 border border-purple-400/40 text-white text-center text-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     style={{
                         boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.2)'
