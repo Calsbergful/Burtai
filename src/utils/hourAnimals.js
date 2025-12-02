@@ -43,12 +43,12 @@ export const friendlyRelationships = {
     'Ox': ['Snake', 'Rooster'],
     'Tiger': ['Horse', 'Dog'],
     'Cat': ['Goat', 'Pig'],
-    'Dragon': ['Rat', 'Monkey', 'Rooster'],
+    'Dragon': ['Rat', 'Monkey'],
     'Snake': ['Ox', 'Rooster'],
     'Horse': ['Tiger', 'Goat', 'Dog'],
     'Goat': ['Cat', 'Horse', 'Pig'],
     'Monkey': ['Rat', 'Dragon'],
-    'Rooster': ['Ox', 'Dragon', 'Snake'],
+    'Rooster': ['Ox', 'Snake'],
     'Dog': ['Tiger', 'Horse'],
     'Pig': ['Cat', 'Goat']
 };
