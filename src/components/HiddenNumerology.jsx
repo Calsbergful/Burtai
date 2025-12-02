@@ -12,52 +12,65 @@ export default function HiddenNumerology() {
 
     const calculateResults = async (m, d, y) => {
         if (m && d && y) {
-            setLoading(true);
-            // Format date as YYYY-MM-DD
-            const monthStr = String(m).padStart(2, '0');
-            const dayStr = String(d).padStart(2, '0');
-            const gregorianDate = `${y}-${monthStr}-${dayStr}`;
-            
-            // Validate date
-            const dateObj = new Date(y, m - 1, d);
-            if (dateObj.getFullYear() == y && dateObj.getMonth() == m - 1 && dateObj.getDate() == d) {
-                // Convert date to alternate calendar
-                const convertedDate = convertDate(gregorianDate);
+            try {
+                setLoading(true);
+                // Format date as YYYY-MM-DD
+                const monthStr = String(m).padStart(2, '0');
+                const dayStr = String(d).padStart(2, '0');
+                const gregorianDate = `${y}-${monthStr}-${dayStr}`;
                 
-                if (convertedDate) {
-                    // Special case for November 26, 1996
-                    const monthNum = parseInt(m, 10);
-                    const dayNum = parseInt(d, 10);
-                    const yearNum = parseInt(y, 10);
-                    const isSpecialDate = yearNum === 1996 && monthNum === 11 && dayNum === 26;
+                // Validate date - convert to numbers first
+                const monthNum = parseInt(m, 10);
+                const dayNum = parseInt(d, 10);
+                const yearNum = parseInt(y, 10);
+                
+                if (isNaN(monthNum) || isNaN(dayNum) || isNaN(yearNum)) {
+                    setResults(null);
+                    setLoading(false);
+                    return;
+                }
+                
+                const dateObj = new Date(yearNum, monthNum - 1, dayNum);
+                if (dateObj.getFullYear() === yearNum && dateObj.getMonth() === monthNum - 1 && dateObj.getDate() === dayNum) {
+                    // Convert date to alternate calendar
+                    const convertedDate = convertDate(gregorianDate);
                     
-                    let lifePath;
-                    if (isSpecialDate) {
-                        // Force life path to 22 for this specific date
-                        lifePath = {
-                            number: 22,
-                            steps: []
-                        };
+                    if (convertedDate) {
+                        // Special case for November 26, 1996
+                        const isSpecialDate = yearNum === 1996 && monthNum === 11 && dayNum === 26;
+                        
+                        let lifePath;
+                        if (isSpecialDate) {
+                            // Force life path to 22 for this specific date
+                            lifePath = {
+                                number: 22,
+                                steps: []
+                            };
+                        } else {
+                            // Format converted date as YYYY-MM-DD for calculation
+                            const convertedDateStr = `${convertedDate.yearNumber}-${String(convertedDate.month).padStart(2, '0')}-${String(convertedDate.day).padStart(2, '0')}`;
+                            // Calculate life path using converted date
+                            lifePath = calculateLifePath(convertedDateStr);
+                        }
+                        
+                        setResults({
+                            gregorianDate,
+                            convertedDate,
+                            lifePath,
+                            isSpecialDate
+                        });
                     } else {
-                        // Format converted date as YYYY-MM-DD for calculation
-                        const convertedDateStr = `${convertedDate.yearNumber}-${String(convertedDate.month).padStart(2, '0')}-${String(convertedDate.day).padStart(2, '0')}`;
-                        // Calculate life path using converted date
-                        lifePath = calculateLifePath(convertedDateStr);
+                        setResults(null);
                     }
-                    
-                    setResults({
-                        gregorianDate,
-                        convertedDate,
-                        lifePath,
-                        isSpecialDate
-                    });
                 } else {
                     setResults(null);
                 }
-            } else {
+            } catch (error) {
+                console.error('Error calculating results:', error);
                 setResults(null);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         } else {
             setResults(null);
         }
