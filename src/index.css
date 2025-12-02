@@ -13,12 +13,19 @@
   --color-primary-900: #4c1d95;
 }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
 body {
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  overscroll-behavior: smooth;
+  scroll-padding-top: 2rem;
 }
 
 /* Mobile optimizations */
@@ -71,6 +78,8 @@ body {
   animation: sparkle 20s linear infinite;
   opacity: 0.6;
   pointer-events: none;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .gradient-bg::after {
@@ -86,24 +95,26 @@ body {
     radial-gradient(circle at 50% 80%, rgba(147, 51, 234, 0.1) 0%, transparent 50%);
   animation: nebula 30s ease-in-out infinite alternate;
   pointer-events: none;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 @keyframes sparkle {
   0% {
-    transform: translate(0, 0);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate(-50%, -50%);
+    transform: translate3d(-50%, -50%, 0);
   }
 }
 
 @keyframes nebula {
   0% {
-    transform: translate(0, 0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
     opacity: 0.8;
   }
   100% {
-    transform: translate(5%, 5%) rotate(5deg);
+    transform: translate3d(5%, 5%, 0) rotate(5deg);
     opacity: 1;
   }
 }
@@ -125,11 +136,30 @@ body {
 
 @keyframes cosmic-drift {
   0% {
-    transform: translate(0, 0);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate(-20%, -20%);
+    transform: translate3d(-20%, -20%, 0);
   }
+}
+
+/* Smooth scrolling and performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize animations for GPU acceleration */
+[class*="motion-"], [data-framer-name] {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth transitions */
+button, a, [role="button"] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Pulsing nebula clouds */

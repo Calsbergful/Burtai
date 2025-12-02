@@ -2,14 +2,6 @@ import { motion } from 'framer-motion'
 
 export default function CosmicBackground() {
   // Generate random positions for cosmic elements
-  const shootingStars = Array.from({ length: 5 }, (_, i) => ({
-    id: i,
-    delay: i * 2,
-    duration: 3 + Math.random() * 2,
-    startX: Math.random() * 100,
-    startY: Math.random() * 50,
-  }))
-
   const floatingParticles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
     size: Math.random() * 4 + 1,
@@ -29,39 +21,7 @@ export default function CosmicBackground() {
   }))
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      {/* Shooting Stars */}
-      {shootingStars.map((star) => (
-        <motion.div
-          key={star.id}
-          className="absolute"
-          initial={{
-            x: `${star.startX}vw`,
-            y: `${star.startY}vh`,
-            opacity: 0,
-          }}
-          animate={{
-            x: [`${star.startX}vw`, `${star.startX + 50}vw`],
-            y: [`${star.startY}vh`, `${star.startY + 50}vh`],
-            opacity: [0, 1, 0],
-          }}
-          transition={{
-            duration: star.duration,
-            delay: star.delay,
-            repeat: Infinity,
-            repeatDelay: 5,
-            ease: 'linear',
-          }}
-          style={{
-            width: '2px',
-            height: '100px',
-            background: 'linear-gradient(to bottom, transparent, white, transparent)',
-            transform: 'rotate(-45deg)',
-            boxShadow: '0 0 10px white, 0 0 20px rgba(138, 43, 226, 0.8)',
-          }}
-        />
-      ))}
-
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
       {/* Floating Particles */}
       {floatingParticles.map((particle) => (
         <motion.div
@@ -74,6 +34,8 @@ export default function CosmicBackground() {
             top: `${particle.top}%`,
             background: 'rgba(255, 255, 255, 0.6)',
             boxShadow: '0 0 6px rgba(138, 43, 226, 0.8)',
+            willChange: 'transform, opacity',
+            transform: 'translateZ(0)',
           }}
           animate={{
             y: [0, -30, 0],
@@ -102,6 +64,8 @@ export default function CosmicBackground() {
             top: `${orb.top}%`,
             background: orb.color,
             boxShadow: `0 0 ${orb.size}px ${orb.color}`,
+            willChange: 'transform, opacity',
+            transform: 'translateZ(0)',
           }}
           animate={{
             x: [0, Math.sin(orb.id) * 30, 0],
@@ -159,6 +123,8 @@ export default function CosmicBackground() {
             top: `${15 + (i % 4) * 20}%`,
             background: 'white',
             boxShadow: '0 0 10px rgba(138, 43, 226, 0.8), 0 0 20px rgba(99, 102, 241, 0.6)',
+            willChange: 'transform, opacity',
+            transform: 'translateZ(0)',
           }}
           animate={{
             opacity: [0.3, 1, 0.3],

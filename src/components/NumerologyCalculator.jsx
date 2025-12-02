@@ -30,12 +30,16 @@ export default function NumerologyCalculator() {
             
             setIsCalculating(false);
             
-            // Scroll to results
+            // Scroll to results with smooth behavior
             setTimeout(() => {
-                document.getElementById('results')?.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'nearest' 
-                });
+                const resultsElement = document.getElementById('results');
+                if (resultsElement) {
+                    resultsElement.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start',
+                        inline: 'nearest'
+                    });
+                }
             }, 100);
         }, 300);
     };
