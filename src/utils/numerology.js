@@ -141,13 +141,8 @@ export function calculateLifePath(birthdate) {
     return {
         number: lifePath,
         steps: [
-            `${month}.${day}.${year}`,
-            `${month} = ${monthStr}`,
-            `${day} = ${dayStr}`,
-            `${year} = ${yearStr}`,
             `Suma: ${allStr} = ${total}`,
-            total !== lifePath ? `${total} → ${lifePath}` : '',
-            `${lifePath}`
+            total !== lifePath ? `${total} → ${lifePath}` : ''
         ].filter(step => step !== '')
     };
 }
