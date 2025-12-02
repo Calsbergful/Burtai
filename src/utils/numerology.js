@@ -197,7 +197,7 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
     }
     
     // Calculate personal day (personal month + day of month)
-    const currentDay = today.getDate();
+    // currentDay is already declared above
     const personalDaySum = personalMonthNum + currentDay;
     const personalDayNum = reducePersonalYear(personalDaySum);
     
