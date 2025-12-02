@@ -95,7 +95,7 @@ function App() {
             >
               <BirthdayCalculator />
             </motion.div>
-          ) : (
+          ) : activeView === 'letterology' ? (
             <motion.div
               key="letterology"
               initial={{ opacity: 0, y: 20 }}
@@ -104,6 +104,16 @@ function App() {
               transition={{ duration: 0.3 }}
             >
               <Letterology />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="hidden-numerology"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <HiddenNumerology />
             </motion.div>
           )}
         </AnimatePresence>
