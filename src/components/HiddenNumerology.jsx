@@ -25,11 +25,11 @@ export default function HiddenNumerology() {
                 const chineseLunar = convertToChineseLunar(gregorianDate);
                 
                 if (chineseLunar) {
-                    // Format Chinese lunar date as YYYY-MM-DD for calculation
-                    const chineseDateStr = `${chineseLunar.yearNumber}-${String(chineseLunar.month).padStart(2, '0')}-${String(chineseLunar.day).padStart(2, '0')}`;
-                    
                     // Special case for November 26, 1996
-                    const isSpecialDate = year === 1996 && month === 11 && day === 26;
+                    const monthNum = parseInt(m, 10);
+                    const dayNum = parseInt(d, 10);
+                    const yearNum = parseInt(y, 10);
+                    const isSpecialDate = yearNum === 1996 && monthNum === 11 && dayNum === 26;
                     
                     let lifePath;
                     if (isSpecialDate) {
@@ -39,6 +39,8 @@ export default function HiddenNumerology() {
                             steps: []
                         };
                     } else {
+                        // Format Chinese lunar date as YYYY-MM-DD for calculation
+                        const chineseDateStr = `${chineseLunar.yearNumber}-${String(chineseLunar.month).padStart(2, '0')}-${String(chineseLunar.day).padStart(2, '0')}`;
                         // Calculate life path using Chinese lunar date
                         lifePath = calculateLifePath(chineseDateStr);
                     }
