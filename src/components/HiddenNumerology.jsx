@@ -191,15 +191,8 @@ export default function HiddenNumerology() {
                     {/* Combined Results and Calculation */}
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
                         <div className="space-y-6">
-                            {/* Chinese Lunar Date */}
-                            <div className="text-center">
-                                <div className="text-lg sm:text-xl font-bold text-yellow-300 mb-2" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
-                                    {results.chineseLunar.month}-{results.chineseLunar.day}-{results.chineseLunar.yearNumber}
-                                </div>
-                            </div>
-
                             {/* Life Path Calculation */}
-                            <div className="border-t border-purple-400/20 pt-6">
+                            <div>
                                 <div className="grid grid-cols-2 gap-4 items-center">
                                     {/* Life Path Number */}
                                     <div className="text-center">
