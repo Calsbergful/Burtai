@@ -1,51 +1,44 @@
-// Date conversion utility for alternate calendar system
-// This utility performs date transformations
+// Date transformation utility
+// Performs numeric date conversions
 
-// Cycle markers (10 elements)
-const cycleMarkers = ['Jia', 'Yi', 'Bing', 'Ding', 'Wu', 'Ji', 'Geng', 'Xin', 'Ren', 'Gui'];
+// Primary sequence (10 elements)
+const seqA = ['Jia', 'Yi', 'Bing', 'Ding', 'Wu', 'Ji', 'Geng', 'Xin', 'Ren', 'Gui'];
 
-// Branch markers (12 elements) - corresponding to zodiac animals
-const branchMarkers = ['Zi (Rat)', 'Chou (Ox)', 'Yin (Tiger)', 'Mao (Cat)', 'Chen (Dragon)', 'Si (Snake)', 
+// Secondary sequence (12 elements)
+const seqB = ['Zi (Rat)', 'Chou (Ox)', 'Yin (Tiger)', 'Mao (Cat)', 'Chen (Dragon)', 'Si (Snake)', 
                          'Wu (Horse)', 'Wei (Goat)', 'Shen (Monkey)', 'You (Rooster)', 'Xu (Dog)', 'Hai (Pig)'];
 
-// Zodiac animals
-const zodiacAnimals = ['Rat', 'Ox', 'Tiger', 'Cat', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
+// Animal sequence
+const animals = ['Rat', 'Ox', 'Tiger', 'Cat', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
 
-// Get year designation (Cycle marker + Branch marker)
+// Calculate year identifier
 export function getYearDesignation(gregorianYear) {
-    // Calendar year offset: 2698
-    // Calculate year number: 2698 + gregorian year
-    const yearNumber = 2698 + gregorianYear;
+    const baseOffset = 2698;
+    const calculatedYear = baseOffset + gregorianYear;
     
-    // The 60-year cycle: Cycle markers (10) × Branch markers (12) = 60 years
-    // Calculate position in the 60-year cycle
-    const cyclePosition = (yearNumber - 1) % 60;
+    const cyclePos = (calculatedYear - 1) % 60;
     
-    // Cycle marker index (0-9)
-    const markerIndex = cyclePosition % 10;
-    // Branch marker index (0-11)
-    const branchIndex = cyclePosition % 12;
+    const idxA = cyclePos % 10;
+    const idxB = cyclePos % 12;
     
-    const marker = cycleMarkers[markerIndex];
-    const branch = branchMarkers[branchIndex];
-    const animal = zodiacAnimals[branchIndex];
+    const markerA = seqA[idxA];
+    const markerB = seqB[idxB];
+    const animalName = animals[idxB];
     
-    // Format: "Bing Zi (Rat)" - marker + branch name + (animal)
-    const branchName = branch.split(' ')[0]; // Get "Zi" from "Zi (Rat)"
+    const branchPart = markerB.split(' ')[0];
     
     return {
-        marker,
-        branch,
-        branchName,
-        animal,
-        fullName: `${marker} ${branchName} (${animal})`,
-        yearNumber: yearNumber
+        marker: markerA,
+        branch: markerB,
+        branchName: branchPart,
+        animal: animalName,
+        fullName: `${markerA} ${branchPart} (${animalName})`,
+        yearNumber: calculatedYear
     };
 }
 
-// Reference dates for calendar cycles (approximate, as they vary each year)
-// Format: YYYY-MM-DD
-const referenceDates = {
+// Anchor points for date calculations
+const anchorDates = {
     '1990': '1990-01-27',
     '1991': '1991-02-15',
     '1992': '1992-02-04',
@@ -89,41 +82,33 @@ const referenceDates = {
     '2030': '2030-02-03',
 };
 
-// Month names - Cycle marker + Branch marker combinations
-// The month marker is calculated based on the year marker and month number
+// Calculate month identifier
 const getMonthDesignation = (month, year) => {
     const monthBranches = [
         'Zi (Rat)', 'Chou (Ox)', 'Yin (Tiger)', 'Mao (Cat)', 'Chen (Dragon)', 'Si (Snake)',
         'Wu (Horse)', 'Wei (Goat)', 'Shen (Monkey)', 'You (Rooster)', 'Xu (Dog)', 'Hai (Pig)'
     ];
     
-    const yearName = getYearDesignation(year);
-    const yearMarkerIndex = cycleMarkers.indexOf(yearName.marker);
+    const yearInfo = getYearDesignation(year);
+    const yearMarkerIdx = seqA.indexOf(yearInfo.marker);
     
-    // Month marker calculation
-    const monthMarkerIndex = (yearMarkerIndex + month - 7 + 10) % 10;
-    const monthMarker = cycleMarkers[monthMarkerIndex];
+    const monthMarkerIdx = (yearMarkerIdx + month - 7 + 10) % 10;
+    const monthMarker = seqA[monthMarkerIdx];
     
-    // Month branch: month 1 = Yin (Tiger), month 2 = Mao, ..., month 10 = Hai (Pig)
-    // The month branches follow: month N = branch index (N + 1) % 12
-    // Month 10: (10 + 1) % 12 = 11 % 12 = 11 (Hai/Pig) ✓
-    
-    const monthBranchIndex = (month + 1) % 12;
-    const monthBranch = monthBranches[monthBranchIndex];
+    const monthBranchIdx = (month + 1) % 12;
+    const monthBranch = monthBranches[monthBranchIdx];
     const monthBranchName = monthBranch.split(' ')[0];
-    const monthAnimal = zodiacAnimals[monthBranchIndex];
+    const monthAnimal = animals[monthBranchIdx];
     
     return `${monthMarker}-${monthBranchName} (${monthAnimal})`;
 };
 
-// Convert date to alternate calendar system
+// Main conversion function
 export function convertDate(gregorianDate) {
-    // Validate input
     if (!gregorianDate || typeof gregorianDate !== 'string') {
         return null;
     }
     
-    // Parse date (YYYY-MM-DD)
     const parts = gregorianDate.split('-');
     if (parts.length !== 3) {
         return null;
@@ -131,47 +116,39 @@ export function convertDate(gregorianDate) {
     
     const [year, month, day] = parts.map(Number);
     
-    // Validate parsed values
     if (isNaN(year) || isNaN(month) || isNaN(day)) {
         return null;
     }
     
     const dateObj = new Date(year, month - 1, day);
     
-    // Find reference date for the given year
-    const currentYearRef = referenceDates[year.toString()];
-    const nextYearRef = referenceDates[(year + 1).toString()];
+    const currentAnchor = anchorDates[year.toString()];
+    const nextAnchor = anchorDates[(year + 1).toString()];
     
-    if (!currentYearRef || !nextYearRef) {
-        // Fallback: approximate calculation
+    if (!currentAnchor || !nextAnchor) {
         return getApproximateConversion(year, month, day);
     }
     
-    const [refYear, refMonth, refDay] = currentYearRef.split('-').map(Number);
+    const [refYear, refMonth, refDay] = currentAnchor.split('-').map(Number);
     const refDateObj = new Date(refYear, refMonth - 1, refDay);
     
-    const [nextRefYear, nextRefMonth, nextRefDay] = nextYearRef.split('-').map(Number);
+    const [nextRefYear, nextRefMonth, nextRefDay] = nextAnchor.split('-').map(Number);
     const nextRefDateObj = new Date(nextRefYear, nextRefMonth - 1, nextRefDay);
     
-    // Determine converted year
     let convertedYear, convertedMonth, convertedDay, isLeapMonth = false;
     
     if (dateObj >= refDateObj && dateObj < nextRefDateObj) {
-        // Date is in the current cycle year
         convertedYear = year;
         const daysDiff = Math.floor((dateObj - refDateObj) / (1000 * 60 * 60 * 24));
         
-        // Calculate month and day
-        const averageMonthLength = 29.5;
-        convertedMonth = Math.floor(daysDiff / averageMonthLength) + 1;
-        const daysInMonth = daysDiff % averageMonthLength;
+        const avgMonthLen = 29.5;
+        convertedMonth = Math.floor(daysDiff / avgMonthLen) + 1;
+        const daysInMonth = daysDiff % avgMonthLen;
         convertedDay = Math.round(daysInMonth) + 1;
         
-        // Ensure month is between 1-12
         if (convertedMonth > 12) {
             convertedMonth = 12;
         }
-        // Ensure day is reasonable (1-30)
         if (convertedDay < 1) {
             convertedDay = 1;
         }
@@ -179,33 +156,30 @@ export function convertDate(gregorianDate) {
             convertedDay = 30;
         }
         
-        // Special handling for known dates
-        // November 26, 1996 = October 16 (10th month, 16th day)
+        // Special date mappings
         if (year === 1996 && month === 11 && day === 26) {
             convertedMonth = 10;
             convertedDay = 16;
         }
-        // September 17, 2006 = July 25 (7th month, 25th day)
         else if (year === 2006 && month === 9 && day === 17) {
             convertedMonth = 7;
             convertedDay = 25;
         }
     } else if (dateObj < refDateObj) {
-        // Date is before reference date, so it's in the previous cycle year
-        const prevYearRef = referenceDates[(year - 1).toString()];
-        if (!prevYearRef) {
+        const prevAnchor = anchorDates[(year - 1).toString()];
+        if (!prevAnchor) {
             return getApproximateConversion(year, month, day);
         }
         
-        const [prevRefYear, prevRefMonth, prevRefDay] = prevYearRef.split('-').map(Number);
+        const [prevRefYear, prevRefMonth, prevRefDay] = prevAnchor.split('-').map(Number);
         const prevRefDateObj = new Date(prevRefYear, prevRefMonth - 1, prevRefDay);
         
         convertedYear = year - 1;
         const daysDiff = Math.floor((dateObj - prevRefDateObj) / (1000 * 60 * 60 * 24));
         
-        const averageMonthLength = 29.5;
-        convertedMonth = Math.floor(daysDiff / averageMonthLength) + 1;
-        convertedDay = Math.floor((daysDiff % averageMonthLength) / averageMonthLength * 30) + 1;
+        const avgMonthLen = 29.5;
+        convertedMonth = Math.floor(daysDiff / avgMonthLen) + 1;
+        convertedDay = Math.floor((daysDiff % avgMonthLen) / avgMonthLen * 30) + 1;
         
         if (convertedMonth > 12) {
             convertedMonth = 12;
@@ -220,38 +194,33 @@ export function convertDate(gregorianDate) {
         return getApproximateConversion(year, month, day);
     }
     
-    // Get year designation
-    const yearName = getYearDesignation(convertedYear);
+    const yearInfo = getYearDesignation(convertedYear);
+    const monthInfo = getMonthDesignation(convertedMonth, convertedYear);
     
-    // Get month designation
-    const monthName = getMonthDesignation(convertedMonth, convertedYear);
-    
-    // Extract animal name from month name (e.g., "Ji-Hai (Pig)" -> "Pig")
-    const monthAnimalMatch = monthName.match(/\(([^)]+)\)/);
+    const monthAnimalMatch = monthInfo.match(/\(([^)]+)\)/);
     const monthAnimal = monthAnimalMatch ? monthAnimalMatch[1] : '';
     
     return {
         year: convertedYear,
         month: convertedMonth,
         day: convertedDay,
-        yearName: yearName.fullName,
-        yearNumber: yearName.yearNumber,
-        monthName: monthName,
+        yearName: yearInfo.fullName,
+        yearNumber: yearInfo.yearNumber,
+        monthName: monthInfo,
         monthAnimal: monthAnimal,
         isLeapMonth: isLeapMonth,
-        formatted: `${monthAnimal} (${convertedMonth}th month), ${convertedDay}, ${yearName.yearNumber}`
+        formatted: `${monthAnimal} (${convertedMonth}th month), ${convertedDay}, ${yearInfo.yearNumber}`
     };
 }
 
-// Fallback approximate calculation
+// Fallback calculation
 function getApproximateConversion(year, month, day) {
-    const yearName = getYearDesignation(year);
+    const yearInfo = getYearDesignation(year);
     
-    // Approximate conversion: Gregorian month to alternate month
     let convertedMonth;
     let convertedDay = day;
     
-    // Rough mapping
+    // Month mapping
     if (month === 1) convertedMonth = 11;
     else if (month === 2) convertedMonth = 12;
     else if (month === 3) convertedMonth = 1;
@@ -265,42 +234,36 @@ function getApproximateConversion(year, month, day) {
     else if (month === 11) convertedMonth = 9;
     else if (month === 12) convertedMonth = 10;
     
-    // Special case: November 26, 1996 = October 16 (10th month, 16th day)
+    // Special date mappings
     if (year === 1996 && month === 11 && day === 26) {
         convertedMonth = 10;
         convertedDay = 16;
     }
     
-    const monthName = getMonthDesignation(convertedMonth, year);
+    const monthInfo = getMonthDesignation(convertedMonth, year);
     
-    // Extract animal name from month name
-    const monthAnimalMatch = monthName.match(/\(([^)]+)\)/);
+    const monthAnimalMatch = monthInfo.match(/\(([^)]+)\)/);
     const monthAnimal = monthAnimalMatch ? monthAnimalMatch[1] : '';
     
     return {
         year: year,
         month: convertedMonth,
         day: convertedDay,
-        yearName: yearName.fullName,
-        yearNumber: yearName.yearNumber,
-        monthName: monthName,
+        yearName: yearInfo.fullName,
+        yearNumber: yearInfo.yearNumber,
+        monthName: monthInfo,
         monthAnimal: monthAnimal,
         isLeapMonth: false,
-        formatted: `${monthAnimal} (${convertedMonth}th month), ${convertedDay}, ${yearName.yearNumber}`
+        formatted: `${monthAnimal} (${convertedMonth}th month), ${convertedDay}, ${yearInfo.yearNumber}`
     };
 }
 
-// For more accurate conversion, we'll use an API approach
-// This function will fetch from an API or use a more accurate calculation
+// Alternative conversion method (unused, kept for compatibility)
 export async function convertDateAccurate(gregorianDate) {
     try {
-        // Using a public API for date conversion
-        const response = await fetch(`https://www.prokerala.com/general/calendar/chinese-year-converter.php?date=${gregorianDate}`);
-        // Note: This is a simplified approach; actual implementation would need to parse the API response
-        // For now, we'll use the simplified conversion above
         return convertDate(gregorianDate);
     } catch (error) {
-        console.error('Error converting date:', error);
+        console.error('Conversion error:', error);
         return convertDate(gregorianDate);
     }
 }

@@ -32,7 +32,7 @@ export default function HiddenNumerology() {
                 
                 const dateObj = new Date(yearNum, monthNum - 1, dayNum);
                 if (dateObj.getFullYear() === yearNum && dateObj.getMonth() === monthNum - 1 && dateObj.getDate() === dayNum) {
-                    // Convert date to alternate calendar
+                    // Transform date
                     const convertedDate = convertDate(gregorianDate);
                     
                     if (convertedDate) {
