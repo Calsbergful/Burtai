@@ -1,6 +1,25 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
+const masterNumbers = [11, 22, 33];
+
+// Calculate total sum for a date
+const calculateDateSum = (day, month, year) => {
+    const monthNum = month + 1; // month is 0-indexed
+    // For month: only November (11) is kept as master number; all others split into digits
+    const monthValues = (monthNum === 11) ? [11] : monthNum.toString().split('').map(d => parseInt(d));
+    // For day: if it's a master number (11, 22, 33), keep it whole; otherwise split into digits
+    const dayValues = masterNumbers.includes(day) ? [day] : day.toString().split('').map(d => parseInt(d));
+    // For year: always use individual digits
+    const yearDigits = year.toString().split('').map(d => parseInt(d));
+    
+    // Sum all values together
+    const allValues = [...monthValues, ...dayValues, ...yearDigits];
+    const total = allValues.reduce((sum, val) => sum + val, 0);
+    
+    return total;
+};
+
 export default function Calendar({ onDateSelect }) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(null);
@@ -141,6 +160,7 @@ export default function Calendar({ onDateSelect }) {
                                 h-[32px] sm:h-[36px] md:h-[44px] lg:h-[52px] 
                                 min-w-[32px] sm:min-w-[36px] md:min-w-[44px] lg:min-w-[52px]
                                 text-xs sm:text-sm md:text-base font-medium
+                                flex flex-col items-center justify-center
                                 ${isSelectedDate
                                     ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg'
                                     : isTodayDate
@@ -156,7 +176,10 @@ export default function Calendar({ onDateSelect }) {
                                     : 'none'
                             }}
                         >
-                            {day}
+                            <span>{day}</span>
+                            <span className="text-[8px] sm:text-[9px] md:text-[10px] opacity-70 font-normal">
+                                {calculateDateSum(day, month, year)}
+                            </span>
                         </motion.button>
                     );
                 })}
