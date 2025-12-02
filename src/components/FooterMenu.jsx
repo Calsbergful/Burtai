@@ -8,7 +8,7 @@ export default function FooterMenu({ onMenuClick }) {
         { id: 'letterology', label: 'Raštologijos Skaičiavimai', icon: '📝' },
         { id: 'hidden-numerology', label: 'Paslėpta Numerologija', icon: '🔮' },
         { id: 'life-path-settings', label: 'Gyvenimo Kelio Skaičiavimo Nustatymai', icon: '⚙️' },
-        { id: 'friendly-enemy-hours', label: 'Draugiškos ir Priešiškos Valandos', icon: '⏰' },
+        { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
     ];
 
     const handleClick = (itemId) => {
