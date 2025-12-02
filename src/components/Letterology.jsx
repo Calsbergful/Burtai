@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { calculateWordValue, getLetterValue, isUpperCase } from '../utils/letterology';
+import { calculateWordValue, getLetterValue, isUpperCase, isVowel } from '../utils/letterology';
 import { numberDescriptions, masterNumbers } from '../utils/numerology';
 
 export default function Letterology() {
@@ -104,9 +104,53 @@ export default function Letterology() {
                         </div>
                     </div>
 
+                    {/* Vowel Breakdown */}
+                    {results.vowels.length > 0 && (
+                        <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
+                            <h3 className="text-lg sm:text-xl font-bold text-purple-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.6)' }}>
+                                Balsių Skaičiavimas
+                            </h3>
+                            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4">
+                                {results.vowels.map((item, index) => {
+                                    const isCapital = isUpperCase(item.letter);
+                                    const isSpecial = masterNumbers.includes(item.vowelValue) || item.vowelValue === 20 || item.vowelValue === 28 || item.vowelValue === 29;
+                                    return (
+                                        <motion.div
+                                            key={index}
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
+                                            className={`text-center p-2 sm:p-3 rounded-lg ${
+                                                isSpecial
+                                                    ? 'bg-gradient-to-br from-yellow-500/30 to-orange-500/20 border-2 border-yellow-400/60'
+                                                    : isCapital
+                                                    ? 'bg-gradient-to-br from-pink-500/30 to-rose-500/20 border border-pink-400/40'
+                                                    : 'bg-pink-500/20 border border-pink-400/30'
+                                            }`}
+                                            style={isSpecial ? {
+                                                boxShadow: '0 0 15px rgba(251, 191, 36, 0.4)'
+                                            } : {}}
+                                        >
+                                            <div className={`text-2xl sm:text-3xl font-bold mb-1 ${
+                                                isSpecial ? 'text-yellow-300' : isCapital ? 'text-pink-300' : 'text-white'
+                                            }`}>
+                                                {item.letter}
+                                            </div>
+                                            <div className={`text-sm font-medium ${
+                                                isSpecial ? 'text-yellow-200' : isCapital ? 'text-pink-200' : 'text-pink-200'
+                                            }`}>
+                                                {item.vowelValue}
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Total and Reduced */}
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
-                        <div className="grid grid-cols-2 gap-4 items-center">
+                        <div className="grid grid-cols-2 gap-4 items-center mb-4">
                             {/* Total */}
                             <div className="text-center">
                                 {(() => {
@@ -164,6 +208,70 @@ export default function Letterology() {
                                 })()}
                             </div>
                         </div>
+
+                        {/* Vowel Total and Reduced */}
+                        {results.vowelTotal > 0 && (
+                            <div className="border-t border-purple-400/20 pt-4 mt-4">
+                                <div className="grid grid-cols-2 gap-4 items-center">
+                                    {/* Vowel Total */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const isSpecialVowelTotal = masterNumbers.includes(results.vowelTotal) || results.vowelTotal === 20 || results.vowelTotal === 28 || results.vowelTotal === 29;
+                                            return (
+                                                <>
+                                                    <div className="text-sm text-white/70 mb-2">Balsių Suma</div>
+                                                    <div 
+                                                        className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-2 ${
+                                                            isSpecialVowelTotal ? 'text-yellow-300' : 'text-pink-300'
+                                                        }`}
+                                                        style={isSpecialVowelTotal ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(236, 72, 153, 0.8)'
+                                                        }}
+                                                    >
+                                                        {results.vowelTotal}
+                                                    </div>
+                                                    <div className="text-xs text-pink-200">
+                                                        {results.vowels.map(item => item.vowelValue).join(' + ')} = {results.vowelTotal}
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
+
+                                    {/* Vowel Reduced */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const isSpecialVowelReduced = masterNumbers.includes(results.vowelReduced) || results.vowelReduced === 20 || results.vowelReduced === 28 || results.vowelReduced === 29;
+                                            const description = numberDescriptions[results.vowelReduced]?.lifePath || '';
+                                            return (
+                                                <>
+                                                    <div className="text-sm text-white/70 mb-2">Balsių Sumažinta</div>
+                                                    <div 
+                                                        className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-2 ${
+                                                            isSpecialVowelReduced ? 'text-yellow-300' : 'text-pink-300'
+                                                        }`}
+                                                        style={isSpecialVowelReduced ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(236, 72, 153, 0.8)'
+                                                        }}
+                                                    >
+                                                        {results.vowelReduced}
+                                                    </div>
+                                                    {description && (
+                                                        <p className="text-white/90 text-xs sm:text-sm">
+                                                            {description}
+                                                        </p>
+                                                    )}
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </motion.div>
             )}

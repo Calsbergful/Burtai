@@ -42,6 +42,62 @@ export const calculateWordValue = (word) => {
     };
 };
 
+// Vowels for calculation
+export const vowels = ['A', 'E', 'I', 'O', 'U', 'Y'];
+
+// Check if letter is a vowel
+export const isVowel = (letter) => {
+    return vowels.includes(letter.toUpperCase());
+};
+
+// Calculate vowel value (vowels use their position: A=1, E=5, I=9, O=6, U=3, Y=7)
+export const getVowelValue = (letter) => {
+    const upperLetter = letter.toUpperCase();
+    const vowelMap = {
+        'A': 1,
+        'E': 5,
+        'I': 9,
+        'O': 6,
+        'U': 3,
+        'Y': 7
+    };
+    
+    if (vowelMap[upperLetter] !== undefined) {
+        const baseValue = vowelMap[upperLetter];
+        if (isUpperCase(letter)) {
+            // Capital vowels: base value + 26
+            return baseValue + 26;
+        }
+        return baseValue;
+    }
+    return 0;
+};
+
+// Calculate total from a word/name
+export const calculateWordValue = (word) => {
+    const letters = word.split('').filter(char => /[a-zA-Z]/.test(char));
+    const values = letters.map(letter => ({
+        letter,
+        value: getLetterValue(letter),
+        isVowel: isVowel(letter),
+        vowelValue: isVowel(letter) ? getVowelValue(letter) : 0
+    }));
+    const total = values.reduce((sum, item) => sum + item.value, 0);
+    const vowelTotal = values
+        .filter(item => item.isVowel)
+        .reduce((sum, item) => sum + item.vowelValue, 0);
+    
+    return {
+        letters,
+        values,
+        total,
+        reduced: reduceNumber(total),
+        vowels: values.filter(item => item.isVowel),
+        vowelTotal,
+        vowelReduced: vowelTotal > 0 ? reduceNumber(vowelTotal) : 0
+    };
+};
+
 // Reduce number to single digit or master number (imported from numerology)
 import { reduceNumber, masterNumbers } from './numerology';
 
