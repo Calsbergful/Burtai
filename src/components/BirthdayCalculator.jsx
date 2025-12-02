@@ -187,39 +187,22 @@ export default function BirthdayCalculator() {
                         </div>
 
                         {/* Zodiac Signs and Relationships */}
-                        <div className="border-t border-purple-400/20 pt-4 space-y-4">
-                            {/* Chinese and Western Zodiac */}
-                            <div className="flex items-center justify-center gap-6 sm:gap-8 md:gap-12">
-                                {/* Chinese Zodiac */}
-                                <div className="text-center">
-                                    <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
-                                        {zodiacEmojis[results.chineseZodiac.zodiac]}
+                        <div className="border-t border-purple-400/20 pt-4">
+                            <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 flex-wrap">
+                                {/* Chinese Zodiac with Friendly */}
+                                <div className="flex items-center gap-3 sm:gap-4">
+                                    <div className="text-center">
+                                        <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
+                                            {zodiacEmojis[results.chineseZodiac.zodiac]}
+                                        </div>
+                                        <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                            {zodiacTranslations[results.chineseZodiac.zodiac]}
+                                        </div>
                                     </div>
-                                    <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
-                                        {zodiacTranslations[results.chineseZodiac.zodiac]}
-                                    </div>
-                                </div>
-
-                                {/* Western Zodiac */}
-                                <div className="text-center">
-                                    <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
-                                        {zodiacSignEmojis[results.westernZodiac.sign]}
-                                    </div>
-                                    <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
-                                        {zodiacSignTranslations[results.westernZodiac.sign]}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Relationships Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-purple-400/20">
-                                {/* Friendly (including soulmates) */}
-                                {results.friendly.length > 0 && (
-                                    <div className="rounded-lg p-3 sm:p-4 border border-green-400/30 bg-green-500/10">
-                                        <h4 className="text-sm sm:text-base font-bold text-green-300 mb-3 text-center" style={{ textShadow: '0 0 8px rgba(34, 197, 94, 0.5)' }}>
-                                            Draugiški
-                                        </h4>
-                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                                    
+                                    {/* Friendly (including soulmates) */}
+                                    {results.friendly.length > 0 && (
+                                        <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
                                             {results.friendly.map((animal, index) => {
                                                 const isSoulmate = results.soulmateAnimals.includes(animal.animal);
                                                 return (
@@ -228,55 +211,58 @@ export default function BirthdayCalculator() {
                                                         initial={{ opacity: 0, scale: 0.8 }}
                                                         animate={{ opacity: 1, scale: 1 }}
                                                         transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
-                                                        className={`text-center p-2 rounded-lg ${
+                                                        className={`text-center p-1.5 sm:p-2 rounded-lg ${
                                                             isSoulmate 
                                                                 ? 'bg-gradient-to-br from-pink-500/30 to-pink-600/20 border border-pink-400/60' 
-                                                                : 'bg-green-500/20'
+                                                                : 'bg-green-500/20 border border-green-400/30'
                                                         }`}
                                                         style={isSoulmate ? {
-                                                            boxShadow: '0 0 10px rgba(236, 72, 153, 0.3)'
+                                                            boxShadow: '0 0 8px rgba(236, 72, 153, 0.3)'
                                                         } : {}}
+                                                        title={zodiacTranslations[animal.animal]}
                                                     >
-                                                        <div className="text-2xl mb-1 relative">
+                                                        <div className="text-xl sm:text-2xl mb-0.5 relative">
                                                             {zodiacEmojis[animal.animal]}
                                                             {isSoulmate && (
                                                                 <span className="absolute -top-0.5 -right-0.5 text-xs">⭐</span>
                                                             )}
                                                         </div>
-                                                        <div className={`font-medium text-xs ${
-                                                            isSoulmate ? 'text-pink-200' : 'text-white'
-                                                        }`}>
-                                                            {zodiacTranslations[animal.animal]}
-                                                        </div>
                                                     </motion.div>
                                                 );
                                             })}
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
 
-                                {/* Enemies */}
-                                {results.enemies.length > 0 && (
-                                    <div className="rounded-lg p-3 sm:p-4 border border-red-400/30 bg-red-500/10">
-                                        <h4 className="text-sm sm:text-base font-bold text-red-300 mb-3 text-center" style={{ textShadow: '0 0 8px rgba(239, 68, 68, 0.5)' }}>
-                                            Priešiški
-                                        </h4>
-                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                                {/* Western Zodiac with Enemies */}
+                                <div className="flex items-center gap-3 sm:gap-4">
+                                    {/* Enemies */}
+                                    {results.enemies.length > 0 && (
+                                        <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
                                             {results.enemies.map((animal, index) => (
                                                 <motion.div
                                                     key={index}
                                                     initial={{ opacity: 0, scale: 0.8 }}
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
-                                                    className="text-center p-2 rounded-lg bg-red-500/20"
+                                                    className="text-center p-1.5 sm:p-2 rounded-lg bg-red-500/20 border border-red-400/30"
+                                                    title={zodiacTranslations[animal.animal]}
                                                 >
-                                                    <div className="text-2xl mb-1">{zodiacEmojis[animal.animal]}</div>
-                                                    <div className="text-white font-medium text-xs">{zodiacTranslations[animal.animal]}</div>
+                                                    <div className="text-xl sm:text-2xl mb-0.5">{zodiacEmojis[animal.animal]}</div>
                                                 </motion.div>
                                             ))}
                                         </div>
+                                    )}
+                                    
+                                    <div className="text-center">
+                                        <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
+                                            {zodiacSignEmojis[results.westernZodiac.sign]}
+                                        </div>
+                                        <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
+                                            {zodiacSignTranslations[results.westernZodiac.sign]}
+                                        </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
                     </div>
