@@ -291,34 +291,68 @@ export default function BirthdayCalculator() {
                         {/* Personal Month */}
                         {results.personalYear.month && (
                             <div className="border-t border-purple-400/20 pt-4">
-                                <div className="text-center">
-                                    {(() => {
-                                        const personalMonth = results.personalYear.month;
-                                        const isSpecialMonth = masterNumbers.includes(personalMonth) || personalMonth === 20 || personalMonth === 28 || personalMonth === 29;
-                                        const monthNames = ['Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Gegužė', 'Birželis', 'Liepa', 'Rugpjūtis', 'Rugsėjis', 'Spalis', 'Lapkritis', 'Gruodis'];
-                                        const currentMonthName = monthNames[results.personalYear.monthNumber - 1];
-                                        
-                                        return (
-                                            <>
-                                                <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninis Mėnuo</div>
-                                                <div 
-                                                    className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
-                                                        isSpecialMonth ? 'text-yellow-300' : 'text-white'
-                                                    }`}
-                                                    style={isSpecialMonth ? {
-                                                        textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
-                                                    } : {
-                                                        textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
-                                                    }}
-                                                >
-                                                    {personalMonth}
-                                                </div>
-                                                <div className="text-xs text-white/60 mt-1">
-                                                    {currentMonthName}
-                                                </div>
-                                            </>
-                                        );
-                                    })()}
+                                <div className="grid grid-cols-2 gap-4 items-center">
+                                    {/* Current Personal Month */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const personalMonth = results.personalYear.month;
+                                            const isSpecialMonth = masterNumbers.includes(personalMonth) || personalMonth === 20 || personalMonth === 28 || personalMonth === 29;
+                                            const monthNames = ['Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Gegužė', 'Birželis', 'Liepa', 'Rugpjūtis', 'Rugsėjis', 'Spalis', 'Lapkritis', 'Gruodis'];
+                                            const currentMonthName = monthNames[results.personalYear.monthNumber - 1];
+                                            
+                                            return (
+                                                <>
+                                                    <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninis Mėnuo</div>
+                                                    <div 
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                            isSpecialMonth ? 'text-yellow-300' : 'text-white'
+                                                        }`}
+                                                        style={isSpecialMonth ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                        }}
+                                                    >
+                                                        {personalMonth}
+                                                    </div>
+                                                    <div className="text-xs text-white/60 mt-1">
+                                                        {currentMonthName}
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
+
+                                    {/* Next Personal Month */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const nextPersonalMonth = results.personalYear.nextMonth;
+                                            const isSpecialMonth = masterNumbers.includes(nextPersonalMonth) || nextPersonalMonth === 20 || nextPersonalMonth === 28 || nextPersonalMonth === 29;
+                                            const monthNames = ['Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Gegužė', 'Birželis', 'Liepa', 'Rugpjūtis', 'Rugsėjis', 'Spalis', 'Lapkritis', 'Gruodis'];
+                                            const nextMonthName = monthNames[results.personalYear.nextMonthNumber - 1];
+                                            
+                                            return (
+                                                <>
+                                                    <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninis Mėnuo</div>
+                                                    <div 
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                            isSpecialMonth ? 'text-yellow-300' : 'text-white'
+                                                        }`}
+                                                        style={isSpecialMonth ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                        }}
+                                                    >
+                                                        {nextPersonalMonth}
+                                                    </div>
+                                                    <div className="text-xs text-white/60 mt-1">
+                                                        {nextMonthName}
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
                                 </div>
                             </div>
                         )}

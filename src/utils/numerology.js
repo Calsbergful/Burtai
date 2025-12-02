@@ -182,13 +182,29 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
     const personalMonthSum = currentPersonalYearNum + currentMonth;
     const personalMonthNum = reducePersonalYear(personalMonthSum);
     
+    // Calculate next personal month
+    let nextMonthNumber, nextPersonalMonthSum, nextPersonalMonthNum;
+    if (currentMonth === 12) {
+        // If current month is December, next month is January of next personal year
+        nextMonthNumber = 1;
+        nextPersonalMonthSum = nextPersonalYearNum + nextMonthNumber;
+        nextPersonalMonthNum = reducePersonalYear(nextPersonalMonthSum);
+    } else {
+        // Otherwise, next month is still in current personal year
+        nextMonthNumber = currentMonth + 1;
+        nextPersonalMonthSum = currentPersonalYearNum + nextMonthNumber;
+        nextPersonalMonthNum = reducePersonalYear(nextPersonalMonthSum);
+    }
+    
     return {
         current: currentPersonalYearNum,
         next: nextPersonalYearNum,
         currentYear: lastBirthdayYear,
         nextYear: nextBirthdayYear,
         month: personalMonthNum,
-        monthNumber: currentMonth
+        monthNumber: currentMonth,
+        nextMonth: nextPersonalMonthNum,
+        nextMonthNumber: nextMonthNumber
     };
 }
 
