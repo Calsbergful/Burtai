@@ -217,16 +217,29 @@ export default function HiddenNumerology() {
                                         })()}
                                     </div>
 
-                                    {/* Calculation Steps */}
+                                    {/* Day Number */}
                                     <div className="text-center">
-                                        <div className="text-sm text-white/70 mb-2">Skaičiavimas</div>
-                                        {results.lifePath.steps && results.lifePath.steps.length > 0 && (
-                                            <div className="p-3 rounded-lg bg-purple-500/10">
-                                                <p className="text-purple-200 text-xs sm:text-sm text-left">
-                                                    {results.lifePath.steps[0]}
-                                                </p>
-                                            </div>
-                                        )}
+                                        {(() => {
+                                            const dayNum = results.chineseLunar.day;
+                                            const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
+                                            return (
+                                                <>
+                                                    <div className="text-sm text-white/70 mb-2">Diena</div>
+                                                    <div 
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
+                                                            isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                                        }`}
+                                                        style={isSpecialDay ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                        }}
+                                                    >
+                                                        {dayNum}
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
                             </div>
