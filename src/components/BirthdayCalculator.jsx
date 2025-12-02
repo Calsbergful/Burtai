@@ -237,7 +237,7 @@ export default function BirthdayCalculator() {
                                         const isSpecialPY = masterNumbers.includes(currentPY) || currentPY === 20 || currentPY === 28 || currentPY === 29;
                                         return (
                                             <>
-                                                <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninis Metai</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeniniai Metai</div>
                                                 <div 
                                                     className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                         isSpecialPY ? 'text-yellow-300' : 'text-white'
@@ -265,7 +265,7 @@ export default function BirthdayCalculator() {
                                         const isSpecialPY = masterNumbers.includes(nextPY) || nextPY === 20 || nextPY === 28 || nextPY === 29;
                                         return (
                                             <>
-                                                <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninis Metai</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeniniai Metai</div>
                                                 <div 
                                                     className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                         isSpecialPY ? 'text-yellow-300' : 'text-white'
