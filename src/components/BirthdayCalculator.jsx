@@ -188,9 +188,9 @@ export default function BirthdayCalculator() {
 
                         {/* Zodiac Signs and Relationships */}
                         <div className="border-t border-purple-400/20 pt-4">
-                            <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 flex-wrap">
+                            <div className="flex items-center justify-between gap-4 sm:gap-6 md:gap-8 flex-wrap">
                                 {/* Chinese Zodiac with Friendly on left and Enemies on right */}
-                                <div className="flex items-center gap-3 sm:gap-4">
+                                <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
                                     {/* Friendly (including soulmates) - LEFT side */}
                                     {results.friendly.length > 0 && (
                                         <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
@@ -254,7 +254,7 @@ export default function BirthdayCalculator() {
                                 </div>
 
                                 {/* Western Zodiac */}
-                                <div className="text-center">
+                                <div className="text-center flex-shrink-0">
                                     <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
                                         {zodiacSignEmojis[results.westernZodiac.sign]}
                                     </div>
