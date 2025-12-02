@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { calculateLifePath, numberDescriptions } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
+import { getWesternZodiac, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals } from '../utils/hourAnimals';
 
 export default function BirthdayCalculator() {
@@ -22,6 +23,7 @@ export default function BirthdayCalculator() {
             if (dateObj.getFullYear() == y && dateObj.getMonth() == m - 1 && dateObj.getDate() == d) {
                 const lifePath = calculateLifePath(date);
                 const chineseZodiac = getChineseZodiac(date);
+                const westernZodiac = getWesternZodiac(date);
                 
                 // Get relationships based on Chinese zodiac
                 const soulmates = soulmateRelationships[chineseZodiac.zodiac] || [];
@@ -36,6 +38,7 @@ export default function BirthdayCalculator() {
                 setResults({
                     lifePath,
                     chineseZodiac,
+                    westernZodiac,
                     friendly: friendlyAnimals,
                     soulmateAnimals: soulmateAnimals.map(ha => ha.animal),
                     enemies: hourAnimals.filter(ha => enemies.includes(ha.animal))
@@ -188,17 +191,35 @@ export default function BirthdayCalculator() {
                         )}
                     </div>
 
-                    {/* Chinese Zodiac */}
-                    <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-yellow-400/30">
-                        <h3 className="text-xl sm:text-2xl font-bold text-yellow-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
-                            Kinų Zodiakas
-                        </h3>
-                        <div className="text-center">
-                            <div className="text-6xl sm:text-7xl mb-2">
-                                {zodiacEmojis[results.chineseZodiac.zodiac]}
+                    {/* Zodiac Signs */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Chinese Zodiac */}
+                        <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-yellow-400/30">
+                            <h3 className="text-xl sm:text-2xl font-bold text-yellow-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
+                                Kinų Zodiakas
+                            </h3>
+                            <div className="text-center">
+                                <div className="text-6xl sm:text-7xl mb-2">
+                                    {zodiacEmojis[results.chineseZodiac.zodiac]}
+                                </div>
+                                <div className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                    {zodiacTranslations[results.chineseZodiac.zodiac]}
+                                </div>
                             </div>
-                            <div className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
-                                {zodiacTranslations[results.chineseZodiac.zodiac]}
+                        </div>
+
+                        {/* Western Zodiac */}
+                        <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-cyan-400/30">
+                            <h3 className="text-xl sm:text-2xl font-bold text-cyan-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(34, 211, 238, 0.6)' }}>
+                                Vakarų Zodiakas
+                            </h3>
+                            <div className="text-center">
+                                <div className="text-6xl sm:text-7xl mb-2">
+                                    {zodiacSignEmojis[results.westernZodiac.sign]}
+                                </div>
+                                <div className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
+                                    {zodiacSignTranslations[results.westernZodiac.sign]}
+                                </div>
                             </div>
                         </div>
                     </div>
