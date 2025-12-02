@@ -221,6 +221,8 @@ export default function HiddenNumerology() {
                                         {(() => {
                                             const dayNum = results.chineseLunar.day;
                                             const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
+                                            const reducedDay = reduceNumber(dayNum);
+                                            const description = numberDescriptions[reducedDay]?.lifePath || '';
                                             return (
                                                 <>
                                                     <div className="text-sm text-white/70 mb-2">Diena</div>
@@ -236,6 +238,11 @@ export default function HiddenNumerology() {
                                                     >
                                                         {dayNum}
                                                     </div>
+                                                    {description && (
+                                                        <p className="text-white/90 text-xs sm:text-sm">
+                                                            {description}
+                                                        </p>
+                                                    )}
                                                 </>
                                             );
                                         })()}
