@@ -1,8 +1,15 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function FooterMenu({ onMenuClick }) {
-    const [activeItem, setActiveItem] = useState(null);
+export default function FooterMenu({ onMenuClick, activeMenuId }) {
+    const [activeItem, setActiveItem] = useState(activeMenuId || null);
+    
+    // Update active item when prop changes
+    useEffect(() => {
+        if (activeMenuId !== undefined) {
+            setActiveItem(activeMenuId);
+        }
+    }, [activeMenuId]);
     
     const menuItems = [
         { id: 'letterology', label: 'Raidės', icon: '🔤' },

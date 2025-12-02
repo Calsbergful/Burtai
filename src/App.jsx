@@ -1,9 +1,21 @@
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import NumerologyCalculator from './components/NumerologyCalculator'
+import FriendlyEnemyHours from './components/FriendlyEnemyHours'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 
 function App() {
+  const [activeView, setActiveView] = useState('calculator');
+
+  const handleMenuClick = (menuId) => {
+    if (menuId === 'friendly-enemy-hours') {
+      setActiveView('hours');
+    } else {
+      setActiveView('calculator');
+    }
+  };
+
   return (
     <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-20 sm:pb-24 md:pb-32 lg:pb-40">
       <CosmicBackground />
@@ -42,13 +54,33 @@ function App() {
             Geduče Burtai
           </motion.h1>
         </header>
-        <NumerologyCalculator />
+        
+        <AnimatePresence mode="wait">
+          {activeView === 'calculator' ? (
+            <motion.div
+              key="calculator"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <NumerologyCalculator />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="hours"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <FriendlyEnemyHours />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
-      <FooterMenu onMenuClick={(menuId) => {
-        console.log('Paspaustas meniu:', menuId);
-        // Handle menu navigation here
-      }} />
+      <FooterMenu onMenuClick={handleMenuClick} activeMenuId={activeView === 'hours' ? 'friendly-enemy-hours' : null} />
     </div>
   )
 }
