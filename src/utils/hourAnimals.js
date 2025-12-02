@@ -81,22 +81,14 @@ export function getHourAnimal(hour) {
     return hourAnimals[0]; // Default to Rat
 }
 
-// Format hour for display (12-hour format with AM/PM)
+// Format hour for display (24-hour format)
 export function formatHour(hour) {
-    if (hour === 0) return '12:00 AM';
-    if (hour === 12) return '12:00 PM';
-    if (hour < 12) return `${hour}:00 AM`;
-    return `${hour - 12}:00 PM`;
+    return `${String(hour).padStart(2, '0')}:00`;
 }
 
 // Format hour range for display (handles midnight span)
 export function formatHourRange(start, end) {
-    if (start > end) {
-        // Spans midnight (e.g., 11pm - 1am)
-        return `${formatHour(start)} - ${formatHour(end)}`;
-    } else {
-        return `${formatHour(start)} - ${formatHour(end)}`;
-    }
+    return `${formatHour(start)} - ${formatHour(end)}`;
 }
 
 // Get friendly hours for a given animal

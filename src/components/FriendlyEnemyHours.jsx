@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { getHourAnimal, getFriendlyHours, getEnemyHours, formatHour, formatHourRange, hourAnimalEmojis } from '../utils/hourAnimals';
+import { hourAnimals, getFriendlyHours, getEnemyHours, formatHourRange, hourAnimalEmojis } from '../utils/hourAnimals';
 
 export default function FriendlyEnemyHours() {
-    const [selectedHour, setSelectedHour] = useState(new Date().getHours());
-    const currentAnimal = getHourAnimal(selectedHour);
-    const friendlyHours = getFriendlyHours(currentAnimal.animal);
-    const enemyHours = getEnemyHours(currentAnimal.animal);
+    const [selectedAnimal, setSelectedAnimal] = useState(null);
+    const friendlyHours = selectedAnimal ? getFriendlyHours(selectedAnimal.animal) : [];
+    const enemyHours = selectedAnimal ? getEnemyHours(selectedAnimal.animal) : [];
 
-    const handleHourSelect = (hour) => {
-        setSelectedHour(hour);
+    const handleAnimalSelect = (animal) => {
+        setSelectedAnimal(animal);
     };
 
     return (
@@ -27,23 +26,25 @@ export default function FriendlyEnemyHours() {
                 Draugiškos ir Priešiškos Valandos
             </h2>
 
-            {/* Hour Selection */}
+            {/* Animal Selection */}
             <div className="mb-6 sm:mb-8">
                 <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}>
-                    Pasirinkite Valandą
+                    Pasirinkite Gyvūną
                 </h3>
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2">
-                    {Array.from({ length: 24 }, (_, i) => {
-                        const hourAnimal = getHourAnimal(i);
-                        const isSelected = selectedHour === i;
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+                    {hourAnimals.map((animal, index) => {
+                        const isSelected = selectedAnimal?.animal === animal.animal;
                         return (
                             <motion.button
-                                key={i}
+                                key={animal.animal}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: index * 0.05 }}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                onClick={() => handleHourSelect(i)}
+                                onClick={() => handleAnimalSelect(animal)}
                                 className={`
-                                    rounded-lg p-2 sm:p-3 text-white text-xs sm:text-sm font-medium transition-all
+                                    rounded-xl p-4 sm:p-5 text-white transition-all
                                     ${isSelected
                                         ? 'bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg'
                                         : 'bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/30'
@@ -56,8 +57,9 @@ export default function FriendlyEnemyHours() {
                                 }}
                             >
                                 <div className="text-center">
-                                    <div className="text-lg sm:text-xl mb-1">{hourAnimalEmojis[hourAnimal.animal]}</div>
-                                    <div>{formatHour(i)}</div>
+                                    <div className="text-3xl sm:text-4xl md:text-5xl mb-2">{hourAnimalEmojis[animal.animal]}</div>
+                                    <div className="text-sm sm:text-base font-semibold mb-1">{animal.name}</div>
+                                    <div className="text-xs sm:text-sm text-white/80">{formatHourRange(animal.start, animal.end)}</div>
                                 </div>
                             </motion.button>
                         );
@@ -65,17 +67,24 @@ export default function FriendlyEnemyHours() {
                 </div>
             </div>
 
-            {/* Selected Hour Info */}
-            <div className="mb-6 sm:mb-8 text-center">
-                <div className="text-4xl sm:text-5xl md:text-6xl mb-2">
-                    {hourAnimalEmojis[currentAnimal.animal]}
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
-                    {formatHour(selectedHour)} - {currentAnimal.name}
-                </h3>
-            </div>
+            {/* Selected Animal Info */}
+            {selectedAnimal && (
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-6 sm:mb-8 text-center"
+                >
+                    <div className="text-4xl sm:text-5xl md:text-6xl mb-2">
+                        {hourAnimalEmojis[selectedAnimal.animal]}
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-2" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
+                        {selectedAnimal.name} - {formatHourRange(selectedAnimal.start, selectedAnimal.end)}
+                    </h3>
+                </motion.div>
+            )}
 
             {/* Friendly and Enemy Hours */}
+            {selectedAnimal && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Friendly Hours */}
                 <motion.div
@@ -149,6 +158,7 @@ export default function FriendlyEnemyHours() {
                     </div>
                 </motion.div>
             </div>
+            )}
         </motion.div>
     );
 }
