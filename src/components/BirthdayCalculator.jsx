@@ -21,11 +21,16 @@ export default function BirthdayCalculator() {
             const friendly = friendlyRelationships[chineseZodiac.zodiac] || [];
             const enemies = enemyRelationships[chineseZodiac.zodiac] || [];
             
+            // Combine soulmates with friendly, but mark soulmates
+            const allFriendly = [...friendly, ...soulmates];
+            const friendlyAnimals = hourAnimals.filter(ha => allFriendly.includes(ha.animal));
+            const soulmateAnimals = hourAnimals.filter(ha => soulmates.includes(ha.animal));
+            
             setResults({
                 lifePath,
                 chineseZodiac,
-                soulmates: hourAnimals.filter(ha => soulmates.includes(ha.animal)),
-                friendly: hourAnimals.filter(ha => friendly.includes(ha.animal)),
+                friendly: friendlyAnimals,
+                soulmateAnimals: soulmateAnimals.map(ha => ha.animal), // Store just the animal names for easy checking
                 enemies: hourAnimals.filter(ha => enemies.includes(ha.animal))
             });
         } else {
@@ -111,39 +116,7 @@ export default function BirthdayCalculator() {
 
                     {/* Relationships */}
                     <div className="space-y-4">
-                        {/* Soulmates */}
-                        {results.soulmates.length > 0 && (
-                            <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.4, delay: 0.3 }}
-                                className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-pink-400/40"
-                                style={{
-                                    background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(219, 39, 119, 0.2) 100%)',
-                                    boxShadow: '0 4px 16px 0 rgba(236, 72, 153, 0.3)'
-                                }}
-                            >
-                                <h4 className="text-lg sm:text-xl font-bold text-pink-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(236, 72, 153, 0.6)' }}>
-                                    Sielos Draugai ⭐
-                                </h4>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                    {results.soulmates.map((animal, index) => (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
-                                            className="text-center p-3 rounded-lg bg-pink-500/20"
-                                        >
-                                            <div className="text-3xl mb-1">{zodiacEmojis[animal.animal]}</div>
-                                            <div className="text-white font-medium text-sm">{zodiacTranslations[animal.animal]}</div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {/* Friendly */}
+                        {/* Friendly (including soulmates) */}
                         {results.friendly.length > 0 && (
                             <motion.div
                                 initial={{ opacity: 0, x: -20 }}
@@ -159,18 +132,37 @@ export default function BirthdayCalculator() {
                                     Draugiški Zodiakai
                                 </h4>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                    {results.friendly.map((animal, index) => (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
-                                            className="text-center p-3 rounded-lg bg-green-500/20"
-                                        >
-                                            <div className="text-3xl mb-1">{zodiacEmojis[animal.animal]}</div>
-                                            <div className="text-white font-medium text-sm">{zodiacTranslations[animal.animal]}</div>
-                                        </motion.div>
-                                    ))}
+                                    {results.friendly.map((animal, index) => {
+                                        const isSoulmate = results.soulmateAnimals.includes(animal.animal);
+                                        return (
+                                            <motion.div
+                                                key={index}
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
+                                                className={`text-center p-3 rounded-lg ${
+                                                    isSoulmate 
+                                                        ? 'bg-gradient-to-br from-pink-500/30 to-pink-600/20 border-2 border-pink-400/60' 
+                                                        : 'bg-green-500/20'
+                                                }`}
+                                                style={isSoulmate ? {
+                                                    boxShadow: '0 0 15px rgba(236, 72, 153, 0.4)'
+                                                } : {}}
+                                            >
+                                                <div className="text-3xl mb-1 relative">
+                                                    {zodiacEmojis[animal.animal]}
+                                                    {isSoulmate && (
+                                                        <span className="absolute -top-1 -right-1 text-lg">⭐</span>
+                                                    )}
+                                                </div>
+                                                <div className={`font-medium text-sm ${
+                                                    isSoulmate ? 'text-pink-200' : 'text-white'
+                                                }`}>
+                                                    {zodiacTranslations[animal.animal]}
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })}
                                 </div>
                             </motion.div>
                         )}

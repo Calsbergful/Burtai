@@ -7,6 +7,12 @@ export default function FriendlyEnemyHours() {
     const soulmateHours = selectedAnimal ? getSoulmateHours(selectedAnimal.animal) : [];
     const friendlyHours = selectedAnimal ? getFriendlyHours(selectedAnimal.animal) : [];
     const enemyHours = selectedAnimal ? getEnemyHours(selectedAnimal.animal) : [];
+    
+    // Combine soulmates with friendly
+    const allFriendlyHours = selectedAnimal 
+        ? [...friendlyHours, ...soulmateHours]
+        : [];
+    const soulmateAnimalNames = soulmateHours.map(ha => ha.animal);
 
     const handleAnimalSelect = (animal) => {
         setSelectedAnimal(animal);
@@ -84,49 +90,11 @@ export default function FriendlyEnemyHours() {
                 </motion.div>
             )}
 
-            {/* Soulmate, Friendly and Enemy Hours */}
+            {/* Friendly and Enemy Hours */}
             {selectedAnimal && (
             <div className="space-y-6">
-                {/* Soulmate Hours */}
-                {soulmateHours.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.1 }}
-                        className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-pink-400/40"
-                        style={{
-                            background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(219, 39, 119, 0.2) 100%)',
-                            boxShadow: '0 4px 16px 0 rgba(236, 72, 153, 0.3)'
-                        }}
-                    >
-                        <h4 className="text-lg sm:text-xl font-bold text-pink-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(236, 72, 153, 0.6)' }}>
-                            Sielos Draugai ⭐
-                        </h4>
-                        <div className="space-y-2">
-                            {soulmateHours.map((hourAnimal, index) => {
-                                const hourRange = formatHourRange(hourAnimal.start, hourAnimal.end);
-                                return (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-                                        className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-pink-500/25"
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-3xl">{hourAnimalEmojis[hourAnimal.animal]}</span>
-                                            <span className="text-white font-semibold text-lg">{hourAnimal.name}</span>
-                                        </div>
-                                        <span className="text-pink-300 font-medium">{hourRange}</span>
-                                    </motion.div>
-                                );
-                            })}
-                        </div>
-                    </motion.div>
-                )}
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Friendly Hours */}
+                {/* Friendly Hours (including soulmates) */}
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -141,21 +109,42 @@ export default function FriendlyEnemyHours() {
                         Draugiškos Valandos
                     </h4>
                     <div className="space-y-2">
-                        {friendlyHours.map((hourAnimal, index) => {
+                        {allFriendlyHours.map((hourAnimal, index) => {
                             const hourRange = formatHourRange(hourAnimal.start, hourAnimal.end);
+                            const isSoulmate = soulmateAnimalNames.includes(hourAnimal.animal);
                             return (
                                 <motion.div
                                     key={index}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-                                    className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-green-500/20"
+                                    className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
+                                        isSoulmate 
+                                            ? 'bg-gradient-to-r from-pink-500/25 to-pink-600/15 border-2 border-pink-400/50' 
+                                            : 'bg-green-500/20'
+                                    }`}
+                                    style={isSoulmate ? {
+                                        boxShadow: '0 0 10px rgba(236, 72, 153, 0.3)'
+                                    } : {}}
                                 >
                                     <div className="flex items-center gap-2">
-                                        <span className="text-2xl">{hourAnimalEmojis[hourAnimal.animal]}</span>
-                                        <span className="text-white font-medium">{hourAnimal.name}</span>
+                                        <span className="text-2xl relative">
+                                            {hourAnimalEmojis[hourAnimal.animal]}
+                                            {isSoulmate && (
+                                                <span className="absolute -top-1 -right-1 text-xs">⭐</span>
+                                            )}
+                                        </span>
+                                        <span className={`font-medium ${
+                                            isSoulmate ? 'text-pink-200' : 'text-white'
+                                        }`}>
+                                            {hourAnimal.name}
+                                        </span>
                                     </div>
-                                    <span className="text-green-300 text-sm">{hourRange}</span>
+                                    <span className={`text-sm ${
+                                        isSoulmate ? 'text-pink-300' : 'text-green-300'
+                                    }`}>
+                                        {hourRange}
+                                    </span>
                                 </motion.div>
                             );
                         })}
