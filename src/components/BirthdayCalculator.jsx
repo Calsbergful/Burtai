@@ -23,7 +23,8 @@ export default function BirthdayCalculator() {
             if (dateObj.getFullYear() == y && dateObj.getMonth() == m - 1 && dateObj.getDate() == d) {
                 const lifePath = calculateLifePath(date);
                 const chineseZodiac = getChineseZodiac(date);
-                const westernZodiac = getWesternZodiac(date);
+                const westernZodiacSign = getWesternZodiac(parseInt(m), parseInt(d));
+                const westernZodiac = { sign: westernZodiacSign };
                 
                 // Get relationships based on Chinese zodiac
                 const soulmates = soulmateRelationships[chineseZodiac.zodiac] || [];
