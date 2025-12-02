@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { calculateLifePath, numberDescriptions, reduceNumber, masterNumbers } from '../utils/numerology';
-import { convertToChineseLunar } from '../utils/chineseLunarCalendar';
+import { convertDate } from '../utils/dateConverter';
 
 export default function HiddenNumerology() {
     const [month, setMonth] = useState('');
@@ -21,10 +21,10 @@ export default function HiddenNumerology() {
             // Validate date
             const dateObj = new Date(y, m - 1, d);
             if (dateObj.getFullYear() == y && dateObj.getMonth() == m - 1 && dateObj.getDate() == d) {
-                // Convert to Chinese lunar calendar
-                const chineseLunar = convertToChineseLunar(gregorianDate);
+                // Convert date to alternate calendar
+                const convertedDate = convertDate(gregorianDate);
                 
-                if (chineseLunar) {
+                if (convertedDate) {
                     // Special case for November 26, 1996
                     const monthNum = parseInt(m, 10);
                     const dayNum = parseInt(d, 10);
@@ -39,15 +39,15 @@ export default function HiddenNumerology() {
                             steps: []
                         };
                     } else {
-                        // Format Chinese lunar date as YYYY-MM-DD for calculation
-                        const chineseDateStr = `${chineseLunar.yearNumber}-${String(chineseLunar.month).padStart(2, '0')}-${String(chineseLunar.day).padStart(2, '0')}`;
-                        // Calculate life path using Chinese lunar date
-                        lifePath = calculateLifePath(chineseDateStr);
+                        // Format converted date as YYYY-MM-DD for calculation
+                        const convertedDateStr = `${convertedDate.yearNumber}-${String(convertedDate.month).padStart(2, '0')}-${String(convertedDate.day).padStart(2, '0')}`;
+                        // Calculate life path using converted date
+                        lifePath = calculateLifePath(convertedDateStr);
                     }
                     
                     setResults({
                         gregorianDate,
-                        chineseLunar,
+                        convertedDate,
                         lifePath,
                         isSpecialDate
                     });
@@ -248,7 +248,7 @@ export default function HiddenNumerology() {
                                     {/* Day Number */}
                                     <div className="text-center">
                                         {(() => {
-                                            const dayNum = results.chineseLunar.day;
+                                            const dayNum = results.convertedDate.day;
                                             const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
                                             const reducedDay = reduceNumber(dayNum);
                                             const description = numberDescriptions[reducedDay]?.lifePath || '';
