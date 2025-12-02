@@ -171,54 +171,50 @@ export default function BirthdayCalculator() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
-                    className="space-y-6"
                 >
-                    {/* Life Path Number */}
-                    <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
-                        <div className="text-center mb-4">
+                    <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30 space-y-6">
+                        {/* Life Path Number */}
+                        <div className="text-center">
                             <div className="text-6xl sm:text-7xl md:text-8xl font-bold text-white mb-2" style={{ textShadow: '0 0 20px rgba(138, 43, 226, 0.8)' }}>
                                 {results.lifePath.number}
                             </div>
-                            <p className="text-white/90 text-sm sm:text-base md:text-lg">
+                            <p className="text-white/90 text-sm sm:text-base md:text-lg mb-2">
                                 {numberDescriptions[results.lifePath.number]?.lifePath || ''}
                             </p>
+                            {results.lifePath.steps && results.lifePath.steps.length > 0 && (
+                                <div className="mt-2 p-2 rounded-lg bg-purple-500/10">
+                                    <p className="text-purple-200 text-xs sm:text-sm text-center">
+                                        {results.lifePath.steps[0]}
+                                    </p>
+                                </div>
+                            )}
                         </div>
-                        {results.lifePath.steps && results.lifePath.steps.length > 0 && (
-                            <div className="mt-4 p-3 rounded-lg bg-purple-500/10">
-                                <p className="text-purple-200 text-sm sm:text-base text-center">
-                                    {results.lifePath.steps[0]}
-                                </p>
-                            </div>
-                        )}
-                    </div>
 
-                    {/* Zodiac Signs */}
-                    <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
-                        <div className="flex items-center justify-center gap-6 sm:gap-8 md:gap-12">
+                        {/* Zodiac Signs */}
+                        <div className="flex items-center justify-center gap-6 sm:gap-8 md:gap-12 border-t border-purple-400/20 pt-4">
                             {/* Chinese Zodiac */}
                             <div className="text-center">
-                                <div className="text-6xl sm:text-7xl md:text-8xl mb-2">
+                                <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
                                     {zodiacEmojis[results.chineseZodiac.zodiac]}
                                 </div>
-                                <div className="text-xl sm:text-2xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
                                     {zodiacTranslations[results.chineseZodiac.zodiac]}
                                 </div>
                             </div>
 
                             {/* Western Zodiac */}
                             <div className="text-center">
-                                <div className="text-6xl sm:text-7xl md:text-8xl mb-2">
+                                <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
                                     {zodiacSignEmojis[results.westernZodiac.sign]}
                                 </div>
-                                <div className="text-xl sm:text-2xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
+                                <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
                                     {zodiacSignTranslations[results.westernZodiac.sign]}
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Relationships */}
-                    <div className="space-y-4">
+                        {/* Relationships */}
+                        <div className="space-y-4 border-t border-purple-400/20 pt-4">
                         {/* Friendly (including soulmates) */}
                         {results.friendly.length > 0 && (
                             <motion.div
@@ -301,6 +297,7 @@ export default function BirthdayCalculator() {
                                 </div>
                             </motion.div>
                         )}
+                        </div>
                     </div>
                 </motion.div>
             )}
