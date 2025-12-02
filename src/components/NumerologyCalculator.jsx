@@ -19,7 +19,11 @@ export default function NumerologyCalculator() {
         
         // Immediate calculation for smooth experience
         requestAnimationFrame(() => {
-            const lifePath = calculateLifePath(date);
+            // Ensure date is in correct format
+            const selectedDate = date || '';
+            if (!selectedDate) return;
+            
+            const lifePath = calculateLifePath(selectedDate);
             
             // Calculate current day's data
             const today = new Date();
@@ -29,6 +33,7 @@ export default function NumerologyCalculator() {
             setResults({
                 lifePath,
                 todayLifePath,
+                selectedDate: selectedDate,
                 calculations: [
                     { title: 'Pilna Data', steps: lifePath.steps }
                 ],
