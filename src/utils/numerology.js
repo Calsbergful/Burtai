@@ -59,7 +59,7 @@ export const numberDescriptions = {
         lifePath: "Gimėti verslininku. Jūs esate ambicingas, organizuotas ir materialiai orientuotas. Jūsų misija - pasiekti sėkmę ir valdyti.",
         destiny: "Jūsų likimas - būti lyderiu ir verslininku. Jūs turite natūralų gebėjimą valdyti ir organizuoti.",
         personality: "Jūs atrodote galingai ir sėkmingai. Kiti mato jūsų ambicijas ir pasiekimus.",
-        soul: "Jūsų siela trokšta sėkmės ir pripažinimo. Jūs norite pasiekti materialinį ir profesinį sėkmę."
+        soul: "Jūsų siela trokšta sėkmės ir pripažinimo. Jūs norite pasiekti materialinę ir profesinę sėkmę."
     },
     9: {
         lifePath: "Gimėti humanitaru. Jūs esate dosnus, empatiškas ir universalus. Jūsų misija - tarnauti žmonijai ir padėti kitiems.",
