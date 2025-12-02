@@ -170,7 +170,7 @@ export default function BirthdayCalculator() {
                 >
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30 space-y-6">
                         {/* Life Path Number */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                        <div className="grid grid-cols-2 gap-4 items-center">
                             {/* Left side - Math/Calculation */}
                             <div className="text-left">
                                 {(() => {
