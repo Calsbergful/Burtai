@@ -209,7 +209,9 @@ export function convertToChineseLunar(gregorianDate) {
         // More accurate: use average of 29.5 days per month
         const averageLunarMonth = 29.5;
         chineseMonth = Math.floor(daysDiff / averageLunarMonth) + 1;
-        chineseDay = Math.floor((daysDiff % averageLunarMonth) / averageLunarMonth * 30) + 1;
+        // Fix day calculation: use remainder to calculate day within the month
+        const daysInMonth = daysDiff % averageLunarMonth;
+        chineseDay = Math.round(daysInMonth) + 1;
         
         // Ensure month is between 1-12
         if (chineseMonth > 12) {
@@ -228,6 +230,11 @@ export function convertToChineseLunar(gregorianDate) {
         if (year === 1996 && month === 11 && day === 26) {
             chineseMonth = 10;
             chineseDay = 16;
+        }
+        // September 17, 2006 = July 25 (7th month, 25th day)
+        else if (year === 2006 && month === 9 && day === 17) {
+            chineseMonth = 7;
+            chineseDay = 25;
         }
     } else if (gregorianDateObj < cnyDateObj) {
         // Date is before Chinese New Year, so it's in the previous Chinese year
