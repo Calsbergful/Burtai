@@ -59,7 +59,7 @@ export default function Letterology() {
                     transition={{ duration: 0.4, delay: 0.2 }}
                     className="space-y-6"
                 >
-                    {/* Letter Breakdown */}
+                    {/* Combined Letter and Vowel Breakdown */}
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
                         <h3 className="text-lg sm:text-xl font-bold text-purple-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.6)' }}>
                             Raidžių Skaičiavimas
@@ -67,83 +67,55 @@ export default function Letterology() {
                         <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4">
                             {results.values.map((item, index) => {
                                 const isCapital = isUpperCase(item.letter);
+                                const isVowelLetter = item.isVowel;
                                 const isSpecial = masterNumbers.includes(item.value) || item.value === 20 || item.value === 28 || item.value === 29;
+                                const isSpecialVowel = isVowelLetter && (masterNumbers.includes(item.vowelValue) || item.vowelValue === 20 || item.vowelValue === 28 || item.vowelValue === 29);
+                                
                                 return (
                                     <motion.div
                                         key={index}
                                         initial={{ opacity: 0, scale: 0.8 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
-                                        className={`text-center p-2 sm:p-3 rounded-lg ${
-                                            isSpecial
+                                        className={`text-center p-2 sm:p-3 rounded-lg relative ${
+                                            isSpecial || isSpecialVowel
                                                 ? 'bg-gradient-to-br from-yellow-500/30 to-orange-500/20 border-2 border-yellow-400/60'
+                                                : isVowelLetter
+                                                ? isCapital
+                                                    ? 'bg-gradient-to-br from-pink-500/30 to-rose-500/20 border border-pink-400/40'
+                                                    : 'bg-pink-500/20 border border-pink-400/30'
                                                 : isCapital
                                                 ? 'bg-gradient-to-br from-cyan-500/30 to-teal-500/20 border border-cyan-400/40'
                                                 : 'bg-purple-500/20 border border-purple-400/30'
                                         }`}
-                                        style={isSpecial ? {
+                                        style={(isSpecial || isSpecialVowel) ? {
                                             boxShadow: '0 0 15px rgba(251, 191, 36, 0.4)'
                                         } : {}}
                                     >
                                         <div className={`text-2xl sm:text-3xl font-bold mb-1 ${
-                                            isSpecial ? 'text-yellow-300' : isCapital ? 'text-cyan-300' : 'text-white'
+                                            isSpecial || isSpecialVowel ? 'text-yellow-300' : 
+                                            isVowelLetter ? (isCapital ? 'text-pink-300' : 'text-white') :
+                                            isCapital ? 'text-cyan-300' : 'text-white'
                                         }`}>
                                             {item.letter}
                                         </div>
                                         <div className={`text-sm font-medium ${
-                                            isSpecial ? 'text-yellow-200' : isCapital ? 'text-cyan-200' : 'text-purple-200'
+                                            isSpecial || isSpecialVowel ? 'text-yellow-200' : 
+                                            isVowelLetter ? (isCapital ? 'text-pink-200' : 'text-pink-200') :
+                                            isCapital ? 'text-cyan-200' : 'text-purple-200'
                                         }`}>
                                             {item.value}
                                         </div>
+                                        {isVowelLetter && (
+                                            <div className="text-xs text-pink-300/70 mt-0.5">
+                                                balsis: {item.vowelValue}
+                                            </div>
+                                        )}
                                     </motion.div>
                                 );
                             })}
                         </div>
                     </div>
-
-                    {/* Vowel Breakdown */}
-                    {results.vowels.length > 0 && (
-                        <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
-                            <h3 className="text-lg sm:text-xl font-bold text-purple-300 mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.6)' }}>
-                                Balsių Skaičiavimas
-                            </h3>
-                            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4">
-                                {results.vowels.map((item, index) => {
-                                    const isCapital = isUpperCase(item.letter);
-                                    const isSpecial = masterNumbers.includes(item.vowelValue) || item.vowelValue === 20 || item.vowelValue === 28 || item.vowelValue === 29;
-                                    return (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
-                                            className={`text-center p-2 sm:p-3 rounded-lg ${
-                                                isSpecial
-                                                    ? 'bg-gradient-to-br from-yellow-500/30 to-orange-500/20 border-2 border-yellow-400/60'
-                                                    : isCapital
-                                                    ? 'bg-gradient-to-br from-pink-500/30 to-rose-500/20 border border-pink-400/40'
-                                                    : 'bg-pink-500/20 border border-pink-400/30'
-                                            }`}
-                                            style={isSpecial ? {
-                                                boxShadow: '0 0 15px rgba(251, 191, 36, 0.4)'
-                                            } : {}}
-                                        >
-                                            <div className={`text-2xl sm:text-3xl font-bold mb-1 ${
-                                                isSpecial ? 'text-yellow-300' : isCapital ? 'text-pink-300' : 'text-white'
-                                            }`}>
-                                                {item.letter}
-                                            </div>
-                                            <div className={`text-sm font-medium ${
-                                                isSpecial ? 'text-yellow-200' : isCapital ? 'text-pink-200' : 'text-pink-200'
-                                            }`}>
-                                                {item.vowelValue}
-                                            </div>
-                                        </motion.div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
 
                     {/* Total and Reduced */}
                     <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
