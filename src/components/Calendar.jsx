@@ -87,7 +87,7 @@ export default function Calendar({ onDateSelect }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-2 sm:p-3 md:p-4 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-md md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto"
+            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-2xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto"
             style={{
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
@@ -107,7 +107,7 @@ export default function Calendar({ onDateSelect }) {
                     </svg>
                 </motion.button>
                 
-                <h2 className="text-sm sm:text-base md:text-lg font-bold text-white px-1 sm:px-2 text-center" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
+                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white px-2 sm:px-4 text-center" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
                     {monthNames[month]} {year}
                 </h2>
                 
@@ -129,7 +129,7 @@ export default function Calendar({ onDateSelect }) {
                 {dayNames.map((dayName, index) => (
                     <div
                         key={index}
-                        className="text-center text-[10px] sm:text-xs font-semibold text-white/70 py-0.5"
+                        className="text-center text-xs sm:text-sm md:text-base font-semibold text-white/70 py-1 sm:py-2"
                         style={{ textShadow: '0 0 8px rgba(138, 43, 226, 0.4)' }}
                     >
                         {dayName}
@@ -141,7 +141,7 @@ export default function Calendar({ onDateSelect }) {
             <div className="grid grid-cols-7 gap-0.5 sm:gap-1 md:gap-2 lg:gap-3">
                 {/* Empty cells for days before the first day of the month */}
                 {Array.from({ length: firstDayOfMonth }).map((_, index) => (
-                    <div key={`empty-${index}`} className="h-[32px] sm:h-[36px] md:h-[44px] lg:h-[52px]" />
+                    <div key={`empty-${index}`} className="h-[40px] sm:h-[48px] md:h-[56px] lg:h-[64px] xl:h-[72px]" />
                 ))}
                 
                 {/* Current month days */}
@@ -162,9 +162,9 @@ export default function Calendar({ onDateSelect }) {
                             onClick={() => handleDateClick(day)}
                             className={`
                                 rounded-md sm:rounded-lg transition-all text-white cursor-pointer 
-                                h-[32px] sm:h-[36px] md:h-[44px] lg:h-[52px] 
-                                min-w-[32px] sm:min-w-[36px] md:min-w-[44px] lg:min-w-[52px]
-                                text-xs sm:text-sm md:text-base font-medium
+                                h-[40px] sm:h-[48px] md:h-[56px] lg:h-[64px] xl:h-[72px]
+                                min-w-[40px] sm:min-w-[48px] md:min-w-[56px] lg:min-w-[64px] xl:min-w-[72px]
+                                text-sm sm:text-base md:text-lg lg:text-xl font-medium
                                 flex flex-col items-center justify-center
                                 ${isSelectedDate
                                     ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg'
@@ -185,7 +185,7 @@ export default function Calendar({ onDateSelect }) {
                                 textShadow: '0 0 8px rgba(251, 191, 36, 0.8), 0 0 12px rgba(245, 158, 11, 0.6)'
                             } : {}}>{day}</span>
                             <span 
-                                className={`text-[8px] sm:text-[9px] md:text-[10px] font-normal ${
+                                className={`text-[9px] sm:text-[10px] md:text-xs lg:text-sm font-normal ${
                                     isSpecialSum 
                                         ? 'text-yellow-300 font-bold opacity-100' 
                                         : 'opacity-70'
