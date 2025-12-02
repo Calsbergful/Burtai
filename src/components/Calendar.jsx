@@ -131,7 +131,7 @@ export default function Calendar({ onDateSelect }) {
                             const signName = zodiacSignTranslations[westernSign] || westernSign;
                             const signEmoji = zodiacSignEmojis[westernSign] || '';
                             return (
-                                <p className="text-xs sm:text-sm md:text-base text-cyan-300/90 font-semibold" style={{ textShadow: '0 0 10px rgba(34, 211, 238, 0.6), 0 0 20px rgba(6, 182, 212, 0.4)' }}>
+                                <p className="text-xs sm:text-sm md:text-base text-cyan-400/75 font-semibold" style={{ textShadow: '0 0 8px rgba(34, 211, 238, 0.4), 0 0 15px rgba(6, 182, 212, 0.3)' }}>
                                     {signName} {signEmoji}
                                 </p>
                             );
@@ -204,7 +204,7 @@ export default function Calendar({ onDateSelect }) {
                                 ${isZodiacNewYear
                                     ? 'bg-gradient-to-br from-yellow-500/40 to-orange-500/40 text-white border-2 border-yellow-400/60 shadow-lg'
                                     : isWesternZodiacStart
-                                    ? 'bg-gradient-to-br from-cyan-500/50 to-teal-500/50 text-white border-2 border-cyan-400/80 shadow-lg'
+                                    ? 'bg-gradient-to-br from-cyan-500/35 to-teal-500/35 text-white border-2 border-cyan-400/60 shadow-lg'
                                     : isSelectedDate
                                     ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg'
                                     : isTodayDate
