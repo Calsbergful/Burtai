@@ -5,9 +5,9 @@ export default function FooterMenu({ onMenuClick }) {
     const [activeItem, setActiveItem] = useState(null);
     
     const menuItems = [
-        { id: 'letterology', label: 'Raidės', icon: '📝' },
+        { id: 'letterology', label: 'Raidės', icon: '🔤' },
         { id: 'hidden-numerology', label: 'Slapta Numerologija', icon: '🔮' },
-        { id: 'life-path-settings', label: 'Gimtadienis', icon: '⚙️' },
+        { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
         { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
     ];
 
