@@ -173,16 +173,33 @@ export default function BirthdayCalculator() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                             {/* Left side - Math/Calculation */}
                             <div className="text-left">
-                                <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '0 0 20px rgba(138, 43, 226, 0.8)' }}>
-                                    {results.lifePath.number}
-                                </div>
-                                {results.lifePath.steps && results.lifePath.steps.length > 0 && (
-                                    <div className="p-3 rounded-lg bg-purple-500/10">
-                                        <p className="text-purple-200 text-xs sm:text-sm">
-                                            {results.lifePath.steps[0]}
-                                        </p>
-                                    </div>
-                                )}
+                                {(() => {
+                                    const lifePathNum = results.lifePath.number;
+                                    const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
+                                    return (
+                                        <>
+                                            <div 
+                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold mb-2 ${
+                                                    isSpecialLifePath ? 'text-yellow-300' : 'text-white'
+                                                }`}
+                                                style={isSpecialLifePath ? {
+                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                } : {
+                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                }}
+                                            >
+                                                {lifePathNum}
+                                            </div>
+                                            {results.lifePath.steps && results.lifePath.steps.length > 0 && (
+                                                <div className="p-3 rounded-lg bg-purple-500/10">
+                                                    <p className="text-purple-200 text-xs sm:text-sm">
+                                                        {results.lifePath.steps[0]}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </>
+                                    );
+                                })()}
                             </div>
 
                             {/* Right side - Day and Description */}
