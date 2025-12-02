@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { calculateLifePath, numberDescriptions } from '../utils/numerology';
+import { calculateLifePath, numberDescriptions, reduceNumber } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
 import { getWesternZodiac, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals } from '../utils/hourAnimals';
@@ -190,9 +190,16 @@ export default function BirthdayCalculator() {
                                 <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-2" style={{ textShadow: '0 0 20px rgba(138, 43, 226, 0.8)' }}>
                                     {parseInt(day)}
                                 </div>
-                                <p className="text-white/90 text-sm sm:text-base md:text-lg">
-                                    {numberDescriptions[parseInt(day)]?.lifePath || ''}
-                                </p>
+                                {(() => {
+                                    const dayNum = parseInt(day);
+                                    const reducedDay = reduceNumber(dayNum);
+                                    const description = numberDescriptions[reducedDay]?.lifePath || '';
+                                    return description ? (
+                                        <p className="text-white/90 text-sm sm:text-base md:text-lg">
+                                            {description}
+                                        </p>
+                                    ) : null;
+                                })()}
                             </div>
                         </div>
 
