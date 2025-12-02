@@ -175,7 +175,7 @@ export default function HiddenNumerology() {
                         <div className="space-y-4">
                             <div className="text-center">
                                 <div className="text-lg sm:text-xl font-bold text-yellow-300 mb-2" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.6)' }}>
-                                    {results.chineseLunar.monthAnimal} {results.chineseLunar.month} {results.chineseLunar.day} {results.chineseLunar.yearNumber}
+                                    {results.chineseLunar.monthAnimal} {results.chineseLunar.month}-{results.chineseLunar.day}-{results.chineseLunar.yearNumber}
                                 </div>
                                 {results.chineseLunar.isLeapMonth && (
                                     <div className="text-xs text-yellow-200/70 mt-1">
