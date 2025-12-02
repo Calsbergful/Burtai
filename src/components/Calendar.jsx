@@ -149,8 +149,8 @@ export default function Calendar({ onDateSelect }) {
                     const isTodayDate = isToday(day);
                     const isSelectedDate = isSelected(day);
                     const dateSum = calculateDateSum(day, month, year);
-                    // Highlight master numbers (11, 22, 33), 28, and 20 (hidden 11) in sum only
-                    const isSpecialSum = masterNumbers.includes(dateSum) || dateSum === 28 || dateSum === 20;
+                    // Highlight master numbers (11, 22, 33), 28, 20 (hidden 11), and 29 (2+9=11) in sum only
+                    const isSpecialSum = masterNumbers.includes(dateSum) || dateSum === 28 || dateSum === 20 || dateSum === 29;
                     // Highlight the 20th, 28th, and 29th day numbers (29 = 2+9 = 11)
                     const isSpecialDay = day === 20 || day === 28 || day === 29;
                     
