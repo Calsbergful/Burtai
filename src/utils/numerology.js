@@ -119,13 +119,14 @@ export function calculateLifePath(birthdate) {
     const year = parseInt(yearPart, 10);
     
     // For month: only November (11) is kept as master number; all others split into digits
-    // For day and year: always use individual digits
+    // For day: if it's a master number (11, 22, 33), keep it whole; otherwise split into digits
+    // For year: always use individual digits
     const monthValues = (month === 11) ? [11] : month.toString().split('').map(d => parseInt(d));
-    const dayDigits = day.toString().split('').map(d => parseInt(d));
+    const dayValues = masterNumbers.includes(day) ? [day] : day.toString().split('').map(d => parseInt(d));
     const yearDigits = year.toString().split('').map(d => parseInt(d));
     
     // Sum all values together
-    const allValues = [...monthValues, ...dayDigits, ...yearDigits];
+    const allValues = [...monthValues, ...dayValues, ...yearDigits];
     const total = allValues.reduce((sum, val) => sum + val, 0);
     
     // Reduce to single digit or master number
@@ -133,7 +134,7 @@ export function calculateLifePath(birthdate) {
     
     // Build calculation steps
     const monthStr = monthValues.join(' + ');
-    const dayStr = dayDigits.join(' + ');
+    const dayStr = dayValues.join(' + ');
     const yearStr = yearDigits.join(' + ');
     const allStr = allValues.join(' + ');
     
