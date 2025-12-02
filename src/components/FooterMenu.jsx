@@ -56,7 +56,10 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
                             onTouchEnd={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                handleClick(item.id, e);
+                                setActiveItem(item.id);
+                                if (onMenuClick) {
+                                    onMenuClick(item.id);
+                                }
                             }}
                             className={`
                                 flex flex-col items-center justify-center gap-1 px-3 sm:px-4 md:px-6 py-2 rounded-lg transition-all
