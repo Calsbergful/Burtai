@@ -149,7 +149,7 @@ export default function Calendar({ onDateSelect }) {
                     const isTodayDate = isToday(day);
                     const isSelectedDate = isSelected(day);
                     const dateSum = calculateDateSum(day, month, year);
-                    const isMasterOr28 = masterNumbers.includes(dateSum) || dateSum === 28;
+                    const isMasterOr28 = masterNumbers.includes(dateSum) || dateSum === 28 || dateSum === 20;
                     
                     return (
                         <motion.button
