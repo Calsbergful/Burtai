@@ -41,7 +41,7 @@ export default function NumerologyCalculator() {
     };
 
     return (
-        <div className="w-full max-w-6xl mx-auto">
+        <div className="w-full max-w-6xl mx-auto mb-8 md:mb-12 lg:mb-16">
             <Calendar onDateSelect={handleDateSelect} />
 
                 <AnimatePresence>

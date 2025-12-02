@@ -112,28 +112,42 @@ export function nameToNumbers(name) {
 
 // Calculate Life Path Number from birthdate
 export function calculateLifePath(birthdate) {
-    const date = new Date(birthdate);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+    // Parse date string (YYYY-MM-DD) to avoid timezone issues
+    const [yearPart, monthPart, dayPart] = birthdate.split('-');
+    const day = parseInt(dayPart, 10);
+    const month = parseInt(monthPart, 10);
+    const year = parseInt(yearPart, 10);
     
-    const daySum = reduceNumber(day);
-    const monthSum = reduceNumber(month);
-    const yearSum = reduceNumber(year);
+    // For month: only November (11) is kept as master number; all others split into digits
+    // For day and year: always use individual digits
+    const monthValues = (month === 11) ? [11] : month.toString().split('').map(d => parseInt(d));
+    const dayDigits = day.toString().split('').map(d => parseInt(d));
+    const yearDigits = year.toString().split('').map(d => parseInt(d));
     
-    const total = daySum + monthSum + yearSum;
+    // Sum all values together
+    const allValues = [...monthValues, ...dayDigits, ...yearDigits];
+    const total = allValues.reduce((sum, val) => sum + val, 0);
+    
+    // Reduce to single digit or master number
     const lifePath = reduceNumber(total);
+    
+    // Build calculation steps
+    const monthStr = monthValues.join(' + ');
+    const dayStr = dayDigits.join(' + ');
+    const yearStr = yearDigits.join(' + ');
+    const allStr = allValues.join(' + ');
     
     return {
         number: lifePath,
         steps: [
             `Gimimo data: ${day}.${month}.${year}`,
-            `Diena: ${day} → ${daySum}`,
-            `Mėnuo: ${month} → ${monthSum}`,
-            `Metai: ${year} → ${yearSum}`,
-            `Suma: ${daySum} + ${monthSum} + ${yearSum} = ${total}`,
+            `Mėnuo: ${month} = ${monthStr}`,
+            `Diena: ${day} = ${dayStr}`,
+            `Metai: ${year} = ${yearStr}`,
+            `Suma: ${allStr} = ${total}`,
+            total !== lifePath ? `${total} → ${lifePath}` : '',
             `Gyvenimo Kelio Skaičius: ${lifePath}`
-        ]
+        ].filter(step => step !== '')
     };
 }
 
