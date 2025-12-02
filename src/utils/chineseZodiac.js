@@ -12,18 +12,18 @@ export const chineseNewYearDates = {
     2032: { date: '2032-02-11', zodiac: 'Rat' },
     2033: { date: '2033-01-31', zodiac: 'Ox' },
     2034: { date: '2034-02-19', zodiac: 'Tiger' },
-    2035: { date: '2035-02-08', zodiac: 'Rabbit' },
+    2035: { date: '2035-02-08', zodiac: 'Cat' },
 };
 
 // Chinese Zodiac cycle (12 animals)
-export const zodiacAnimals = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
+export const zodiacAnimals = ['Rat', 'Ox', 'Tiger', 'Cat', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
 
 // Lithuanian translations
 export const zodiacTranslations = {
     'Rat': 'Žiurkė',
     'Ox': 'Jautis',
     'Tiger': 'Tigras',
-    'Rabbit': 'Triušis',
+    'Cat': 'Katė',
     'Dragon': 'Drakonas',
     'Snake': 'Gyvatė',
     'Horse': 'Arklys',
@@ -39,7 +39,7 @@ export const zodiacEmojis = {
     'Rat': '🐭',
     'Ox': '🐂',
     'Tiger': '🐅',
-    'Rabbit': '🐰',
+    'Cat': '🐱',
     'Dragon': '🐉',
     'Snake': '🐍',
     'Horse': '🐴',
