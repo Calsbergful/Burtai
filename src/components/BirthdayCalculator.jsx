@@ -176,6 +176,7 @@ export default function BirthdayCalculator() {
                                 {(() => {
                                     const lifePathNum = results.lifePath.number;
                                     const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
+                                    const description = numberDescriptions[lifePathNum]?.lifePath || '';
                                     return (
                                         <>
                                             <div 
@@ -190,6 +191,11 @@ export default function BirthdayCalculator() {
                                             >
                                                 {lifePathNum}
                                             </div>
+                                            {description && (
+                                                <p className="text-white/90 text-sm sm:text-base md:text-lg mb-2">
+                                                    {description}
+                                                </p>
+                                            )}
                                             {results.lifePath.steps && results.lifePath.steps.length > 0 && (
                                                 <div className="p-3 rounded-lg bg-purple-500/10">
                                                     <p className="text-purple-200 text-xs sm:text-sm">
