@@ -151,16 +151,31 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         lastBirthdayYear = currentYear - 1;
     }
     
+    // Calculate personal year sum without reducing first
+    // Use same logic as calculateLifePath but get the total sum
+    const calculatePersonalYearSum = (year) => {
+        // For month: only November (11) is kept as master number; all others split into digits
+        // For day: if it's a master number (11, 22, 33), keep it whole; otherwise split into digits
+        // For year: always use individual digits
+        const monthValues = (birthMonth === 11) ? [11] : birthMonth.toString().split('').map(d => parseInt(d));
+        const dayValues = masterNumbers.includes(birthDay) ? [birthDay] : birthDay.toString().split('').map(d => parseInt(d));
+        const yearDigits = year.toString().split('').map(d => parseInt(d));
+        
+        // Sum all values together
+        const allValues = [...monthValues, ...dayValues, ...yearDigits];
+        const total = allValues.reduce((sum, val) => sum + val, 0);
+        
+        return total;
+    };
+    
     // Calculate current personal year (from last birthday to next birthday)
-    const currentPersonalYearDate = `${lastBirthdayYear}-${String(birthMonth).padStart(2, '0')}-${String(birthDay).padStart(2, '0')}`;
-    const currentPersonalYear = calculateLifePath(currentPersonalYearDate);
-    const currentPersonalYearNum = reducePersonalYear(currentPersonalYear.number);
+    const currentPersonalYearSum = calculatePersonalYearSum(lastBirthdayYear);
+    const currentPersonalYearNum = reducePersonalYear(currentPersonalYearSum);
     
     // Calculate next personal year (from next birthday to following birthday)
     const nextBirthdayYear = lastBirthdayYear + 1;
-    const nextPersonalYearDate = `${nextBirthdayYear}-${String(birthMonth).padStart(2, '0')}-${String(birthDay).padStart(2, '0')}`;
-    const nextPersonalYear = calculateLifePath(nextPersonalYearDate);
-    const nextPersonalYearNum = reducePersonalYear(nextPersonalYear.number);
+    const nextPersonalYearSum = calculatePersonalYearSum(nextBirthdayYear);
+    const nextPersonalYearNum = reducePersonalYear(nextPersonalYearSum);
     
     return {
         current: currentPersonalYearNum,
