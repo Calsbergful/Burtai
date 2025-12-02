@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
 import BirthdayCalculator from './components/BirthdayCalculator'
+import Letterology from './components/Letterology'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 
@@ -14,6 +15,8 @@ function App() {
       setActiveView('hours');
     } else if (menuId === 'life-path-settings') {
       setActiveView('birthday');
+    } else if (menuId === 'letterology') {
+      setActiveView('letterology');
     } else {
       setActiveView('calculator');
     }
@@ -79,7 +82,7 @@ function App() {
             >
               <FriendlyEnemyHours />
             </motion.div>
-          ) : (
+          ) : activeView === 'birthday' ? (
             <motion.div
               key="birthday"
               initial={{ opacity: 0, y: 20 }}
@@ -89,6 +92,16 @@ function App() {
             >
               <BirthdayCalculator />
             </motion.div>
+          ) : (
+            <motion.div
+              key="letterology"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Letterology />
+            </motion.div>
           )}
         </AnimatePresence>
       </main>
@@ -96,6 +109,7 @@ function App() {
       <FooterMenu onMenuClick={handleMenuClick} activeMenuId={
         activeView === 'hours' ? 'friendly-enemy-hours' : 
         activeView === 'birthday' ? 'life-path-settings' : 
+        activeView === 'letterology' ? 'letterology' :
         null
       } />
     </div>
