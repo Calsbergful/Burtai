@@ -86,8 +86,9 @@ export default function Calendar({ onDateSelect }) {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-2xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto"
+            style={{ willChange: 'transform, opacity' }}
             style={{
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
@@ -157,9 +158,11 @@ export default function Calendar({ onDateSelect }) {
                     return (
                         <motion.button
                             key={index}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.98 }}
                             onClick={() => handleDateClick(day)}
+                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                            style={{ willChange: 'transform' }}
                             className={`
                                 rounded-md sm:rounded-lg transition-all text-white cursor-pointer 
                                 h-[40px] sm:h-[48px] md:h-[56px] lg:h-[64px] xl:h-[72px]

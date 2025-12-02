@@ -17,8 +17,8 @@ export default function NumerologyCalculator() {
         setBirthdate(date);
         setIsCalculating(true);
         
-        // Small delay for smooth animation
-        setTimeout(() => {
+        // Immediate calculation for smooth experience
+        requestAnimationFrame(() => {
             const lifePath = calculateLifePath(date);
             
             setResults({
@@ -30,8 +30,8 @@ export default function NumerologyCalculator() {
             
             setIsCalculating(false);
             
-            // Scroll to results with smooth behavior, but keep calendar in view
-            setTimeout(() => {
+            // Smooth scroll after animation starts
+            requestAnimationFrame(() => {
                 const resultsElement = document.getElementById('results');
                 if (resultsElement) {
                     resultsElement.scrollIntoView({ 
@@ -40,8 +40,8 @@ export default function NumerologyCalculator() {
                         inline: 'nearest'
                     });
                 }
-            }, 100);
-        }, 300);
+            });
+        });
     };
 
     return (
@@ -49,20 +49,22 @@ export default function NumerologyCalculator() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                style={{ willChange: 'transform, opacity' }}
             >
                 <Calendar onDateSelect={handleDateSelect} />
             </motion.div>
 
-                <AnimatePresence>
+                <AnimatePresence mode="wait">
                     {results && (
                         <motion.div
                             id="results"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.5 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                             className="mt-4 sm:mt-6 md:mt-8"
+                            style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
                                 <ResultCard

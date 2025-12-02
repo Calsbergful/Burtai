@@ -159,7 +159,20 @@ body {
 
 /* Smooth transitions */
 button, a, [role="button"] {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Optimize result animations */
+#results {
+  contain: layout style paint;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+/* Reduce layout shifts */
+[data-framer-component] {
+  contain: layout;
 }
 
 /* Pulsing nebula clouds */

@@ -5,8 +5,9 @@ export default function CalculationSteps({ calculations }) {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
+            transition={{ duration: 0.3, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
             className="mt-4 sm:mt-6 md:mt-8"
+            style={{ willChange: 'transform, opacity' }}
         >
             <div className="space-y-4 sm:space-y-6">
                 {calculations.map((calc, index) => (
@@ -14,7 +15,8 @@ export default function CalculationSteps({ calculations }) {
                         key={index}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: 0.9 + index * 0.1 }}
+                        transition={{ duration: 0.25, delay: 0.3 + index * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
+                        style={{ willChange: 'transform, opacity' }}
                         className="backdrop-blur-sm bg-black/30 p-3 sm:p-4 md:p-5 rounded-lg sm:rounded-xl border-l-4 border-purple-400"
                         style={{
                             boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.1)'
