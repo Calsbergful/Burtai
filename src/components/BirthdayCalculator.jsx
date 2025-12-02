@@ -288,6 +288,41 @@ export default function BirthdayCalculator() {
                             </div>
                         </div>
 
+                        {/* Personal Month */}
+                        {results.personalYear.month && (
+                            <div className="border-t border-purple-400/20 pt-4">
+                                <div className="text-center">
+                                    {(() => {
+                                        const personalMonth = results.personalYear.month;
+                                        const isSpecialMonth = masterNumbers.includes(personalMonth) || personalMonth === 20 || personalMonth === 28 || personalMonth === 29;
+                                        const monthNames = ['Sausis', 'Vasaris', 'Kovas', 'Balandis', 'Gegužė', 'Birželis', 'Liepa', 'Rugpjūtis', 'Rugsėjis', 'Spalis', 'Lapkritis', 'Gruodis'];
+                                        const currentMonthName = monthNames[results.personalYear.monthNumber - 1];
+                                        
+                                        return (
+                                            <>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninis Mėnuo</div>
+                                                <div 
+                                                    className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                        isSpecialMonth ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialMonth ? {
+                                                        textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {personalMonth}
+                                                </div>
+                                                <div className="text-xs text-white/60 mt-1">
+                                                    {currentMonthName}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Zodiac Signs and Relationships */}
                         <div className="border-t border-purple-400/20 pt-4">
                             <div className="flex items-center justify-between gap-4 sm:gap-6 md:gap-8 flex-wrap">
