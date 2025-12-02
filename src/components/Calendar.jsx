@@ -202,7 +202,6 @@ export default function Calendar({ onDateSelect }) {
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleDateClick(day)}
                             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                            style={{ willChange: 'transform' }}
                             className={`
                                 rounded-md sm:rounded-lg transition-all text-white cursor-pointer 
                                 h-[40px] sm:h-[48px] md:h-[56px] lg:h-[64px] xl:h-[72px]
@@ -221,6 +220,7 @@ export default function Calendar({ onDateSelect }) {
                                 }
                             `}
                             style={{
+                                willChange: 'transform',
                                 boxShadow: isSelectedDate 
                                     ? '0 0 20px rgba(138, 43, 226, 0.6)' 
                                     : isTodayDate

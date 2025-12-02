@@ -16,9 +16,9 @@ export default function CalculationSteps({ calculations }) {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.25, delay: 0.3 + index * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
-                        style={{ willChange: 'transform, opacity' }}
                         className="backdrop-blur-sm bg-black/30 p-3 sm:p-4 md:p-5 rounded-lg sm:rounded-xl border-l-4 border-purple-400"
                         style={{
+                            willChange: 'transform, opacity',
                             boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.1)'
                         }}
                     >
