@@ -182,7 +182,7 @@ export default function BirthdayCalculator() {
                                     const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
                                     return (
                                         <>
-                                            <div className="text-xs sm:text-sm text-white/70 mb-1">Gyvenimo Kelias</div>
+                                            <div className="text-xs sm:text-sm text-white/70 mb-1">Pagrindinis</div>
                                             <div 
                                                 className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                     isSpecialLifePath ? 'text-yellow-300' : 'text-white'
