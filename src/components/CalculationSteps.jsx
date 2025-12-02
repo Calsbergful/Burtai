@@ -6,11 +6,7 @@ export default function CalculationSteps({ calculations }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="backdrop-blur-lg rounded-xl sm:rounded-2xl p-4 sm:p-6 mt-4 sm:mt-6 md:mt-8 border border-purple-500/20"
-            style={{
-                background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.5) 0%, rgba(26, 10, 46, 0.4) 100%)',
-                boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.15)'
-            }}
+            className="mt-4 sm:mt-6 md:mt-8"
         >
             <div className="space-y-4 sm:space-y-6">
                 {calculations.map((calc, index) => (
