@@ -24,9 +24,6 @@ export default function CalculationSteps({ calculations }) {
                             boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.1)'
                         }}
                     >
-                        <div className="font-semibold text-purple-300 mb-2 sm:mb-3 text-base sm:text-lg" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.6)' }}>
-                            {calc.title}
-                        </div>
                         <div className="font-mono text-xs sm:text-sm text-gray-300 space-y-1 break-words">
                             {calc.steps.map((step, stepIndex) => (
                                 <div key={stepIndex}>{step}</div>
