@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { getChineseZodiac, isChineseNewYear, zodiacTranslations } from '../utils/chineseZodiac';
 
 const masterNumbers = [11, 22, 33];
 
@@ -88,8 +89,8 @@ export default function Calendar({ onDateSelect }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-2xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto"
-            style={{ willChange: 'transform, opacity' }}
             style={{
+                willChange: 'transform, opacity',
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
             }}
@@ -108,9 +109,20 @@ export default function Calendar({ onDateSelect }) {
                     </svg>
                 </motion.button>
                 
-                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white px-2 sm:px-4 text-center" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
-                    {monthNames[month]} {year}
-                </h2>
+                <div className="text-center">
+                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white px-2 sm:px-4" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
+                        {monthNames[month]} {year}
+                    </h2>
+                    {(() => {
+                        const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+                        const zodiac = getChineseZodiac(currentDateStr);
+                        return (
+                            <p className="text-xs sm:text-sm md:text-base text-yellow-300/80 mt-1 font-semibold" style={{ textShadow: '0 0 10px rgba(251, 191, 36, 0.5)' }}>
+                                {zodiacTranslations[zodiac.zodiac] || zodiac.zodiac}
+                            </p>
+                        );
+                    })()}
+                </div>
                 
                 <motion.button
                     whileHover={{ scale: 1.1 }}
@@ -154,6 +166,9 @@ export default function Calendar({ onDateSelect }) {
                     const isSpecialSum = masterNumbers.includes(dateSum) || dateSum === 28 || dateSum === 20 || dateSum === 29;
                     // Highlight the 11th, 20th, 22nd, 28th, 29th, and 33rd day numbers (master numbers and special days)
                     const isSpecialDay = day === 11 || day === 20 || day === 22 || day === 28 || day === 29 || day === 33;
+                    // Check if this is Chinese New Year
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const isZodiacNewYear = isChineseNewYear(dateStr);
                     
                     return (
                         <motion.button
@@ -169,7 +184,9 @@ export default function Calendar({ onDateSelect }) {
                                 min-w-[40px] sm:min-w-[48px] md:min-w-[56px] lg:min-w-[64px] xl:min-w-[72px]
                                 text-sm sm:text-base md:text-lg lg:text-xl font-medium
                                 flex flex-col items-center justify-center
-                                ${isSelectedDate
+                                ${isZodiacNewYear
+                                    ? 'bg-gradient-to-br from-yellow-500/40 to-orange-500/40 text-white border-2 border-yellow-400/60 shadow-lg'
+                                    : isSelectedDate
                                     ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg'
                                     : isTodayDate
                                     ? 'bg-purple-500/30 text-white border border-purple-400'
