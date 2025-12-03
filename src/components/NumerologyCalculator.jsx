@@ -56,7 +56,7 @@ export default function NumerologyCalculator() {
     };
 
     return (
-        <div className="w-full max-w-6xl mx-auto mb-4 sm:mb-5 md:mb-6">
+        <div className="w-full max-w-6xl mx-auto mb-1 sm:mb-2">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -74,14 +74,14 @@ export default function NumerologyCalculator() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                            className="mt-4 sm:mt-6 md:mt-8 backdrop-blur-xl bg-black/30 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-12 shadow-2xl shadow-purple-500/30 border border-purple-500/20"
+                            className="mt-2 sm:mt-3 backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-2 sm:p-3 md:p-4 lg:p-5 shadow-2xl shadow-purple-500/30 border border-purple-500/20"
                             style={{
                                 willChange: 'transform, opacity',
                                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
                                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
                             }}
                         >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-0">
                                 {/* Left side - Full date data */}
                                 <div className="flex flex-col items-center justify-center">
                                     {(() => {
@@ -92,7 +92,7 @@ export default function NumerologyCalculator() {
                                                 initial={{ opacity: 0, scale: 0.8 }}
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 transition={{ duration: 0.3, delay: 0.1 }}
-                                                className={`text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-4 sm:mb-6 ${
+                                                className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-3 ${
                                                     isSpecialLifePath ? 'text-yellow-300' : 'text-white'
                                                 }`}
                                                 style={isSpecialLifePath ? {
@@ -120,7 +120,7 @@ export default function NumerologyCalculator() {
                                                 initial={{ opacity: 0, scale: 0.8 }}
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 transition={{ duration: 0.3, delay: 0.2 }}
-                                                className={`text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-4 sm:mb-6 ${
+                                                className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-3 ${
                                                     isSpecialDay ? 'text-yellow-300' : 'text-white'
                                                 }`}
                                                 style={isSpecialDay ? {

@@ -35,8 +35,8 @@ function App() {
   return (
     <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-[70px] sm:pb-[75px] md:pb-[80px]">
       <CosmicBackground />
-      <main className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <header className="text-center text-white mb-4 sm:mb-5 md:mb-6 relative z-10 w-full">
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-180px)]">
+        <header className="text-center text-white mb-2 sm:mb-3 md:mb-4 relative z-10 w-full">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ 

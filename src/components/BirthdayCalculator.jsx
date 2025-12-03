@@ -222,7 +222,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-7xl xl:max-w-[90%] 2xl:max-w-[95%] mx-auto backdrop-blur-xl bg-black/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8 shadow-2xl shadow-purple-500/30 border border-purple-500/20"
+            className="w-full max-w-6xl lg:max-w-6xl xl:max-w-6xl 2xl:max-w-6xl mx-auto backdrop-blur-xl bg-black/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-4.5 lg:p-5 xl:p-4.5 2xl:p-4 shadow-2xl shadow-purple-500/30 border border-purple-500/20"
             style={{
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
@@ -335,7 +335,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
                 >
-                    <div className="backdrop-blur-lg rounded-xl p-2 sm:p-3 md:p-4 border border-purple-400/30 space-y-2 sm:space-y-2.5 md:space-y-3">
+                    <div className="backdrop-blur-lg rounded-xl p-2 sm:p-2.5 md:p-3 border border-purple-400/30 space-y-2 sm:space-y-2 md:space-y-2.5">
                         {/* Life Path Number and Day - Only show for regular birthday (not personal) */}
                         {(!personalBirthdayTrigger || personalBirthdayTrigger === 0) && (
                         <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-8 items-center">
@@ -407,10 +407,10 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         </div>
                         )}
 
-                        {/* Personal Stats - Combined compact layout */}
+                        {/* Personal Stats - Balanced grid layout */}
                         {results.personalYear && (
                         <div>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 items-center">
+                            <div className="grid grid-cols-4 gap-3 sm:gap-3.5 md:gap-4 lg:gap-4.5 xl:gap-4 2xl:gap-3.5 items-center">
                                 {/* Current Personal Year */}
                                 <div className="text-center">
                                     {(() => {
@@ -418,9 +418,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         const isSpecialPY = masterNumbers.includes(currentPY) || currentPY === 20 || currentPY === 28 || currentPY === 29;
                                         return (
                                             <>
-                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Metai</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-1.5 xl:mb-1 2xl:mb-0.5">Metai</div>
                                                 <div 
-                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl font-bold ${
                                                         isSpecialPY ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialPY ? {
@@ -431,7 +431,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                 >
                                                     {currentPY}
                                                 </div>
-                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                <div className="text-xs sm:text-sm text-white/60 mt-1 sm:mt-1.5 xl:mt-1 2xl:mt-0.5">
                                                     {new Date().getFullYear()}
                                                 </div>
                                             </>
@@ -446,9 +446,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         const isSpecialPY = masterNumbers.includes(nextPY) || nextPY === 20 || nextPY === 28 || nextPY === 29;
                                         return (
                                             <>
-                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Metai</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-1.5 xl:mb-1 2xl:mb-0.5">Metai</div>
                                                 <div 
-                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl font-bold ${
                                                         isSpecialPY ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialPY ? {
@@ -459,7 +459,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                 >
                                                     {nextPY}
                                                 </div>
-                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                <div className="text-xs sm:text-sm text-white/60 mt-1 sm:mt-1.5 xl:mt-1 2xl:mt-0.5">
                                                     {new Date().getFullYear() + 1}
                                                 </div>
                                             </>
@@ -478,9 +478,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         
                                         return (
                                             <>
-                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Mėnuo</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-1.5 xl:mb-1 2xl:mb-0.5">Mėnuo</div>
                                                 <div 
-                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl font-bold ${
                                                         isSpecialMonth ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialMonth ? {
@@ -491,7 +491,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                 >
                                                     {personalMonth}
                                                 </div>
-                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                <div className="text-xs sm:text-sm text-white/60 mt-1 sm:mt-1.5 xl:mt-1 2xl:mt-0.5">
                                                     {currentMonthName}
                                                 </div>
                                             </>
@@ -511,9 +511,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         
                                         return (
                                             <>
-                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Mėnuo</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-1.5 xl:mb-1 2xl:mb-0.5">Mėnuo</div>
                                                 <div 
-                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl font-bold ${
                                                         isSpecialMonth ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialMonth ? {
@@ -524,7 +524,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                 >
                                                     {nextPersonalMonth}
                                                 </div>
-                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                <div className="text-xs sm:text-sm text-white/60 mt-1 sm:mt-1.5 xl:mt-1 2xl:mt-0.5">
                                                     {nextMonthName}
                                                 </div>
                                             </>
@@ -542,9 +542,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         
                                         return (
                                             <>
-                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Diena</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-1.5 xl:mb-1 2xl:mb-0.5">Diena</div>
                                                 <div 
-                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl font-bold ${
                                                         isSpecialDay ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialDay ? {
@@ -555,7 +555,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                 >
                                                     {personalDay}
                                                 </div>
-                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                <div className="text-xs sm:text-sm text-white/60 mt-1 sm:mt-1.5 xl:mt-1 2xl:mt-0.5">
                                                     {results.personalYear.dayNumber}
                                                 </div>
                                             </>
@@ -573,9 +573,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         
                                         return (
                                             <>
-                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Diena</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-1.5 xl:mb-1 2xl:mb-0.5">Diena</div>
                                                 <div 
-                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl font-bold ${
                                                         isSpecialDay ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialDay ? {
@@ -586,7 +586,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                 >
                                                     {nextPersonalDay}
                                                 </div>
-                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                <div className="text-xs sm:text-sm text-white/60 mt-1 sm:mt-1.5 xl:mt-1 2xl:mt-0.5">
                                                     {results.personalYear.nextDayNumber}
                                                 </div>
                                             </>
@@ -604,9 +604,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         
                                         return (
                                             <>
-                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Valanda</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-1.5 xl:mb-1 2xl:mb-0.5">Valanda</div>
                                                 <div 
-                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl font-bold ${
                                                         isSpecialHour ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialHour ? {
@@ -617,7 +617,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                 >
                                                     {personalHour}
                                                 </div>
-                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                <div className="text-xs sm:text-sm text-white/60 mt-1 sm:mt-1.5 xl:mt-1 2xl:mt-0.5">
                                                     {String(results.personalYear.hourNumber).padStart(2, '0')}:00
                                                 </div>
                                             </>
@@ -635,9 +635,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         
                                         return (
                                             <>
-                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Valanda</div>
+                                                <div className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-1.5 xl:mb-1 2xl:mb-0.5">Valanda</div>
                                                 <div 
-                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl font-bold ${
                                                         isSpecialHour ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialHour ? {
@@ -648,7 +648,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                 >
                                                     {nextPersonalHour}
                                                 </div>
-                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                <div className="text-xs sm:text-sm text-white/60 mt-1 sm:mt-1.5 xl:mt-1 2xl:mt-0.5">
                                                     {String(results.personalYear.nextHourNumber).padStart(2, '0')}:00
                                                 </div>
                                             </>
@@ -660,10 +660,10 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         </div>
                         )}
 
-                        {/* Zodiac Signs and Relationships */}
-                        <div className="border-t border-purple-400/20 pt-1.5 md:pt-2">
+                        {/* Zodiac Signs and Relationships - Horizontal Layout */}
+                        <div className="border-t border-purple-400/20 pt-1.5 sm:pt-2 md:pt-2.5 xl:pt-2 2xl:pt-1.5">
                             {/* Chinese Zodiac Row */}
-                            <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3">
+                            <div className="flex items-center justify-center gap-3 sm:gap-3.5 md:gap-4 lg:gap-4.5 xl:gap-4 2xl:gap-3.5">
                                 {/* Friendly (including soulmates) - LEFT side */}
                                 {results.friendly.length > 0 && (
                                     <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center justify-end">
@@ -699,37 +699,49 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                 
                                 {/* Chinese Zodiac - CENTER */}
                                 <div className="text-center">
-                                    <div className="text-4xl sm:text-5xl md:text-6xl mb-1">
+                                    <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-7xl 2xl:text-6xl mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1">
                                         {zodiacEmojis[results.chineseZodiac.zodiac]}
                                     </div>
-                                    <div className="text-base sm:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                    <div className="text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
                                         {zodiacTranslations[results.chineseZodiac.zodiac]}
                                     </div>
                                 </div>
                                 
-                                {/* Enemies - RIGHT side */}
-                                {results.enemies.length > 0 && (
-                                    <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center justify-start">
-                                        {results.enemies.map((animal, index) => (
-                                            <motion.div
-                                                key={index}
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
-                                                className="text-center p-1.5 sm:p-2 rounded-lg bg-red-500/20 border border-red-400/30"
-                                                title={zodiacTranslations[animal.animal]}
-                                            >
-                                                <div className="text-lg sm:text-xl md:text-2xl mb-0.5">{zodiacEmojis[animal.animal]}</div>
-                                            </motion.div>
-                                        ))}
+                                {/* Enemies and Western Zodiac - RIGHT side */}
+                                <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
+                                    {results.enemies.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center justify-start">
+                                            {results.enemies.map((animal, index) => (
+                                                <motion.div
+                                                    key={index}
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+                                                    className="text-center p-1.5 sm:p-2 rounded-lg bg-red-500/20 border border-red-400/30"
+                                                    title={zodiacTranslations[animal.animal]}
+                                                >
+                                                    <div className="text-lg sm:text-xl md:text-2xl mb-0.5">{zodiacEmojis[animal.animal]}</div>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
+                                    {/* Western Zodiac - Right of enemies */}
+                                    <div className="text-center">
+                                        <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-7xl 2xl:text-6xl mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1">
+                                            {zodiacSignEmojis[results.westernZodiac.sign]}
+                                        </div>
+                                        <div className="text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
+                                            {zodiacSignTranslations[results.westernZodiac.sign]}
+                                        </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
 
                         {/* Birth Hour Animal */}
                         {results.birthHourAnimal && (
-                            <div className="border-t border-purple-400/20 pt-1.5 md:pt-2">
+                            <div className="border-t border-purple-400/20 pt-1.5 sm:pt-2 md:pt-2.5 xl:pt-2 2xl:pt-1.5">
                                 <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3">
                                     {/* Friendly (including soulmates) - LEFT side */}
                                     {results.birthHourFriendly.length > 0 && (
@@ -769,13 +781,13 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                     
                                     {/* Birth Hour Animal - CENTER */}
                                     <div className="text-center">
-                                        <div className="text-4xl sm:text-5xl md:text-6xl mb-1">
+                                        <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-7xl 2xl:text-6xl mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1">
                                             {hourAnimalEmojis[results.birthHourAnimal.animal]}
                                         </div>
-                                        <div className="text-base sm:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                        <div className="text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
                                             {results.birthHourAnimal.name}
                                         </div>
-                                        <div className="text-[10px] sm:text-xs text-white/70 mt-0.5">
+                                        <div className="text-sm sm:text-base xl:text-sm 2xl:text-xs text-white/70 mt-1 xl:mt-0.5 2xl:mt-0.5">
                                             {results.inputHour !== null && results.inputMinute !== null 
                                                 ? `${String(results.inputHour).padStart(2, '0')}:${String(results.inputMinute).padStart(2, '0')}`
                                                 : `${String(results.birthHourAnimal.start).padStart(2, '0')}:40`
@@ -807,19 +819,6 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                             </div>
                         )}
 
-                        {/* Western Zodiac Row - Below Birth Hour Animal */}
-                        <div className="border-t border-purple-400/20 pt-1.5 md:pt-2">
-                            <div className="flex items-center justify-center">
-                                <div className="text-center">
-                                    <div className="text-4xl sm:text-5xl md:text-6xl mb-1">
-                                        {zodiacSignEmojis[results.westernZodiac.sign]}
-                                    </div>
-                                    <div className="text-base sm:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
-                                        {zodiacSignTranslations[results.westernZodiac.sign]}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </motion.div>
             )}

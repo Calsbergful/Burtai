@@ -90,7 +90,7 @@ export default function Calendar({ onDateSelect }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-1.5 sm:p-3 md:p-4 lg:p-6 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-5xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto w-full"
+            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 md:p-4.5 lg:p-5 xl:p-6 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-[96%] sm:max-w-[94%] md:max-w-[92%] lg:max-w-[90%] xl:max-w-[92%] 2xl:max-w-[94%] mx-auto w-full"
             style={{
                 willChange: 'transform, opacity',
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
@@ -98,21 +98,21 @@ export default function Calendar({ onDateSelect }) {
             }}
         >
             {/* Calendar Header */}
-            <div className="flex items-center justify-between mb-1 sm:mb-1.5">
+            <div className="flex items-center justify-between mb-2 sm:mb-2.5 md:mb-3">
                 <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={goToPrevMonth}
-                    className="text-white/80 hover:text-white transition-colors p-1.5 sm:p-2 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] flex items-center justify-center touch-manipulation"
+                    className="text-white/80 hover:text-white transition-colors p-1.5 sm:p-2 md:p-2.5 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] md:min-w-[44px] md:min-h-[44px] flex items-center justify-center touch-manipulation"
                     style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}
                 >
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                 </motion.button>
                 
                 <div className="text-center">
-                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white px-2 sm:px-4 flex items-center justify-center gap-2" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
+                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white px-2 sm:px-3 md:px-4 flex items-center justify-center gap-2 sm:gap-2.5" style={{ textShadow: '0 0 15px rgba(138, 43, 226, 0.6)' }}>
                         {(() => {
                             const monthAnimal = getMonthAnimal(month + 1);
                             const animalEmoji = monthAnimalEmojis[monthAnimal] || '';
@@ -140,7 +140,7 @@ export default function Calendar({ onDateSelect }) {
                         const signName = zodiacSignTranslations[westernSign] || westernSign;
                         const signEmoji = zodiacSignEmojis[westernSign] || '';
                         return (
-                            <p className="text-xs sm:text-sm md:text-base text-cyan-400/75 mt-1 font-semibold" style={{ textShadow: '0 0 8px rgba(34, 211, 238, 0.4), 0 0 15px rgba(6, 182, 212, 0.3)' }}>
+                            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-cyan-400/75 mt-1 sm:mt-1.5 font-semibold" style={{ textShadow: '0 0 8px rgba(34, 211, 238, 0.4), 0 0 15px rgba(6, 182, 212, 0.3)' }}>
                                 {signName} {signEmoji}
                             </p>
                         );
@@ -151,21 +151,21 @@ export default function Calendar({ onDateSelect }) {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={goToNextMonth}
-                    className="text-white/80 hover:text-white transition-colors p-1.5 sm:p-2 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] flex items-center justify-center touch-manipulation"
+                    className="text-white/80 hover:text-white transition-colors p-1.5 sm:p-2 md:p-2.5 min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px] md:min-w-[44px] md:min-h-[44px] flex items-center justify-center touch-manipulation"
                     style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}
                 >
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                 </motion.button>
             </div>
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-1 sm:gap-1 md:gap-2 mb-0.5 sm:mb-1">
+            <div className="grid grid-cols-7 gap-2 sm:gap-2.5 md:gap-3 lg:gap-3.5 mb-2 sm:mb-2.5">
                 {dayNames.map((dayName, index) => (
                     <div
                         key={index}
-                        className="text-center text-sm sm:text-sm md:text-base font-semibold text-white/70 py-1 sm:py-2"
+                        className="text-center text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-white/70 py-1 sm:py-1.5"
                         style={{ textShadow: '0 0 8px rgba(138, 43, 226, 0.4)' }}
                     >
                         {dayName}
@@ -174,10 +174,10 @@ export default function Calendar({ onDateSelect }) {
             </div>
 
             {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-1 sm:gap-1 md:gap-2 lg:gap-3">
+            <div className="grid grid-cols-7 gap-2 sm:gap-2.5 md:gap-3 lg:gap-3.5">
                 {/* Empty cells for days before the first day of the month */}
                 {Array.from({ length: firstDayOfMonth }).map((_, index) => (
-                    <div key={`empty-${index}`} className="h-[56px] sm:h-[60px] md:h-[64px] lg:h-[72px] xl:h-[80px]" />
+                    <div key={`empty-${index}`} className="h-[50px] sm:h-[55px] md:h-[60px] lg:h-[65px] xl:h-[70px]" />
                 ))}
                 
                 {/* Current month days */}
@@ -203,10 +203,10 @@ export default function Calendar({ onDateSelect }) {
                             onClick={() => handleDateClick(day)}
                             transition={{ type: "spring", stiffness: 400, damping: 25 }}
                             className={`
-                                rounded-md sm:rounded-lg transition-all text-white cursor-pointer 
-                                h-[56px] sm:h-[60px] md:h-[64px] lg:h-[72px] xl:h-[80px]
-                                min-w-[56px] sm:min-w-[60px] md:min-w-[64px] lg:min-w-[72px] xl:min-w-[80px]
-                                text-lg sm:text-xl md:text-xl lg:text-2xl font-medium
+                                rounded-lg sm:rounded-xl transition-all text-white cursor-pointer 
+                                h-[50px] sm:h-[55px] md:h-[60px] lg:h-[65px] xl:h-[70px]
+                                min-w-[50px] sm:min-w-[55px] md:min-w-[60px] lg:min-w-[65px] xl:min-w-[70px]
+                                text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-medium
                                 flex flex-col items-center justify-center
                                 ${isZodiacNewYear
                                     ? 'bg-gradient-to-br from-yellow-500/40 to-orange-500/40 text-white border-2 border-yellow-400/60 shadow-lg'
@@ -231,12 +231,12 @@ export default function Calendar({ onDateSelect }) {
                             <span className={isSpecialDay ? 'text-yellow-300 font-bold' : ''} style={isSpecialDay ? {
                                 textShadow: '0 0 8px rgba(251, 191, 36, 0.8), 0 0 12px rgba(245, 158, 11, 0.6)'
                             } : {}}>{day}</span>
-                            <span 
-                                className={`text-[11px] sm:text-xs md:text-sm lg:text-base font-normal ${
-                                    isSpecialSum 
-                                        ? 'text-yellow-300 font-bold opacity-100' 
-                                        : 'opacity-70'
-                                }`}
+                                        <span 
+                                            className={`text-xs sm:text-sm md:text-base lg:text-lg font-normal ${
+                                                isSpecialSum 
+                                                    ? 'text-yellow-300 font-bold opacity-100' 
+                                                    : 'opacity-70'
+                                            }`}
                                 style={isSpecialSum ? {
                                     textShadow: '0 0 8px rgba(251, 191, 36, 0.8), 0 0 12px rgba(245, 158, 11, 0.6)'
                                 } : {}}
