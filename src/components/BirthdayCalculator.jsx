@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { calculateLifePath, reduceNumber, masterNumbers, calculatePersonalYear } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
@@ -62,7 +62,10 @@ export default function BirthdayCalculator({ personalBirthdayTrigger }) {
             setMonth('11');
             setDay('26');
             setYear('1996');
-            calculateResults('11', '26', '1996');
+            // Use setTimeout to ensure state updates are processed
+            setTimeout(() => {
+                calculateResults('11', '26', '1996');
+            }, 0);
         }
     }, [personalBirthdayTrigger]);
 
