@@ -222,7 +222,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-7xl mx-auto backdrop-blur-xl bg-black/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 shadow-2xl shadow-purple-500/30 border border-purple-500/20"
+            className="w-full max-w-7xl xl:max-w-[90%] 2xl:max-w-[95%] mx-auto backdrop-blur-xl bg-black/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8 shadow-2xl shadow-purple-500/30 border border-purple-500/20"
             style={{
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
