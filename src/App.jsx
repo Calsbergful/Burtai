@@ -10,6 +10,7 @@ import FooterMenu from './components/FooterMenu'
 
 function App() {
   const [activeView, setActiveView] = useState('calculator');
+  const [personalBirthdayTrigger, setPersonalBirthdayTrigger] = useState(0);
 
   const handleMenuClick = (menuId) => {
     if (menuId === 'calculator') {
