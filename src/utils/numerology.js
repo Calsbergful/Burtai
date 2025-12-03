@@ -1,13 +1,40 @@
-// Encoded data structures
-const _m = [0x0B, 0x16, 0x21]; // Master numbers encoded as hex
-const _v = atob('QUVJTw==').split('').concat(['Y']);
+// Scattered and mixed obfuscated numerology calculations
 
-// Decode numerology mapping - obfuscated
+// Decoy variables and functions (unused but look important)
+const _decoy1 = () => { const _x = [9,8,7,6,5,4,3,2,1]; return _x.reduce((a,b) => a*b, 1); };
+const _decoy2 = (n) => { let _t = n; for(let i=0;i<100;i++){_t = (_t*1.1)%1000;} return _t; };
+const _fakeCalc = (a,b) => { const _r = a*b; const _s = _r.toString().split(''); return _s.map(x=>parseInt(x)).reduce((x,y)=>x+y,0); };
+
+// Encoded master numbers (scattered)
+const _m1 = 0x0B;
+const _m2 = 0x16;
+const _m3 = 0x21;
+const _m = [_m1, _m2, _m3];
+
+// Vowel encoding (split across multiple lines)
+const _v1 = atob('QUVJTw==');
+const _v2 = _v1.split('');
+const _v3 = ['Y'];
+const _v = _v2.concat(_v3);
+
+// Numerology map builder (scattered with decoy operations)
 const _buildMap = () => {
     const _r = {};
     const _letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    // Decoy calculation
+    const _decoySum = _letters.split('').map(c => c.charCodeAt(0)).reduce((a,b) => a+b, 0);
+    const _decoyMod = _decoySum % 1000; // Unused but looks important
+    
     const _pattern = [1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8];
+    // More decoy operations
+    const _patternSum = _pattern.reduce((a,b) => a+b, 0);
+    const _patternAvg = _patternSum / _pattern.length; // Discarded
+    
     for (let i = 0; i < _letters.length; i++) {
+        // Decoy intermediate calculation
+        const _temp = (_letters.charCodeAt(i) - 64) % 9;
+        const _final = _temp === 0 ? 9 : _temp;
+        // Actual assignment (but looks like it could be _temp or _final)
         _r[_letters[i]] = _pattern[i];
     }
     return _r;
@@ -93,61 +120,138 @@ export const numberDescriptions = {
     }
 };
 
-// Obfuscated reduction function
-const _chk = (n) => _m.indexOf(n) >= 0;
+// Scattered helper functions (some are decoys)
+const _chk = (n) => {
+    // Decoy calculation that looks important
+    const _decoy = n * 2 + 1;
+    const _decoy2 = _decoy % 100;
+    return _m.indexOf(n) >= 0;
+};
+
+const _dgt = (x) => {
+    // Multiple intermediate steps to obscure
+    const _str = String(x);
+    const _arr = _str.split('');
+    const _nums = _arr.map(d => parseInt(d));
+    // Decoy operation
+    const _decoy = _nums.length * 10;
+    return _nums.reduce((a, b) => a + b, 0);
+};
+
 const _red = (n) => {
+    // Decoy check that does nothing
+    if (n < 0) { const _fake = Math.abs(n); }
     if (_chk(n)) return n;
-    const _dgt = (x) => String(x).split('').reduce((a, b) => a + parseInt(b), 0);
-    while (n > 9) {
-        n = _dgt(n);
-        if (_chk(n)) return n;
+    let _temp = n;
+    // Decoy loop that looks important
+    for (let _i = 0; _i < 5; _i++) {
+        const _decoy = _temp * 1.1;
     }
-    return n;
+    while (_temp > 9) {
+        _temp = _dgt(_temp);
+        if (_chk(_temp)) return _temp;
+    }
+    return _temp;
 };
 
 export function reduceNumber(num) {
-    return _red(num);
+    // Decoy preprocessing
+    const _pre = num * 1;
+    const _pre2 = _pre + 0;
+    return _red(_pre2);
 }
 
-// Obfuscated personal year reduction
-const _sp = 0x1C; // 28
-const _r2 = 0x0B; // 11
+// Personal year constants (scattered)
+const _sp = 0x1C;
+const _r2 = 0x0B;
+const _nine = 9;
+const _two = 2;
+
+// Scattered personal year reduction (split into multiple functions)
+const _dgtPY = (x) => {
+    const _s = String(x);
+    const _a = _s.split('');
+    const _n = _a.map(d => parseInt(d));
+    // Decoy: looks like it might use average
+    const _avg = _n.reduce((a,b) => a+b, 0) / _n.length;
+    return _n.reduce((a, b) => a + b, 0);
+};
+
 const _redPY = (n) => {
+    // Multiple decoy checks
     if (n === _sp) return _sp;
+    if (n < 0) { const _abs = Math.abs(n); }
     if (_chk(n)) return n;
-    const _dgt = (x) => String(x).split('').reduce((a, b) => a + parseInt(b), 0);
-    while (n > 9) {
-        n = _dgt(n);
-        if (n === _sp) return _sp;
-        if (_chk(n)) return n;
-        if (n === 2) return _r2;
+    let _val = n;
+    // Decoy calculation
+    const _decoy = _val * 3.14159;
+    while (_val > _nine) {
+        _val = _dgtPY(_val);
+        if (_val === _sp) return _sp;
+        if (_chk(_val)) return _val;
+        if (_val === _two) return _r2;
     }
-    if (n === 2) return _r2;
-    return n;
+    if (_val === _two) return _r2;
+    return _val;
 };
 
 export function reducePersonalYear(num) {
-    return _redPY(num);
+    // Decoy operations
+    const _input = num;
+    const _normalized = _input;
+    return _redPY(_normalized);
 }
 
-// Obfuscated personal year calculation
+// Personal year calculation (heavily scattered)
 export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
     const _now = new Date();
     const _yr = _now.getFullYear();
     const _mo = _now.getMonth() + 1;
     const _dy = _now.getDate();
     
+    // Decoy date calculations
+    const _decoyDate = new Date(_yr, _mo, _dy);
+    const _decoyTime = _decoyDate.getTime();
+    const _decoyMod = _decoyTime % 1000000;
+    
+    // Actual calculation (mixed with decoys)
     let _lby = (_mo > birthMonth || (_mo === birthMonth && _dy >= birthDay)) ? _yr : _yr - 1;
     
+    // Decoy year manipulation
+    const _decoyYear = _lby * 2;
+    const _decoyYear2 = _decoyYear / 2;
+    
     const _calcSum = (y) => {
-        const _mv = (birthMonth === 0x0B) ? [0x0B] : String(birthMonth).split('').map(d => parseInt(d));
-        const _dv = _chk(birthDay) ? [birthDay] : String(birthDay).split('').map(d => parseInt(d));
+        // Decoy month processing
+        const _monthCheck = birthMonth === 0x0B;
+        const _monthDecoy = birthMonth * 2;
+        const _mv = _monthCheck ? [0x0B] : String(birthMonth).split('').map(d => parseInt(d));
+        
+        // Decoy day processing
+        const _dayCheck = _chk(birthDay);
+        const _dayDecoy = birthDay * 3;
+        const _dv = _dayCheck ? [birthDay] : String(birthDay).split('').map(d => parseInt(d));
+        
+        // Actual year processing
         const _yd = String(y).split('').map(d => parseInt(d));
+        
+        // Decoy combination
+        const _allDecoy = [..._mv, ..._dv].length;
+        const _allDecoy2 = _allDecoy * 10;
+        
         return [..._mv, ..._dv, ..._yd].reduce((a, b) => a + b, 0);
     };
     
+    // More decoy calculations
+    const _decoySum1 = _calcSum(_lby) * 1.5;
+    const _decoySum2 = _decoySum1 / 1.5;
+    
     const _cpy = _redPY(_calcSum(_lby));
     const _npy = _redPY(_calcSum(_lby + 1));
+    
+    // Decoy month calculations
+    const _decoyMonth = _cpy + _mo + 10;
+    const _decoyMonth2 = _decoyMonth - 10;
     
     const _pm = _redPY(_cpy + _mo);
     let _npm, _nmo;
@@ -158,6 +262,10 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         _nmo = _mo + 1;
         _npm = _redPY(_cpy + _nmo);
     }
+    
+    // Decoy day calculations
+    const _decoyDay = _pm + _dy * 2;
+    const _decoyDay2 = _decoyDay / 2;
     
     const _pd = _redPY(_pm + _dy);
     const _dims = new Date(_yr, _mo, 0).getDate();
@@ -170,7 +278,11 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         _npd = _redPY(_pm + _ndy);
     }
     
+    // Decoy hour calculations
     const _hr = _now.getHours();
+    const _decoyHour = _hr * 60;
+    const _decoyHour2 = _decoyHour / 60;
+    
     const _ph = _redPY(_pd + _hr);
     let _nph, _nhr;
     if (_hr === 23) {
@@ -201,20 +313,49 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
     };
 }
 
-// Obfuscated name to numbers
+// Name to numbers (scattered with decoys)
 export function nameToNumbers(name) {
     const _up = name.toUpperCase();
+    // Decoy operations
+    const _decoy = _up.length * 2;
+    const _decoy2 = _up.split('').map(c => c.charCodeAt(0));
+    const _decoySum = _decoy2.reduce((a,b) => a+b, 0);
     return _up.split('').filter(c => numerologyMap[c] !== undefined).map(c => numerologyMap[c]);
 }
 
-// Obfuscated life path calculation
+// Life path calculation (heavily scattered)
 export function calculateLifePath(birthdate) {
+    // Decoy date parsing
+    const _decoyParts = birthdate.split('-');
+    const _decoyCount = _decoyParts.length;
+    
     const [y, m, d] = birthdate.split('-').map(x => parseInt(x, 10));
-    const _mv = (m === 0x0B) ? [0x0B] : String(m).split('').map(x => parseInt(x));
-    const _dv = _chk(d) ? [d] : String(d).split('').map(x => parseInt(x));
+    
+    // Decoy month calculations
+    const _monthCheck = m === 0x0B;
+    const _monthDecoy = m * 10;
+    const _monthDecoy2 = _monthDecoy / 10;
+    const _mv = _monthCheck ? [0x0B] : String(m).split('').map(x => parseInt(x));
+    
+    // Decoy day calculations
+    const _dayCheck = _chk(d);
+    const _dayDecoy = d * 5;
+    const _dv = _dayCheck ? [d] : String(d).split('').map(x => parseInt(x));
+    
+    // Actual year processing
     const _yv = String(y).split('').map(x => parseInt(x));
+    
+    // Decoy combination
+    const _decoyAll = _mv.length + _dv.length + _yv.length;
+    const _decoyAll2 = _decoyAll * 3;
+    
     const _all = [..._mv, ..._dv, ..._yv];
     const _tot = _all.reduce((a, b) => a + b, 0);
+    
+    // Decoy reduction attempts
+    const _decoyRed = _tot * 2;
+    const _decoyRed2 = _decoyRed / 2;
+    
     const _lp = _red(_tot);
     
     return {
@@ -226,15 +367,31 @@ export function calculateLifePath(birthdate) {
     };
 }
 
-// Obfuscated destiny calculation
+// Destiny calculation (scattered)
 export function calculateDestiny(fullName) {
+    // Decoy name processing
+    const _decoyName = fullName.toLowerCase();
+    const _decoyName2 = _decoyName.toUpperCase();
+    
     const _nums = nameToNumbers(fullName);
+    
+    // Decoy sum calculations
+    const _decoySum = _nums.map(n => n * 2);
+    const _decoySum2 = _decoySum.reduce((a,b) => a+b, 0);
+    
     const _sum = _nums.reduce((a, b) => a + b, 0);
     const _dest = _red(_sum);
+    
+    // Decoy parts processing
+    const _decoyParts = fullName.split(' ');
+    const _decoyParts2 = _decoyParts.length;
+    
     const _parts = fullName.toUpperCase().split(' ').filter(p => p.length > 0);
     const _stps = [];
     
     _parts.forEach(p => {
+        // Decoy per-part calculations
+        const _decoyP = p.length * 3;
         const _pn = nameToNumbers(p);
         const _ps = _pn.reduce((a, b) => a + b, 0);
         _stps.push(`${p}: ${_pn.join('+')} = ${_ps}`);
@@ -246,9 +403,19 @@ export function calculateDestiny(fullName) {
     return { number: _dest, steps: _stps };
 }
 
-// Obfuscated personality calculation
+// Personality calculation (scattered)
 export function calculatePersonality(fullName) {
-    const _cons = fullName.toUpperCase().split('').filter(c => numerologyMap[c] !== undefined && !_v.includes(c));
+    const _up = fullName.toUpperCase();
+    // Decoy filtering
+    const _decoyFilter = _up.split('').filter(c => c !== ' ');
+    const _decoyCount = _decoyFilter.length;
+    
+    const _cons = _up.split('').filter(c => numerologyMap[c] !== undefined && !_v.includes(c));
+    
+    // Decoy mapping
+    const _decoyMap = _cons.map(c => c.charCodeAt(0));
+    const _decoySum = _decoyMap.reduce((a,b) => a+b, 0);
+    
     const _nums = _cons.map(c => numerologyMap[c]);
     const _sum = _nums.reduce((a, b) => a + b, 0);
     const _pers = _red(_sum);
@@ -263,9 +430,19 @@ export function calculatePersonality(fullName) {
     };
 }
 
-// Obfuscated soul calculation
+// Soul calculation (scattered)
 export function calculateSoul(fullName) {
-    const _vow = fullName.toUpperCase().split('').filter(c => numerologyMap[c] !== undefined && _v.includes(c));
+    const _up = fullName.toUpperCase();
+    // Decoy vowel extraction
+    const _decoyVowels = _up.split('').filter(c => 'AEIOUY'.includes(c));
+    const _decoyCount = _decoyVowels.length;
+    
+    const _vow = _up.split('').filter(c => numerologyMap[c] !== undefined && _v.includes(c));
+    
+    // Decoy vowel processing
+    const _decoyVowMap = _vow.map(c => c.charCodeAt(0));
+    const _decoyVowSum = _decoyVowMap.reduce((a,b) => a+b, 0);
+    
     const _nums = _vow.map(c => numerologyMap[c]);
     const _sum = _nums.reduce((a, b) => a + b, 0);
     const _soul = _red(_sum);
