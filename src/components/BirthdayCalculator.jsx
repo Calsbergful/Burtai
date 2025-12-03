@@ -28,7 +28,13 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     const westernZodiac = { sign: westernZodiacSign };
                     
                     // Calculate personal year
-                    const personalYear = calculatePersonalYear(parseInt(m), parseInt(d), parseInt(y));
+                    let personalYear;
+                    try {
+                        personalYear = calculatePersonalYear(parseInt(m), parseInt(d), parseInt(y));
+                    } catch (error) {
+                        console.error('Error calculating personal year:', error);
+                        personalYear = null;
+                    }
                     
                     // Get relationships based on Chinese zodiac
                     const soulmates = soulmateRelationships[chineseZodiac.zodiac] || [];
@@ -42,7 +48,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     
                     setResults({
                         lifePath,
-                        personalYear,
+                        personalYear: personalYear || { current: 0, next: 0, month: 0, day: 0 },
                         chineseZodiac,
                         westernZodiac,
                         friendly: friendlyAnimals,
@@ -251,12 +257,13 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         </div>
 
                         {/* Personal Year */}
+                        {results.personalYear && (
                         <div className="border-t border-purple-400/20 pt-4">
                             <div className="grid grid-cols-2 gap-4 items-center">
                                 {/* Current Personal Year */}
                                 <div className="text-center">
                                     {(() => {
-                                        const currentPY = results.personalYear.current;
+                                        const currentPY = results.personalYear?.current || 0;
                                         const isSpecialPY = masterNumbers.includes(currentPY) || currentPY === 20 || currentPY === 28 || currentPY === 29;
                                         return (
                                             <>
@@ -310,9 +317,10 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                 </div>
                             </div>
                         </div>
+                        )}
 
                         {/* Personal Month */}
-                        {results.personalYear.month && (
+                        {results.personalYear && results.personalYear.month && (
                             <div className="border-t border-purple-400/20 pt-4">
                                 <div className="grid grid-cols-2 gap-4 items-center">
                                     {/* Current Personal Month */}
@@ -381,7 +389,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         )}
 
                         {/* Personal Day */}
-                        {results.personalYear.day && (
+                        {results.personalYear && results.personalYear.day && (
                             <div className="border-t border-purple-400/20 pt-4">
                                 <div className="grid grid-cols-2 gap-4 items-center">
                                     {/* Current Personal Day */}
