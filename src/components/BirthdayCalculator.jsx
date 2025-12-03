@@ -560,7 +560,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         {/* Birth Hour Animal (Personal Birthday Only) */}
                         {results.birthHourAnimal && (
                             <div className="border-t border-purple-400/20 pt-4">
-                                <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 flex-wrap">
+                                <div className="flex items-center justify-start gap-4 sm:gap-6 md:gap-8 flex-wrap">
                                     {/* Birth Hour Animal with Friendly on left and Enemies on right */}
                                     <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
                                         {/* Friendly (including soulmates) - LEFT side */}
