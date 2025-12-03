@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { calculateLifePath, reduceNumber, masterNumbers, calculatePersonalYear } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
 import { getWesternZodiac, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
-import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals } from '../utils/hourAnimals';
+import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals, getHourAnimal, getFriendlyHours, getEnemyHours, hourAnimalEmojis, formatHourRange } from '../utils/hourAnimals';
 
 export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
     const [month, setMonth] = useState('');
@@ -46,6 +46,25 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     const friendlyAnimals = hourAnimals.filter(ha => allFriendly.includes(ha.animal));
                     const soulmateAnimals = hourAnimals.filter(ha => soulmates.includes(ha.animal));
                     
+                    // Calculate hour animal for personal birthday (03:40 = Tiger hour)
+                    let birthHourAnimal = null;
+                    let birthHourFriendly = [];
+                    let birthHourEnemies = [];
+                    let birthHourSoulmates = [];
+                    
+                    // Check if this is the personal birthday (11/26/1996)
+                    if (parseInt(m) === 11 && parseInt(d) === 26 && parseInt(y) === 1996) {
+                        const hour = 3; // 03:40 = hour 3
+                        birthHourAnimal = getHourAnimal(hour);
+                        const hourSoulmates = soulmateRelationships[birthHourAnimal.animal] || [];
+                        const hourFriendly = friendlyRelationships[birthHourAnimal.animal] || [];
+                        const hourEnemies = enemyRelationships[birthHourAnimal.animal] || [];
+                        
+                        birthHourFriendly = getFriendlyHours(birthHourAnimal.animal);
+                        birthHourEnemies = getEnemyHours(birthHourAnimal.animal);
+                        birthHourSoulmates = hourAnimals.filter(ha => hourSoulmates.includes(ha.animal));
+                    }
+                    
                     setResults({
                         lifePath,
                         personalYear: personalYear || { current: 0, next: 0, month: 0, day: 0 },
@@ -53,7 +72,11 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         westernZodiac,
                         friendly: friendlyAnimals,
                         soulmateAnimals: soulmateAnimals.map(ha => ha.animal),
-                        enemies: hourAnimals.filter(ha => enemies.includes(ha.animal))
+                        enemies: hourAnimals.filter(ha => enemies.includes(ha.animal)),
+                        birthHourAnimal,
+                        birthHourFriendly,
+                        birthHourEnemies,
+                        birthHourSoulmates: birthHourSoulmates.map(ha => ha.animal)
                     });
                 } else {
                     setResults(null);
@@ -533,6 +556,80 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Birth Hour Animal (Personal Birthday Only) */}
+                        {results.birthHourAnimal && (
+                            <div className="border-t border-purple-400/20 pt-4">
+                                <div className="flex items-center justify-between gap-4 sm:gap-6 md:gap-8 flex-wrap">
+                                    {/* Birth Hour Animal with Friendly on left and Enemies on right */}
+                                    <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0 mx-auto">
+                                        {/* Friendly (including soulmates) - LEFT side */}
+                                        {results.birthHourFriendly.length > 0 && (
+                                            <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
+                                                {results.birthHourFriendly.map((animal, index) => {
+                                                    const isSoulmate = results.birthHourSoulmates.includes(animal.animal);
+                                                    return (
+                                                        <motion.div
+                                                            key={index}
+                                                            initial={{ opacity: 0, scale: 0.8 }}
+                                                            animate={{ opacity: 1, scale: 1 }}
+                                                            transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
+                                                            className={`text-center p-1.5 sm:p-2 rounded-lg ${
+                                                                isSoulmate 
+                                                                    ? 'bg-gradient-to-br from-pink-500/30 to-pink-600/20 border border-pink-400/60' 
+                                                                    : 'bg-green-500/20 border border-green-400/30'
+                                                            }`}
+                                                            style={isSoulmate ? {
+                                                                boxShadow: '0 0 8px rgba(236, 72, 153, 0.3)'
+                                                            } : {}}
+                                                            title={`${animal.name} (${formatHourRange(animal.start, animal.end)})`}
+                                                        >
+                                                            <div className="text-xl sm:text-2xl mb-0.5 relative">
+                                                                {hourAnimalEmojis[animal.animal]}
+                                                                {isSoulmate && (
+                                                                    <span className="absolute -top-0.5 -right-0.5 text-xs">⭐</span>
+                                                                )}
+                                                            </div>
+                                                        </motion.div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                        
+                                        {/* Birth Hour Animal - CENTER */}
+                                        <div className="text-center">
+                                            <div className="text-5xl sm:text-6xl md:text-7xl mb-2">
+                                                {hourAnimalEmojis[results.birthHourAnimal.animal]}
+                                            </div>
+                                            <div className="text-lg sm:text-xl font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                                {results.birthHourAnimal.name}
+                                            </div>
+                                            <div className="text-xs sm:text-sm text-white/70 mt-1">
+                                                {String(results.birthHourAnimal.start).padStart(2, '0')}:40
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Enemies - RIGHT side */}
+                                        {results.birthHourEnemies.length > 0 && (
+                                            <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
+                                                {results.birthHourEnemies.map((animal, index) => (
+                                                    <motion.div
+                                                        key={index}
+                                                        initial={{ opacity: 0, scale: 0.8 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
+                                                        className="text-center p-1.5 sm:p-2 rounded-lg bg-red-500/20 border border-red-400/30"
+                                                        title={`${animal.name} (${formatHourRange(animal.start, animal.end)})`}
+                                                    >
+                                                        <div className="text-xl sm:text-2xl mb-0.5">{hourAnimalEmojis[animal.animal]}</div>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </motion.div>
             )}
