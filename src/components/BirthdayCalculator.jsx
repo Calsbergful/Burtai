@@ -12,46 +12,51 @@ export default function BirthdayCalculator({ personalBirthdayTrigger }) {
     const [results, setResults] = useState(null);
 
     const calculateResults = (m, d, y) => {
-        if (m && d && y) {
-            // Format date as YYYY-MM-DD
-            const monthStr = String(m).padStart(2, '0');
-            const dayStr = String(d).padStart(2, '0');
-            const date = `${y}-${monthStr}-${dayStr}`;
-            
-            // Validate date
-            const dateObj = new Date(y, m - 1, d);
-            if (dateObj.getFullYear() == y && dateObj.getMonth() == m - 1 && dateObj.getDate() == d) {
-                const lifePath = calculateLifePath(date);
-                const chineseZodiac = getChineseZodiac(date);
-                const westernZodiacSign = getWesternZodiac(parseInt(m), parseInt(d));
-                const westernZodiac = { sign: westernZodiacSign };
+        try {
+            if (m && d && y) {
+                // Format date as YYYY-MM-DD
+                const monthStr = String(m).padStart(2, '0');
+                const dayStr = String(d).padStart(2, '0');
+                const date = `${y}-${monthStr}-${dayStr}`;
                 
-                // Calculate personal year
-                const personalYear = calculatePersonalYear(parseInt(m), parseInt(d), parseInt(y));
-                
-                // Get relationships based on Chinese zodiac
-                const soulmates = soulmateRelationships[chineseZodiac.zodiac] || [];
-                const friendly = friendlyRelationships[chineseZodiac.zodiac] || [];
-                const enemies = enemyRelationships[chineseZodiac.zodiac] || [];
-                
-                // Combine soulmates with friendly, but mark soulmates
-                const allFriendly = [...friendly, ...soulmates];
-                const friendlyAnimals = hourAnimals.filter(ha => allFriendly.includes(ha.animal));
-                const soulmateAnimals = hourAnimals.filter(ha => soulmates.includes(ha.animal));
-                
-                setResults({
-                    lifePath,
-                    personalYear,
-                    chineseZodiac,
-                    westernZodiac,
-                    friendly: friendlyAnimals,
-                    soulmateAnimals: soulmateAnimals.map(ha => ha.animal),
-                    enemies: hourAnimals.filter(ha => enemies.includes(ha.animal))
-                });
+                // Validate date
+                const dateObj = new Date(y, m - 1, d);
+                if (dateObj.getFullYear() == y && dateObj.getMonth() == m - 1 && dateObj.getDate() == d) {
+                    const lifePath = calculateLifePath(date);
+                    const chineseZodiac = getChineseZodiac(date);
+                    const westernZodiacSign = getWesternZodiac(parseInt(m), parseInt(d));
+                    const westernZodiac = { sign: westernZodiacSign };
+                    
+                    // Calculate personal year
+                    const personalYear = calculatePersonalYear(parseInt(m), parseInt(d), parseInt(y));
+                    
+                    // Get relationships based on Chinese zodiac
+                    const soulmates = soulmateRelationships[chineseZodiac.zodiac] || [];
+                    const friendly = friendlyRelationships[chineseZodiac.zodiac] || [];
+                    const enemies = enemyRelationships[chineseZodiac.zodiac] || [];
+                    
+                    // Combine soulmates with friendly, but mark soulmates
+                    const allFriendly = [...friendly, ...soulmates];
+                    const friendlyAnimals = hourAnimals.filter(ha => allFriendly.includes(ha.animal));
+                    const soulmateAnimals = hourAnimals.filter(ha => soulmates.includes(ha.animal));
+                    
+                    setResults({
+                        lifePath,
+                        personalYear,
+                        chineseZodiac,
+                        westernZodiac,
+                        friendly: friendlyAnimals,
+                        soulmateAnimals: soulmateAnimals.map(ha => ha.animal),
+                        enemies: hourAnimals.filter(ha => enemies.includes(ha.animal))
+                    });
+                } else {
+                    setResults(null);
+                }
             } else {
                 setResults(null);
             }
-        } else {
+        } catch (error) {
+            console.error('Error calculating results:', error);
             setResults(null);
         }
     };
@@ -59,14 +64,19 @@ export default function BirthdayCalculator({ personalBirthdayTrigger }) {
     // Handle personal birthday trigger
     useEffect(() => {
         if (personalBirthdayTrigger && personalBirthdayTrigger > 0) {
-            setMonth('11');
-            setDay('26');
-            setYear('1996');
-            // Use setTimeout to ensure state updates are processed
-            setTimeout(() => {
-                calculateResults('11', '26', '1996');
-            }, 0);
+            try {
+                setMonth('11');
+                setDay('26');
+                setYear('1996');
+                // Use setTimeout to ensure state updates are processed
+                setTimeout(() => {
+                    calculateResults('11', '26', '1996');
+                }, 0);
+            } catch (error) {
+                console.error('Error loading personal birthday:', error);
+            }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [personalBirthdayTrigger]);
 
     const handleMonthChange = (e) => {
