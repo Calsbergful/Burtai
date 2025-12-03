@@ -16,6 +16,7 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
                     { id: 'letterology', label: 'Raidės', icon: '🔤' },
                     { id: 'hidden-numerology', label: 'Hmmm..', icon: '🔮' },
                     { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
+                    { id: 'personal-birthday', label: 'Asmeninis', icon: '⭐' },
                     { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
                 ];
 

@@ -18,6 +18,9 @@ function App() {
       setActiveView('hours');
     } else if (menuId === 'life-path-settings') {
       setActiveView('birthday');
+    } else if (menuId === 'personal-birthday') {
+      setActiveView('birthday');
+      setPersonalBirthdayTrigger(prev => prev + 1);
     } else if (menuId === 'letterology') {
       setActiveView('letterology');
     } else if (menuId === 'hidden-numerology') {
@@ -95,7 +98,7 @@ function App() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <BirthdayCalculator />
+              <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
             </motion.div>
           ) : activeView === 'letterology' ? (
             <motion.div
@@ -124,6 +127,7 @@ function App() {
       <FooterMenu onMenuClick={handleMenuClick} activeMenuId={
         activeView === 'calculator' ? 'calculator' :
         activeView === 'hours' ? 'friendly-enemy-hours' : 
+        activeView === 'birthday' && personalBirthdayTrigger > 0 ? 'personal-birthday' :
         activeView === 'birthday' ? 'life-path-settings' : 
         activeView === 'letterology' ? 'letterology' :
         activeView === 'hidden-numerology' ? 'hidden-numerology' :
