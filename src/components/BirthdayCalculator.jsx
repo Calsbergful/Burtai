@@ -11,16 +11,6 @@ export default function BirthdayCalculator({ personalBirthdayTrigger }) {
     const [year, setYear] = useState('');
     const [results, setResults] = useState(null);
 
-    // Handle personal birthday trigger
-    useEffect(() => {
-        if (personalBirthdayTrigger > 0) {
-            setMonth('11');
-            setDay('26');
-            setYear('1996');
-            calculateResults('11', '26', '1996');
-        }
-    }, [personalBirthdayTrigger]);
-
     const calculateResults = (m, d, y) => {
         if (m && d && y) {
             // Format date as YYYY-MM-DD
@@ -65,6 +55,16 @@ export default function BirthdayCalculator({ personalBirthdayTrigger }) {
             setResults(null);
         }
     };
+
+    // Handle personal birthday trigger
+    useEffect(() => {
+        if (personalBirthdayTrigger && personalBirthdayTrigger > 0) {
+            setMonth('11');
+            setDay('26');
+            setYear('1996');
+            calculateResults('11', '26', '1996');
+        }
+    }, [personalBirthdayTrigger]);
 
     const handleMonthChange = (e) => {
         const value = e.target.value.replace(/\D/g, '').slice(0, 2);
