@@ -33,10 +33,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-20 sm:pb-24 md:pb-32 lg:pb-40">
+    <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-[70px] sm:pb-[75px] md:pb-[80px]">
       <CosmicBackground />
       <main className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <header className="text-center text-white mb-6 sm:mb-8 md:mb-12 relative z-10 w-full">
+        <header className="text-center text-white mb-4 sm:mb-5 md:mb-6 relative z-10 w-full">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ 
@@ -125,6 +125,11 @@ function App() {
           )}
         </AnimatePresence>
       </main>
+
+      {/* Homage Text */}
+      <div className="fixed bottom-[50px] sm:bottom-[55px] left-0 right-0 z-40 text-center text-white/60 py-0.5 px-2 text-[9px] sm:text-[10px]" style={{ textShadow: '0 0 6px rgba(138, 43, 226, 0.3)' }}>
+        HOMAGE TO GARRY 33 FEET SNAKE
+      </div>
 
       <FooterMenu onMenuClick={handleMenuClick} activeMenuId={
         activeView === 'calculator' ? 'calculator' :

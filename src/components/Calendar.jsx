@@ -90,7 +90,7 @@ export default function Calendar({ onDateSelect }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-2xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto"
+            className="backdrop-blur-xl bg-black/30 rounded-xl sm:rounded-2xl p-1.5 sm:p-3 md:p-4 lg:p-6 shadow-2xl shadow-purple-500/30 border border-purple-500/20 max-w-5xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto w-full"
             style={{
                 willChange: 'transform, opacity',
                 background: 'linear-gradient(135deg, rgba(10, 10, 26, 0.6) 0%, rgba(26, 10, 46, 0.5) 50%, rgba(15, 52, 96, 0.4) 100%)',
@@ -98,7 +98,7 @@ export default function Calendar({ onDateSelect }) {
             }}
         >
             {/* Calendar Header */}
-            <div className="flex items-center justify-between mb-1 sm:mb-2">
+            <div className="flex items-center justify-between mb-1 sm:mb-1.5">
                 <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -161,11 +161,11 @@ export default function Calendar({ onDateSelect }) {
             </div>
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-0.5 sm:gap-1 md:gap-2 mb-1 sm:mb-1.5">
+            <div className="grid grid-cols-7 gap-1 sm:gap-1 md:gap-2 mb-0.5 sm:mb-1">
                 {dayNames.map((dayName, index) => (
                     <div
                         key={index}
-                        className="text-center text-xs sm:text-sm md:text-base font-semibold text-white/70 py-1 sm:py-2"
+                        className="text-center text-sm sm:text-sm md:text-base font-semibold text-white/70 py-1 sm:py-2"
                         style={{ textShadow: '0 0 8px rgba(138, 43, 226, 0.4)' }}
                     >
                         {dayName}
@@ -174,10 +174,10 @@ export default function Calendar({ onDateSelect }) {
             </div>
 
             {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-0.5 sm:gap-1 md:gap-2 lg:gap-3">
+            <div className="grid grid-cols-7 gap-1 sm:gap-1 md:gap-2 lg:gap-3">
                 {/* Empty cells for days before the first day of the month */}
                 {Array.from({ length: firstDayOfMonth }).map((_, index) => (
-                    <div key={`empty-${index}`} className="h-[40px] sm:h-[48px] md:h-[56px] lg:h-[64px] xl:h-[72px]" />
+                    <div key={`empty-${index}`} className="h-[56px] sm:h-[60px] md:h-[64px] lg:h-[72px] xl:h-[80px]" />
                 ))}
                 
                 {/* Current month days */}
@@ -204,9 +204,9 @@ export default function Calendar({ onDateSelect }) {
                             transition={{ type: "spring", stiffness: 400, damping: 25 }}
                             className={`
                                 rounded-md sm:rounded-lg transition-all text-white cursor-pointer 
-                                h-[40px] sm:h-[48px] md:h-[56px] lg:h-[64px] xl:h-[72px]
-                                min-w-[40px] sm:min-w-[48px] md:min-w-[56px] lg:min-w-[64px] xl:min-w-[72px]
-                                text-sm sm:text-base md:text-lg lg:text-xl font-medium
+                                h-[56px] sm:h-[60px] md:h-[64px] lg:h-[72px] xl:h-[80px]
+                                min-w-[56px] sm:min-w-[60px] md:min-w-[64px] lg:min-w-[72px] xl:min-w-[80px]
+                                text-lg sm:text-xl md:text-xl lg:text-2xl font-medium
                                 flex flex-col items-center justify-center
                                 ${isZodiacNewYear
                                     ? 'bg-gradient-to-br from-yellow-500/40 to-orange-500/40 text-white border-2 border-yellow-400/60 shadow-lg'
@@ -232,7 +232,7 @@ export default function Calendar({ onDateSelect }) {
                                 textShadow: '0 0 8px rgba(251, 191, 36, 0.8), 0 0 12px rgba(245, 158, 11, 0.6)'
                             } : {}}>{day}</span>
                             <span 
-                                className={`text-[9px] sm:text-[10px] md:text-xs lg:text-sm font-normal ${
+                                className={`text-[11px] sm:text-xs md:text-sm lg:text-base font-normal ${
                                     isSpecialSum 
                                         ? 'text-yellow-300 font-bold opacity-100' 
                                         : 'opacity-70'

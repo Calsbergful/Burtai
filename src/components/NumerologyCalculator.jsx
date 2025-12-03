@@ -56,7 +56,7 @@ export default function NumerologyCalculator() {
     };
 
     return (
-        <div className="w-full max-w-6xl mx-auto mb-8 md:mb-12 lg:mb-16">
+        <div className="w-full max-w-6xl mx-auto mb-4 sm:mb-5 md:mb-6">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
