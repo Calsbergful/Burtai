@@ -29,38 +29,35 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     const westernZodiacSign = getWesternZodiac(parseInt(m), parseInt(d));
                     const westernZodiac = { sign: westernZodiacSign };
                     
-                    // Calculate personal year
+                    // Calculate personal year (always uses current device time)
                     let personalYear;
                     try {
                         personalYear = calculatePersonalYear(parseInt(m), parseInt(d), parseInt(y));
                         
-                        // If hour is provided, calculate personal hour
-                        if (h !== null && h !== '') {
-                            const hourNum = parseInt(h, 10);
-                            if (!isNaN(hourNum) && hourNum >= 0 && hourNum <= 23) {
-                                // Calculate personal hour (personal day + hour)
-                                const personalDayNum = personalYear.day;
-                                const personalHourSum = personalDayNum + hourNum;
-                                const personalHourNum = reducePersonalYear(personalHourSum);
-                                
-                                // Calculate next personal hour
-                                let nextHourNum, nextPersonalHourSum, nextPersonalHourNum;
-                                if (hourNum === 23) {
-                                    nextHourNum = 0;
-                                    nextPersonalHourSum = personalYear.nextDay + nextHourNum;
-                                    nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
-                                } else {
-                                    nextHourNum = hourNum + 1;
-                                    nextPersonalHourSum = personalDayNum + nextHourNum;
-                                    nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
-                                }
-                                
-                                personalYear.hour = personalHourNum;
-                                personalYear.hourNumber = hourNum;
-                                personalYear.nextHour = nextPersonalHourNum;
-                                personalYear.nextHourNumber = nextHourNum;
-                            }
+                        // Personal hour is always calculated from current device time, not input hour
+                        // The input hour is only used for birth hour animal display
+                        const now = new Date();
+                        const currentHour = now.getHours(); // Uses device's local timezone
+                        const personalDayNum = personalYear.day;
+                        const personalHourSum = personalDayNum + currentHour;
+                        const personalHourNum = reducePersonalYear(personalHourSum);
+                        
+                        // Calculate next personal hour
+                        let nextHourNum, nextPersonalHourSum, nextPersonalHourNum;
+                        if (currentHour === 23) {
+                            nextHourNum = 0;
+                            nextPersonalHourSum = personalYear.nextDay + nextHourNum;
+                            nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
+                        } else {
+                            nextHourNum = currentHour + 1;
+                            nextPersonalHourSum = personalDayNum + nextHourNum;
+                            nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
                         }
+                        
+                        personalYear.hour = personalHourNum;
+                        personalYear.hourNumber = currentHour;
+                        personalYear.nextHour = nextPersonalHourNum;
+                        personalYear.nextHourNumber = nextHourNum;
                     } catch (error) {
                         console.error('Error calculating personal year:', error);
                         personalYear = null;
@@ -134,9 +131,11 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                 setMonth('11');
                 setDay('26');
                 setYear('1996');
+                setHour('03');
+                setMinute('40');
                 // Use setTimeout to ensure state updates are processed
                 setTimeout(() => {
-                    calculateResults('11', '26', '1996', '3', '40');
+                    calculateResults('11', '26', '1996', '03', '40');
                 }, 0);
             } catch (error) {
                 console.error('Error loading personal birthday:', error);
@@ -152,6 +151,35 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [personalBirthdayTrigger]);
+
+    // Auto-refresh personal stats every minute to keep them up-to-date
+    useEffect(() => {
+        // Only set up auto-refresh if we have results and a valid date
+        if (!results || !month || !day || !year) {
+            return;
+        }
+
+        // Calculate time until next minute to align with minute boundaries
+        const now = new Date();
+        const msUntilNextMinute = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+        
+        // Set initial timeout to align with next minute
+        const initialTimeout = setTimeout(() => {
+            // Recalculate immediately
+            calculateResults(month, day, year, hour || null, minute || null);
+            
+            // Then set up interval to refresh every minute
+            const interval = setInterval(() => {
+                calculateResults(month, day, year, hour || null, minute || null);
+            }, 60000); // 60 seconds = 1 minute
+            
+            // Cleanup function
+            return () => clearInterval(interval);
+        }, msUntilNextMinute);
+
+        // Cleanup function for initial timeout
+        return () => clearTimeout(initialTimeout);
+    }, [month, day, year, hour, minute, results]);
 
     const handleMonthChange = (e) => {
         const value = e.target.value.replace(/\D/g, '').slice(0, 2);
@@ -728,10 +756,18 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                     
                                     {/* Western Zodiac - Right of enemies */}
                                     <div className="text-center">
-                                        <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-7xl 2xl:text-6xl mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1">
+                                        <div className={`mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1 ${
+                                            personalBirthdayTrigger > 0 
+                                                ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl 2xl:text-4xl'
+                                                : 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-7xl 2xl:text-6xl'
+                                        }`}>
                                             {zodiacSignEmojis[results.westernZodiac.sign]}
                                         </div>
-                                        <div className="text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
+                                        <div className={`font-bold text-white ${
+                                            personalBirthdayTrigger > 0
+                                                ? 'text-sm sm:text-base md:text-lg xl:text-base 2xl:text-sm'
+                                                : 'text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-lg'
+                                        }`} style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
                                             {zodiacSignTranslations[results.westernZodiac.sign]}
                                         </div>
                                     </div>
@@ -784,14 +820,8 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-7xl 2xl:text-6xl mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1">
                                             {hourAnimalEmojis[results.birthHourAnimal.animal]}
                                         </div>
-                                        <div className="text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
-                                            {results.birthHourAnimal.name}
-                                        </div>
-                                        <div className="text-sm sm:text-base xl:text-sm 2xl:text-xs text-white/70 mt-1 xl:mt-0.5 2xl:mt-0.5">
-                                            {results.inputHour !== null && results.inputMinute !== null 
-                                                ? `${String(results.inputHour).padStart(2, '0')}:${String(results.inputMinute).padStart(2, '0')}`
-                                                : `${String(results.birthHourAnimal.start).padStart(2, '0')}:40`
-                                            }
+                                        <div className="text-[8px] sm:text-[9px] text-white/60">
+                                            {formatHourRange(results.birthHourAnimal.start, results.birthHourAnimal.end)}
                                         </div>
                                     </div>
                                     
