@@ -19,6 +19,7 @@ function App() {
       setActiveView('hours');
     } else if (menuId === 'life-path-settings') {
       setActiveView('birthday');
+      setPersonalBirthdayTrigger(0); // Reset to show regular birthday input
     } else if (menuId === 'personal-birthday') {
       setActiveView('birthday');
       setPersonalBirthdayTrigger(prev => prev + 1);
