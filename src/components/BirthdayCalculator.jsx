@@ -111,6 +111,24 @@ export default function BirthdayCalculator() {
                 <label className="block text-lg sm:text-xl font-semibold text-white mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}>
                     Įveskite Gimimo Datą
                 </label>
+                <div className="flex justify-center mb-4">
+                    <motion.button
+                        onClick={() => {
+                            setMonth('11');
+                            setDay('26');
+                            setYear('1996');
+                            calculateResults('11', '26', '1996');
+                        }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-4 py-2 rounded-xl bg-purple-500/30 border border-purple-400/50 text-white text-sm font-medium hover:bg-purple-500/40 transition-all"
+                        style={{
+                            boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.3)'
+                        }}
+                    >
+                        Asmeninis Gimtadienis
+                    </motion.button>
+                </div>
                 <div className="flex justify-center items-center gap-2 sm:gap-4 max-w-md mx-auto">
                     <div className="flex flex-col items-center">
                         <label className="text-sm text-white/70 mb-2">Mėnuo</label>
