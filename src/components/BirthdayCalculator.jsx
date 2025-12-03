@@ -233,6 +233,77 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     transition={{ duration: 0.4, delay: 0.2 }}
                 >
                     <div className="backdrop-blur-lg rounded-xl p-2 sm:p-3 md:p-4 border border-purple-400/30 space-y-2 sm:space-y-2.5 md:space-y-3">
+                        {/* Life Path Number and Day - Only show for regular birthday (not personal) */}
+                        {(!personalBirthdayTrigger || personalBirthdayTrigger === 0) && (
+                        <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-8 items-center">
+                            {/* Left side - Life Path */}
+                            <div className="text-center">
+                                {(() => {
+                                    const lifePathNum = results.lifePath.number;
+                                    const lifePathTotal = results.lifePath.total;
+                                    const isSpecialTotal = masterNumbers.includes(lifePathTotal) || lifePathTotal === 20 || lifePathTotal === 28 || lifePathTotal === 29;
+                                    const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
+                                    return (
+                                        <div className="flex items-center justify-center gap-2 sm:gap-3">
+                                            {lifePathTotal !== lifePathNum && (
+                                                <>
+                                                    <div 
+                                                        className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                            isSpecialTotal ? 'text-yellow-300' : 'text-white/80'
+                                                        }`}
+                                                        style={isSpecialTotal ? {
+                                                            textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 15px rgba(138, 43, 226, 0.6)'
+                                                        }}
+                                                    >
+                                                        {lifePathTotal}
+                                                    </div>
+                                                    <span className="text-2xl sm:text-3xl md:text-4xl text-white/60">→</span>
+                                                </>
+                                            )}
+                                            <div 
+                                                className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    isSpecialLifePath ? 'text-yellow-300' : 'text-white'
+                                                }`}
+                                                style={isSpecialLifePath ? {
+                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                } : {
+                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                }}
+                                            >
+                                                {lifePathNum}
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+
+                            {/* Right side - Day */}
+                            <div className="text-center">
+                                {(() => {
+                                    const dayNum = parseInt(day);
+                                    const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
+                                    
+                                    return (
+                                        <div 
+                                            className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                            }`}
+                                            style={isSpecialDay ? {
+                                                textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                            } : {
+                                                textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                            }}
+                                        >
+                                            {dayNum}
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+                        </div>
+                        )}
+
                         {/* Personal Stats - Combined compact layout */}
                         {results.personalYear && (
                         <div>

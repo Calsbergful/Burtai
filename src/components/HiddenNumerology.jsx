@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { calculateLifePath, reduceNumber, masterNumbers } from '../utils/numerology';
+import { calculateLifePath, reduceNumber, masterNumbers, calculatePersonalYear } from '../utils/numerology';
 import { convertDate } from '../utils/dateConverter';
 
 export default function HiddenNumerology() {
@@ -53,11 +53,25 @@ export default function HiddenNumerology() {
                             lifePath = calculateLifePath(convertedDateStr);
                         }
                         
+                        // Calculate personal year, month, day, and hour using converted date (not Gregorian)
+                        let personalYear;
+                        try {
+                            // Use converted date for personal calculations
+                            const convertedMonth = convertedDate.month;
+                            const convertedDay = convertedDate.day;
+                            const convertedYear = convertedDate.yearNumber;
+                            personalYear = calculatePersonalYear(convertedMonth, convertedDay, convertedYear);
+                        } catch (error) {
+                            console.error('Error calculating personal year:', error);
+                            personalYear = null;
+                        }
+                        
                         setResults({
                             gregorianDate,
                             convertedDate,
                             lifePath,
-                            isSpecialDate
+                            isSpecialDate,
+                            personalYear
                         });
                     } else {
                         setResults(null);
@@ -202,23 +216,42 @@ export default function HiddenNumerology() {
                     className="space-y-6"
                 >
                     {/* Combined Results and Calculation */}
-                    <div className="backdrop-blur-lg rounded-xl p-4 sm:p-6 border border-purple-400/30">
-                        <div className="space-y-6">
-                            {/* Life Path Calculation */}
-                            <div>
-                                <div className="grid grid-cols-2 gap-4 items-center">
-                                    {/* Life Path Number */}
-                                    <div className="text-center">
-                                        {(() => {
-                                            const lifePathNum = results.lifePath.number;
-                                            const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
-                                            
-                                            // For special date, show 22/33
-                                            const displayValue = results.isSpecialDate ? '22/33' : lifePathNum;
-                                            
-                                            return (
+                    <div className="backdrop-blur-lg rounded-xl p-2 sm:p-3 md:p-4 border border-purple-400/30 space-y-2 sm:space-y-2.5 md:space-y-3">
+                        {/* Life Path Calculation */}
+                        <div>
+                            <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-8 items-center">
+                                {/* Life Path Number */}
+                                <div className="text-center">
+                                    {(() => {
+                                        const lifePathNum = results.lifePath.number;
+                                        const lifePathTotal = results.lifePath.total;
+                                        const isSpecialTotal = masterNumbers.includes(lifePathTotal) || lifePathTotal === 20 || lifePathTotal === 28 || lifePathTotal === 29;
+                                        const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 20 || lifePathNum === 28 || lifePathNum === 29;
+                                        
+                                        // For special date, show 22/33
+                                        const displayValue = results.isSpecialDate ? '22/33' : lifePathNum;
+                                        
+                                        return (
+                                            <div className="flex items-center justify-center gap-2 sm:gap-3">
+                                                {!results.isSpecialDate && lifePathTotal !== lifePathNum && (
+                                                    <>
+                                                        <div 
+                                                            className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                                isSpecialTotal ? 'text-yellow-300' : 'text-white/80'
+                                                            }`}
+                                                            style={isSpecialTotal ? {
+                                                                textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                            } : {
+                                                                textShadow: '0 0 15px rgba(138, 43, 226, 0.6)'
+                                                            }}
+                                                        >
+                                                            {lifePathTotal}
+                                                        </div>
+                                                        <span className="text-2xl sm:text-3xl md:text-4xl text-white/60">→</span>
+                                                    </>
+                                                )}
                                                 <div 
-                                                    className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialLifePath || results.isSpecialDate ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={(isSpecialLifePath || results.isSpecialDate) ? {
@@ -229,37 +262,287 @@ export default function HiddenNumerology() {
                                                 >
                                                     {displayValue}
                                                 </div>
-                                            );
-                                        })()}
-                                    </div>
+                                            </div>
+                                        );
+                                    })()}
+                                </div>
 
-                                    {/* Day Number */}
-                                    <div className="text-center">
-                                        {(() => {
-                                            const dayNum = results.convertedDate.day;
-                                            const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
-                                            return (
-                                                <>
-                                                    <div className="text-sm text-white/70 mb-2">Diena</div>
-                                                    <div 
-                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
-                                                            isSpecialDay ? 'text-yellow-300' : 'text-white'
-                                                        }`}
-                                                        style={isSpecialDay ? {
-                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
-                                                        } : {
-                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
-                                                        }}
-                                                    >
-                                                        {dayNum}
-                                                    </div>
-                                                </>
-                                            );
-                                        })()}
-                                    </div>
+                                {/* Day Number */}
+                                <div className="text-center">
+                                    {(() => {
+                                        const dayNum = results.convertedDate.day;
+                                        const isSpecialDay = masterNumbers.includes(dayNum) || dayNum === 20 || dayNum === 28 || dayNum === 29;
+                                        return (
+                                            <div 
+                                                className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                    isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                                }`}
+                                                style={isSpecialDay ? {
+                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                } : {
+                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                }}
+                                            >
+                                                {dayNum}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             </div>
                         </div>
+
+                        {/* Personal Stats - Combined compact layout */}
+                        {results.personalYear && (
+                        <div className="border-t border-purple-400/20 pt-2 md:pt-3">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 items-center">
+                                {/* Current Personal Year */}
+                                <div className="text-center">
+                                    {(() => {
+                                        const currentPY = results.personalYear?.current || 0;
+                                        const isSpecialPY = masterNumbers.includes(currentPY) || currentPY === 20 || currentPY === 28 || currentPY === 29;
+                                        return (
+                                            <>
+                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Metai</div>
+                                                <div 
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        isSpecialPY ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialPY ? {
+                                                        textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 15px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {currentPY}
+                                                </div>
+                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                    {new Date().getFullYear()}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+
+                                {/* Next Personal Year */}
+                                <div className="text-center">
+                                    {(() => {
+                                        const nextPY = results.personalYear.next;
+                                        const isSpecialPY = masterNumbers.includes(nextPY) || nextPY === 20 || nextPY === 28 || nextPY === 29;
+                                        return (
+                                            <>
+                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Metai</div>
+                                                <div 
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        isSpecialPY ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialPY ? {
+                                                        textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 15px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {nextPY}
+                                                </div>
+                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                    {new Date().getFullYear() + 1}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+
+                                {/* Current Personal Month */}
+                                {results.personalYear.month && (
+                                <div className="text-center">
+                                    {(() => {
+                                        const personalMonth = results.personalYear.month;
+                                        const isSpecialMonth = masterNumbers.includes(personalMonth) || personalMonth === 20 || personalMonth === 28 || personalMonth === 29;
+                                        const monthNames = ['Sau', 'Vas', 'Kov', 'Bal', 'Geg', 'Bir', 'Lie', 'Rug', 'Rgs', 'Spa', 'Lap', 'Gru'];
+                                        const currentMonthName = monthNames[results.personalYear.monthNumber - 1];
+                                        
+                                        return (
+                                            <>
+                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Mėnuo</div>
+                                                <div 
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        isSpecialMonth ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialMonth ? {
+                                                        textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 15px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {personalMonth}
+                                                </div>
+                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                    {currentMonthName}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                                )}
+
+                                {/* Next Personal Month */}
+                                {results.personalYear.nextMonth && (
+                                <div className="text-center">
+                                    {(() => {
+                                        const nextPersonalMonth = results.personalYear.nextMonth;
+                                        const isSpecialMonth = masterNumbers.includes(nextPersonalMonth) || nextPersonalMonth === 20 || nextPersonalMonth === 28 || nextPersonalMonth === 29;
+                                        const monthNames = ['Sau', 'Vas', 'Kov', 'Bal', 'Geg', 'Bir', 'Lie', 'Rug', 'Rgs', 'Spa', 'Lap', 'Gru'];
+                                        const nextMonthName = monthNames[results.personalYear.nextMonthNumber - 1];
+                                        
+                                        return (
+                                            <>
+                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Mėnuo</div>
+                                                <div 
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        isSpecialMonth ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialMonth ? {
+                                                        textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 15px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {nextPersonalMonth}
+                                                </div>
+                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                    {nextMonthName}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                                )}
+
+                                {/* Current Personal Day */}
+                                {results.personalYear.day && (
+                                <div className="text-center">
+                                    {(() => {
+                                        const personalDay = results.personalYear.day;
+                                        const isSpecialDay = masterNumbers.includes(personalDay) || personalDay === 20 || personalDay === 28 || personalDay === 29;
+                                        
+                                        return (
+                                            <>
+                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Diena</div>
+                                                <div 
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialDay ? {
+                                                        textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 15px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {personalDay}
+                                                </div>
+                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                    {results.personalYear.dayNumber}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                                )}
+
+                                {/* Next Personal Day */}
+                                {results.personalYear.nextDay && (
+                                <div className="text-center">
+                                    {(() => {
+                                        const nextPersonalDay = results.personalYear.nextDay;
+                                        const isSpecialDay = masterNumbers.includes(nextPersonalDay) || nextPersonalDay === 20 || nextPersonalDay === 28 || nextPersonalDay === 29;
+                                        
+                                        return (
+                                            <>
+                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Diena</div>
+                                                <div 
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        isSpecialDay ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialDay ? {
+                                                        textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 15px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {nextPersonalDay}
+                                                </div>
+                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                    {results.personalYear.nextDayNumber}
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                                )}
+
+                                {/* Current Personal Hour */}
+                                {results.personalYear.hour !== undefined && (
+                                <div className="text-center">
+                                    {(() => {
+                                        const personalHour = results.personalYear.hour;
+                                        const isSpecialHour = masterNumbers.includes(personalHour) || personalHour === 20 || personalHour === 28 || personalHour === 29;
+                                        
+                                        return (
+                                            <>
+                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Valanda</div>
+                                                <div 
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        isSpecialHour ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialHour ? {
+                                                        textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 15px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {personalHour}
+                                                </div>
+                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                    {String(results.personalYear.hourNumber).padStart(2, '0')}:00
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                                )}
+
+                                {/* Next Personal Hour */}
+                                {results.personalYear.nextHour !== undefined && (
+                                <div className="text-center">
+                                    {(() => {
+                                        const nextPersonalHour = results.personalYear.nextHour;
+                                        const isSpecialHour = masterNumbers.includes(nextPersonalHour) || nextPersonalHour === 20 || nextPersonalHour === 28 || nextPersonalHour === 29;
+                                        
+                                        return (
+                                            <>
+                                                <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Valanda</div>
+                                                <div 
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        isSpecialHour ? 'text-yellow-300' : 'text-white'
+                                                    }`}
+                                                    style={isSpecialHour ? {
+                                                        textShadow: '0 0 15px rgba(251, 191, 36, 0.8), 0 0 25px rgba(245, 158, 11, 0.6)'
+                                                    } : {
+                                                        textShadow: '0 0 15px rgba(138, 43, 226, 0.8)'
+                                                    }}
+                                                >
+                                                    {nextPersonalHour}
+                                                </div>
+                                                <div className="text-[9px] text-white/60 mt-0.5">
+                                                    {String(results.personalYear.nextHourNumber).padStart(2, '0')}:00
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                                )}
+                            </div>
+                        </div>
+                        )}
                     </div>
                 </motion.div>
             )}

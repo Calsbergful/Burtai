@@ -293,6 +293,7 @@ export function calculateLifePath(birthdate) {
     
     return {
         number: lifePath,
+        total: total,
         steps: [
             total !== lifePath 
                 ? `Suma: ${allStr} = ${total} = ${lifePath}`
