@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { calculateLifePath, reduceNumber, masterNumbers, calculatePersonalYear } from '../utils/numerology';
+import { calculateLifePath, reduceNumber, masterNumbers, calculatePersonalYear, reducePersonalYear } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
 import { getWesternZodiac, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals, getHourAnimal, getFriendlyHours, getEnemyHours, hourAnimalEmojis, formatHourRange } from '../utils/hourAnimals';
@@ -9,9 +9,11 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
     const [month, setMonth] = useState('');
     const [day, setDay] = useState('');
     const [year, setYear] = useState('');
+    const [hour, setHour] = useState('');
+    const [minute, setMinute] = useState('');
     const [results, setResults] = useState(null);
 
-    const calculateResults = (m, d, y) => {
+    const calculateResults = (m, d, y, h = null, min = null) => {
         try {
             if (m && d && y) {
                 // Format date as YYYY-MM-DD
@@ -31,6 +33,34 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     let personalYear;
                     try {
                         personalYear = calculatePersonalYear(parseInt(m), parseInt(d), parseInt(y));
+                        
+                        // If hour is provided, calculate personal hour
+                        if (h !== null && h !== '') {
+                            const hourNum = parseInt(h, 10);
+                            if (!isNaN(hourNum) && hourNum >= 0 && hourNum <= 23) {
+                                // Calculate personal hour (personal day + hour)
+                                const personalDayNum = personalYear.day;
+                                const personalHourSum = personalDayNum + hourNum;
+                                const personalHourNum = reducePersonalYear(personalHourSum);
+                                
+                                // Calculate next personal hour
+                                let nextHourNum, nextPersonalHourSum, nextPersonalHourNum;
+                                if (hourNum === 23) {
+                                    nextHourNum = 0;
+                                    nextPersonalHourSum = personalYear.nextDay + nextHourNum;
+                                    nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
+                                } else {
+                                    nextHourNum = hourNum + 1;
+                                    nextPersonalHourSum = personalDayNum + nextHourNum;
+                                    nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
+                                }
+                                
+                                personalYear.hour = personalHourNum;
+                                personalYear.hourNumber = hourNum;
+                                personalYear.nextHour = nextPersonalHourNum;
+                                personalYear.nextHourNumber = nextHourNum;
+                            }
+                        }
                     } catch (error) {
                         console.error('Error calculating personal year:', error);
                         personalYear = null;
@@ -46,19 +76,24 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     const friendlyAnimals = hourAnimals.filter(ha => allFriendly.includes(ha.animal));
                     const soulmateAnimals = hourAnimals.filter(ha => soulmates.includes(ha.animal));
                     
-                    // Calculate hour animal for personal birthday (03:40 = Tiger hour)
+                    // Calculate hour animal if hour is provided
                     let birthHourAnimal = null;
                     let birthHourFriendly = [];
                     let birthHourEnemies = [];
                     let birthHourSoulmates = [];
                     
-                    // Check if this is the personal birthday (11/26/1996)
-                    if (parseInt(m) === 11 && parseInt(d) === 26 && parseInt(y) === 1996) {
-                        const hour = 3; // 03:40 = hour 3
-                        birthHourAnimal = getHourAnimal(hour);
+                    // Check if hour is provided (either from input or personal birthday)
+                    let hourToUse = null;
+                    if (h !== null && h !== '') {
+                        hourToUse = parseInt(h, 10);
+                    } else if (parseInt(m) === 11 && parseInt(d) === 26 && parseInt(y) === 1996) {
+                        // Personal birthday default hour
+                        hourToUse = 3; // 03:40 = hour 3
+                    }
+                    
+                    if (hourToUse !== null && !isNaN(hourToUse) && hourToUse >= 0 && hourToUse <= 23) {
+                        birthHourAnimal = getHourAnimal(hourToUse);
                         const hourSoulmates = soulmateRelationships[birthHourAnimal.animal] || [];
-                        const hourFriendly = friendlyRelationships[birthHourAnimal.animal] || [];
-                        const hourEnemies = enemyRelationships[birthHourAnimal.animal] || [];
                         
                         birthHourFriendly = getFriendlyHours(birthHourAnimal.animal);
                         birthHourEnemies = getEnemyHours(birthHourAnimal.animal);
@@ -76,7 +111,9 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         birthHourAnimal,
                         birthHourFriendly,
                         birthHourEnemies,
-                        birthHourSoulmates: birthHourSoulmates.map(ha => ha.animal)
+                        birthHourSoulmates: birthHourSoulmates.map(ha => ha.animal),
+                        inputHour: h !== null && h !== '' ? parseInt(h, 10) : (parseInt(m) === 11 && parseInt(d) === 26 && parseInt(y) === 1996 ? 3 : null),
+                        inputMinute: min !== null && min !== '' ? parseInt(min, 10) : (parseInt(m) === 11 && parseInt(d) === 26 && parseInt(y) === 1996 ? 40 : null)
                     });
                 } else {
                     setResults(null);
@@ -99,7 +136,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                 setYear('1996');
                 // Use setTimeout to ensure state updates are processed
                 setTimeout(() => {
-                    calculateResults('11', '26', '1996');
+                    calculateResults('11', '26', '1996', '3', '40');
                 }, 0);
             } catch (error) {
                 console.error('Error loading personal birthday:', error);
@@ -109,6 +146,8 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             setMonth('');
             setDay('');
             setYear('');
+            setHour('');
+            setMinute('');
             setResults(null);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +164,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             }
         }
         
-        calculateResults(value, day, year);
+        calculateResults(value, day, year, hour, minute);
     };
 
     const handleDayChange = (e) => {
@@ -139,7 +178,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             }
         }
         
-        calculateResults(month, value, year);
+        calculateResults(month, value, year, hour, minute);
     };
 
     const handleYearChange = (e) => {
@@ -147,10 +186,35 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
         setYear(value);
         
         if (value.length === 4) {
-            document.getElementById('year-input')?.blur();
+            document.getElementById('hour-input')?.focus();
         }
         
-        calculateResults(month, day, value);
+        calculateResults(month, day, value, hour, minute);
+    };
+
+    const handleHourChange = (e) => {
+        const value = e.target.value.replace(/\D/g, '').slice(0, 2);
+        setHour(value);
+        
+        if (value.length === 2) {
+            const hourNum = parseInt(value);
+            if (hourNum >= 0 && hourNum <= 23) {
+                document.getElementById('minute-input')?.focus();
+            }
+        }
+        
+        calculateResults(month, day, year, value);
+    };
+
+    const handleMinuteChange = (e) => {
+        const value = e.target.value.replace(/\D/g, '').slice(0, 2);
+        setMinute(value);
+        
+        if (value.length === 2) {
+            document.getElementById('minute-input')?.blur();
+        }
+        
+        calculateResults(month, day, year, hour);
     };
 
     return (
@@ -168,7 +232,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             {!personalBirthdayTrigger || personalBirthdayTrigger === 0 ? (
                 <div className="mb-6 sm:mb-8">
                     <label className="block text-lg sm:text-xl font-semibold text-white mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}>
-                        Įveskite Gimimo Datą
+                        Datos Analizė
                     </label>
                     <div className="flex justify-center items-center gap-2 sm:gap-4 max-w-md mx-auto">
                     <div className="flex flex-col items-center">
@@ -222,6 +286,45 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         />
                     </div>
                 </div>
+                
+                {/* Hour Input - Optional */}
+                <div className="mb-4 sm:mb-6 mt-6 sm:mt-8">
+                    <div className="flex justify-center items-center gap-2 sm:gap-3 max-w-xs mx-auto">
+                        <div className="flex flex-col items-center">
+                            <label className="text-xs text-white/60 mb-1.5">Valanda</label>
+                            <input
+                                id="hour-input"
+                                type="text"
+                                inputMode="numeric"
+                                value={hour}
+                                onChange={handleHourChange}
+                                placeholder="HH"
+                                maxLength={2}
+                                className="w-14 sm:w-16 px-2 py-2 rounded-lg bg-purple-500/20 border border-purple-400/40 text-white text-center text-lg sm:text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                style={{
+                                    boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.2)'
+                                }}
+                            />
+                        </div>
+                        <span className="text-white text-xl sm:text-2xl mt-5">:</span>
+                        <div className="flex flex-col items-center">
+                            <label className="text-xs text-white/60 mb-1.5">Minutė</label>
+                            <input
+                                id="minute-input"
+                                type="text"
+                                inputMode="numeric"
+                                value={minute}
+                                onChange={handleMinuteChange}
+                                placeholder="MM"
+                                maxLength={2}
+                                className="w-14 sm:w-16 px-2 py-2 rounded-lg bg-purple-500/20 border border-purple-400/40 text-white text-center text-lg sm:text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                style={{
+                                    boxShadow: '0 4px 16px 0 rgba(138, 43, 226, 0.2)'
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
                 </div>
             ) : null}
 
@@ -248,7 +351,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             {lifePathTotal !== lifePathNum && (
                                                 <>
                                                     <div 
-                                                        className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                        className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                             isSpecialTotal ? 'text-yellow-300' : 'text-white/80'
                                                         }`}
                                                         style={isSpecialTotal ? {
@@ -259,11 +362,11 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                     >
                                                         {lifePathTotal}
                                                     </div>
-                                                    <span className="text-2xl sm:text-3xl md:text-4xl text-white/60">→</span>
+                                                    <span className="text-3xl sm:text-4xl md:text-5xl text-white/60">→</span>
                                                 </>
                                             )}
                                             <div 
-                                                className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                                className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                     isSpecialLifePath ? 'text-yellow-300' : 'text-white'
                                                 }`}
                                                 style={isSpecialLifePath ? {
@@ -287,7 +390,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                     
                                     return (
                                         <div 
-                                            className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
+                                            className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
                                                 isSpecialDay ? 'text-yellow-300' : 'text-white'
                                             }`}
                                             style={isSpecialDay ? {
@@ -317,7 +420,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             <>
                                                 <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Metai</div>
                                                 <div 
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialPY ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialPY ? {
@@ -345,7 +448,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             <>
                                                 <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Metai</div>
                                                 <div 
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialPY ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialPY ? {
@@ -377,7 +480,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             <>
                                                 <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Mėnuo</div>
                                                 <div 
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialMonth ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialMonth ? {
@@ -410,7 +513,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             <>
                                                 <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Mėnuo</div>
                                                 <div 
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialMonth ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialMonth ? {
@@ -441,7 +544,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             <>
                                                 <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Diena</div>
                                                 <div 
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialDay ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialDay ? {
@@ -472,7 +575,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             <>
                                                 <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Diena</div>
                                                 <div 
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialDay ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialDay ? {
@@ -493,7 +596,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                 )}
 
                                 {/* Current Personal Hour */}
-                                {personalBirthdayTrigger > 0 && results.personalYear.hour !== undefined && (
+                                {((personalBirthdayTrigger > 0) || (hour && hour !== '')) && results.personalYear && results.personalYear.hour !== undefined && (
                                 <div className="text-center">
                                     {(() => {
                                         const personalHour = results.personalYear.hour;
@@ -503,7 +606,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             <>
                                                 <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Valanda</div>
                                                 <div 
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialHour ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialHour ? {
@@ -524,7 +627,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                 )}
 
                                 {/* Next Personal Hour */}
-                                {personalBirthdayTrigger > 0 && results.personalYear.nextHour !== undefined && (
+                                {((personalBirthdayTrigger > 0) || (hour && hour !== '')) && results.personalYear && results.personalYear.nextHour !== undefined && (
                                 <div className="text-center">
                                     {(() => {
                                         const nextPersonalHour = results.personalYear.nextHour;
@@ -534,7 +637,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                             <>
                                                 <div className="text-[9px] sm:text-[10px] text-white/70 mb-0.5">Valanda</div>
                                                 <div 
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold ${
+                                                    className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
                                                         isSpecialHour ? 'text-yellow-300' : 'text-white'
                                                     }`}
                                                     style={isSpecialHour ? {
@@ -559,20 +662,86 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
 
                         {/* Zodiac Signs and Relationships */}
                         <div className="border-t border-purple-400/20 pt-1.5 md:pt-2">
-                            <div className="flex items-center justify-start gap-1.5 sm:gap-2 md:gap-3 flex-wrap">
-                                {/* Chinese Zodiac with Friendly on left and Enemies on right */}
-                                <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 flex-shrink-0">
+                            {/* Chinese Zodiac Row */}
+                            <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3">
+                                {/* Friendly (including soulmates) - LEFT side */}
+                                {results.friendly.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center justify-end">
+                                        {results.friendly.map((animal, index) => {
+                                            const isSoulmate = results.soulmateAnimals.includes(animal.animal);
+                                            return (
+                                                <motion.div
+                                                    key={index}
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+                                                    className={`text-center p-1 sm:p-1.5 rounded-lg ${
+                                                        isSoulmate 
+                                                            ? 'bg-gradient-to-br from-pink-500/30 to-pink-600/20 border border-pink-400/60' 
+                                                            : 'bg-green-500/20 border border-green-400/30'
+                                                    }`}
+                                                    style={isSoulmate ? {
+                                                        boxShadow: '0 0 8px rgba(236, 72, 153, 0.3)'
+                                                    } : {}}
+                                                    title={zodiacTranslations[animal.animal]}
+                                                >
+                                                    <div className="text-lg sm:text-xl md:text-2xl mb-0.5 relative">
+                                                        {zodiacEmojis[animal.animal]}
+                                                        {isSoulmate && (
+                                                            <span className="absolute -top-0.5 -right-0.5 text-xs">⭐</span>
+                                                        )}
+                                                    </div>
+                                                </motion.div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                                
+                                {/* Chinese Zodiac - CENTER */}
+                                <div className="text-center">
+                                    <div className="text-4xl sm:text-5xl md:text-6xl mb-1">
+                                        {zodiacEmojis[results.chineseZodiac.zodiac]}
+                                    </div>
+                                    <div className="text-base sm:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
+                                        {zodiacTranslations[results.chineseZodiac.zodiac]}
+                                    </div>
+                                </div>
+                                
+                                {/* Enemies - RIGHT side */}
+                                {results.enemies.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center justify-start">
+                                        {results.enemies.map((animal, index) => (
+                                            <motion.div
+                                                key={index}
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+                                                className="text-center p-1.5 sm:p-2 rounded-lg bg-red-500/20 border border-red-400/30"
+                                                title={zodiacTranslations[animal.animal]}
+                                            >
+                                                <div className="text-lg sm:text-xl md:text-2xl mb-0.5">{zodiacEmojis[animal.animal]}</div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Birth Hour Animal */}
+                        {results.birthHourAnimal && (
+                            <div className="border-t border-purple-400/20 pt-1.5 md:pt-2">
+                                <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3">
                                     {/* Friendly (including soulmates) - LEFT side */}
-                                    {results.friendly.length > 0 && (
-                                        <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center">
-                                            {results.friendly.map((animal, index) => {
-                                                const isSoulmate = results.soulmateAnimals.includes(animal.animal);
+                                    {results.birthHourFriendly.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center justify-end">
+                                            {results.birthHourFriendly.map((animal, index) => {
+                                                const isSoulmate = results.birthHourSoulmates.includes(animal.animal);
                                                 return (
                                                     <motion.div
                                                         key={index}
                                                         initial={{ opacity: 0, scale: 0.8 }}
                                                         animate={{ opacity: 1, scale: 1 }}
-                                                        transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+                                                        transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
                                                         className={`text-center p-1 sm:p-1.5 rounded-lg ${
                                                             isSoulmate 
                                                                 ? 'bg-gradient-to-br from-pink-500/30 to-pink-600/20 border border-pink-400/60' 
@@ -581,13 +750,16 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                                         style={isSoulmate ? {
                                                             boxShadow: '0 0 8px rgba(236, 72, 153, 0.3)'
                                                         } : {}}
-                                                        title={zodiacTranslations[animal.animal]}
+                                                        title={`${animal.name} (${formatHourRange(animal.start, animal.end)})`}
                                                     >
                                                         <div className="text-lg sm:text-xl md:text-2xl mb-0.5 relative">
-                                                            {zodiacEmojis[animal.animal]}
+                                                            {hourAnimalEmojis[animal.animal]}
                                                             {isSoulmate && (
                                                                 <span className="absolute -top-0.5 -right-0.5 text-xs">⭐</span>
                                                             )}
+                                                        </div>
+                                                        <div className="text-[8px] sm:text-[9px] text-white/60">
+                                                            {formatHourRange(animal.start, animal.end)}
                                                         </div>
                                                     </motion.div>
                                                 );
@@ -595,37 +767,50 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                         </div>
                                     )}
                                     
-                                    {/* Chinese Zodiac - CENTER */}
+                                    {/* Birth Hour Animal - CENTER */}
                                     <div className="text-center">
                                         <div className="text-4xl sm:text-5xl md:text-6xl mb-1">
-                                            {zodiacEmojis[results.chineseZodiac.zodiac]}
+                                            {hourAnimalEmojis[results.birthHourAnimal.animal]}
                                         </div>
                                         <div className="text-base sm:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
-                                            {zodiacTranslations[results.chineseZodiac.zodiac]}
+                                            {results.birthHourAnimal.name}
+                                        </div>
+                                        <div className="text-[10px] sm:text-xs text-white/70 mt-0.5">
+                                            {results.inputHour !== null && results.inputMinute !== null 
+                                                ? `${String(results.inputHour).padStart(2, '0')}:${String(results.inputMinute).padStart(2, '0')}`
+                                                : `${String(results.birthHourAnimal.start).padStart(2, '0')}:40`
+                                            }
                                         </div>
                                     </div>
                                     
                                     {/* Enemies - RIGHT side */}
-                                    {results.enemies.length > 0 && (
-                                        <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center">
-                                            {results.enemies.map((animal, index) => (
+                                    {results.birthHourEnemies.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center justify-start">
+                                            {results.birthHourEnemies.map((animal, index) => (
                                                 <motion.div
                                                     key={index}
                                                     initial={{ opacity: 0, scale: 0.8 }}
                                                     animate={{ opacity: 1, scale: 1 }}
-                                                    transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+                                                    transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
                                                     className="text-center p-1.5 sm:p-2 rounded-lg bg-red-500/20 border border-red-400/30"
-                                                    title={zodiacTranslations[animal.animal]}
+                                                    title={`${animal.name} (${formatHourRange(animal.start, animal.end)})`}
                                                 >
-                                                    <div className="text-lg sm:text-xl md:text-2xl mb-0.5">{zodiacEmojis[animal.animal]}</div>
+                                                    <div className="text-xl sm:text-2xl mb-0.5">{hourAnimalEmojis[animal.animal]}</div>
+                                                    <div className="text-[8px] sm:text-[9px] text-white/60">
+                                                        {formatHourRange(animal.start, animal.end)}
+                                                    </div>
                                                 </motion.div>
                                             ))}
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                        )}
 
-                                {/* Western Zodiac - Moved closer to Chinese zodiac */}
-                                <div className="text-center flex-shrink-0 ml-1.5 sm:ml-2 md:ml-3">
+                        {/* Western Zodiac Row - Below Birth Hour Animal */}
+                        <div className="border-t border-purple-400/20 pt-1.5 md:pt-2">
+                            <div className="flex items-center justify-center">
+                                <div className="text-center">
                                     <div className="text-4xl sm:text-5xl md:text-6xl mb-1">
                                         {zodiacSignEmojis[results.westernZodiac.sign]}
                                     </div>
@@ -635,87 +820,6 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Birth Hour Animal (Personal Birthday Only) */}
-                        {results.birthHourAnimal && (
-                            <div className="border-t border-purple-400/20 pt-1.5 md:pt-2">
-                                <div className="flex items-center justify-start gap-1.5 sm:gap-2 md:gap-3 flex-wrap">
-                                    {/* Birth Hour Animal with Friendly on left and Enemies on right */}
-                                    <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 flex-shrink-0">
-                                        {/* Spacer to align Tiger with Rat - accounts for difference in friendly animals */}
-                                        {results.friendly && results.friendly.length > results.birthHourFriendly.length && (
-                                            <div className="flex-shrink-0" style={{ width: `${(results.friendly.length - results.birthHourFriendly.length) * 40}px` }}></div>
-                                        )}
-                                        {/* Friendly (including soulmates) - LEFT side */}
-                                        {results.birthHourFriendly.length > 0 && (
-                                            <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center">
-                                                {results.birthHourFriendly.map((animal, index) => {
-                                                    const isSoulmate = results.birthHourSoulmates.includes(animal.animal);
-                                                    return (
-                                                        <motion.div
-                                                            key={index}
-                                                            initial={{ opacity: 0, scale: 0.8 }}
-                                                            animate={{ opacity: 1, scale: 1 }}
-                                                            transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
-                                                            className={`text-center p-1 sm:p-1.5 rounded-lg ${
-                                                                isSoulmate 
-                                                                    ? 'bg-gradient-to-br from-pink-500/30 to-pink-600/20 border border-pink-400/60' 
-                                                                    : 'bg-green-500/20 border border-green-400/30'
-                                                            }`}
-                                                            style={isSoulmate ? {
-                                                                boxShadow: '0 0 8px rgba(236, 72, 153, 0.3)'
-                                                            } : {}}
-                                                            title={`${animal.name} (${formatHourRange(animal.start, animal.end)})`}
-                                                        >
-                                                            <div className="text-lg sm:text-xl md:text-2xl mb-0.5 relative">
-                                                                {hourAnimalEmojis[animal.animal]}
-                                                                {isSoulmate && (
-                                                                    <span className="absolute -top-0.5 -right-0.5 text-xs">⭐</span>
-                                                                )}
-                                                            </div>
-                                                        </motion.div>
-                                                    );
-                                                })}
-                                            </div>
-                                        )}
-                                        
-                                        {/* Birth Hour Animal - CENTER */}
-                                        <div className="text-center">
-                                            <div className="text-4xl sm:text-5xl md:text-6xl mb-1">
-                                                {hourAnimalEmojis[results.birthHourAnimal.animal]}
-                                            </div>
-                                            <div className="text-base sm:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
-                                                {results.birthHourAnimal.name}
-                                            </div>
-                                            <div className="text-[10px] sm:text-xs text-white/70 mt-0.5">
-                                                {String(results.birthHourAnimal.start).padStart(2, '0')}:40
-                                            </div>
-                                        </div>
-                                        
-                                        {/* Enemies - RIGHT side */}
-                                        {results.birthHourEnemies.length > 0 && (
-                                            <div className="flex flex-wrap gap-1 sm:gap-1.5 items-center">
-                                                {results.birthHourEnemies.map((animal, index) => (
-                                                    <motion.div
-                                                        key={index}
-                                                        initial={{ opacity: 0, scale: 0.8 }}
-                                                        animate={{ opacity: 1, scale: 1 }}
-                                                        transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
-                                                        className="text-center p-1.5 sm:p-2 rounded-lg bg-red-500/20 border border-red-400/30"
-                                                        title={`${animal.name} (${formatHourRange(animal.start, animal.end)})`}
-                                                    >
-                                                        <div className="text-xl sm:text-2xl mb-0.5">{hourAnimalEmojis[animal.animal]}</div>
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                    
-                                    {/* Spacer to match Western zodiac width and center Tiger with Rat */}
-                                    <div className="flex-shrink-0" style={{ width: '120px' }}></div>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </motion.div>
             )}
