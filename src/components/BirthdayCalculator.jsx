@@ -5,7 +5,7 @@ import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chi
 import { getWesternZodiac, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals } from '../utils/hourAnimals';
 
-export default function BirthdayCalculator({ personalBirthdayTrigger }) {
+export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
     const [month, setMonth] = useState('');
     const [day, setDay] = useState('');
     const [year, setYear] = useState('');
