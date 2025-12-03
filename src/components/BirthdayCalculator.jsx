@@ -104,6 +104,12 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             } catch (error) {
                 console.error('Error loading personal birthday:', error);
             }
+        } else if (personalBirthdayTrigger === 0) {
+            // Clear all fields when switching to regular birthday mode
+            setMonth('');
+            setDay('');
+            setYear('');
+            setResults(null);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [personalBirthdayTrigger]);
