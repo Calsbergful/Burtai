@@ -275,3 +275,4 @@ document.getElementById('numerologyForm').addEventListener('submit', function(e)
     displayResults(lifePath, destiny, personality, soul);
 });
 
+

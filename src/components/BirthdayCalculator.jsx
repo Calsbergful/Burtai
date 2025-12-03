@@ -756,18 +756,10 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                     
                                     {/* Western Zodiac - Right of enemies */}
                                     <div className="text-center">
-                                        <div className={`mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1 ${
-                                            personalBirthdayTrigger > 0 
-                                                ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl 2xl:text-4xl'
-                                                : 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-7xl 2xl:text-6xl'
-                                        }`}>
+                                        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-5xl 2xl:text-4xl mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1">
                                             {zodiacSignEmojis[results.westernZodiac.sign]}
                                         </div>
-                                        <div className={`font-bold text-white ${
-                                            personalBirthdayTrigger > 0
-                                                ? 'text-sm sm:text-base md:text-lg xl:text-base 2xl:text-sm'
-                                                : 'text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-lg'
-                                        }`} style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
+                                        <div className="text-sm sm:text-base md:text-lg xl:text-base 2xl:text-sm font-bold text-white" style={{ textShadow: '0 0 15px rgba(34, 211, 238, 0.6)' }}>
                                             {zodiacSignTranslations[results.westernZodiac.sign]}
                                         </div>
                                     </div>
@@ -817,7 +809,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                     
                                     {/* Birth Hour Animal - CENTER */}
                                     <div className="text-center">
-                                        <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-7xl 2xl:text-6xl mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1">
+                                        <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-5xl mb-1.5 sm:mb-2 xl:mb-1.5 2xl:mb-1">
                                             {hourAnimalEmojis[results.birthHourAnimal.animal]}
                                         </div>
                                         <div className="text-[8px] sm:text-[9px] text-white/60">

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
@@ -7,10 +7,29 @@ import Letterology from './components/Letterology'
 import HiddenNumerology from './components/HiddenNumerology'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
+import PasswordProtection from './components/PasswordProtection'
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [activeView, setActiveView] = useState('calculator');
   const [personalBirthdayTrigger, setPersonalBirthdayTrigger] = useState(0);
+
+  useEffect(() => {
+    // Check if user is already authenticated
+    const authStatus = sessionStorage.getItem('isAuthenticated')
+    if (authStatus === 'true') {
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  const handlePasswordCorrect = () => {
+    setIsAuthenticated(true)
+  }
+
+  // Show password protection if not authenticated
+  if (!isAuthenticated) {
+    return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
+  }
 
   const handleMenuClick = (menuId) => {
     if (menuId === 'calculator') {
