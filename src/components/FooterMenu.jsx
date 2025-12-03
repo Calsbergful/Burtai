@@ -42,7 +42,7 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
                     boxShadow: '0 -4px 20px 0 rgba(138, 43, 226, 0.4), inset 0 1px 0 rgba(138, 43, 226, 0.2)'
                 }}
             >
-                <nav className="flex justify-center items-center gap-1 sm:gap-2 md:gap-4 px-0 py-1 sm:py-1.5">
+                <nav className="flex justify-center items-center gap-2 sm:gap-2 md:gap-4 px-0 py-2.5 sm:py-1.5">
                     {menuItems.map((item, index) => (
                         <motion.button
                             key={item.id}
@@ -64,8 +64,8 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
                                 }
                             }}
                             className={`
-                                flex flex-col items-center justify-center gap-0.5 px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 rounded-lg transition-all
-                                min-h-[50px] min-w-[50px] sm:min-w-[70px] md:min-w-[90px]
+                                flex flex-col items-center justify-center gap-1 px-3 sm:px-3 md:px-5 py-2 sm:py-1.5 rounded-lg transition-all
+                                min-h-[65px] min-w-[65px] sm:min-h-[50px] sm:min-w-[70px] md:min-w-[90px]
                                 touch-manipulation cursor-pointer
                                 ${activeItem === item.id
                                     ? 'bg-purple-500/40 text-white border border-purple-400/60'
@@ -85,8 +85,8 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
                             }}
                             title={item.label}
                         >
-                            <span className="text-xl sm:text-2xl md:text-3xl">{item.icon}</span>
-                            <span className="text-[7px] sm:text-[9px] md:text-[10px] font-semibold text-center leading-tight hidden sm:block">
+                            <span className="text-2xl sm:text-2xl md:text-3xl">{item.icon}</span>
+                            <span className="text-[9px] sm:text-[9px] md:text-[10px] font-semibold text-center leading-tight">
                                 {item.label.split(' ')[0]}
                             </span>
                         </motion.button>
