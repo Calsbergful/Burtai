@@ -478,8 +478,8 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                             </div>
                         )}
 
-                        {/* Personal Hour */}
-                        {results.personalYear && results.personalYear.hour !== undefined && (
+                        {/* Personal Hour - Only show for personal birthday */}
+                        {personalBirthdayTrigger > 0 && results.personalYear && results.personalYear.hour !== undefined && (
                             <div className="border-t border-purple-400/20 pt-4">
                                 <div className="grid grid-cols-2 gap-4 items-center">
                                     {/* Current Personal Hour */}
