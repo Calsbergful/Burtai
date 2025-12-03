@@ -135,12 +135,13 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
             }}
         >
-            {/* Date Input */}
-            <div className="mb-6 sm:mb-8">
-                <label className="block text-lg sm:text-xl font-semibold text-white mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}>
-                    Įveskite Gimimo Datą
-                </label>
-                <div className="flex justify-center items-center gap-2 sm:gap-4 max-w-md mx-auto">
+            {/* Date Input - Hide for personal birthday */}
+            {!personalBirthdayTrigger || personalBirthdayTrigger === 0 ? (
+                <div className="mb-6 sm:mb-8">
+                    <label className="block text-lg sm:text-xl font-semibold text-white mb-4 text-center" style={{ textShadow: '0 0 10px rgba(138, 43, 226, 0.5)' }}>
+                        Įveskite Gimimo Datą
+                    </label>
+                    <div className="flex justify-center items-center gap-2 sm:gap-4 max-w-md mx-auto">
                     <div className="flex flex-col items-center">
                         <label className="text-sm text-white/70 mb-2">Mėnuo</label>
                         <input
@@ -192,7 +193,8 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                         />
                     </div>
                 </div>
-            </div>
+                </div>
+            ) : null}
 
             {/* Results */}
             {results && (
