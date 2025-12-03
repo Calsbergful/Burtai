@@ -12,7 +12,9 @@ function App() {
   const [activeView, setActiveView] = useState('calculator');
 
   const handleMenuClick = (menuId) => {
-    if (menuId === 'friendly-enemy-hours') {
+    if (menuId === 'calculator') {
+      setActiveView('calculator');
+    } else if (menuId === 'friendly-enemy-hours') {
       setActiveView('hours');
     } else if (menuId === 'life-path-settings') {
       setActiveView('birthday');
@@ -120,6 +122,7 @@ function App() {
       </main>
 
       <FooterMenu onMenuClick={handleMenuClick} activeMenuId={
+        activeView === 'calculator' ? 'calculator' :
         activeView === 'hours' ? 'friendly-enemy-hours' : 
         activeView === 'birthday' ? 'life-path-settings' : 
         activeView === 'letterology' ? 'letterology' :

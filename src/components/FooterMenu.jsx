@@ -11,12 +11,13 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
         }
     }, [activeMenuId]);
     
-    const menuItems = [
-        { id: 'letterology', label: 'Raidės', icon: '🔤' },
-        { id: 'hidden-numerology', label: 'Hmmm..', icon: '🔮' },
-        { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
-        { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
-    ];
+                const menuItems = [
+                    { id: 'calculator', label: 'Kalendorius', icon: '📅' },
+                    { id: 'letterology', label: 'Raidės', icon: '🔤' },
+                    { id: 'hidden-numerology', label: 'Hmmm..', icon: '🔮' },
+                    { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
+                    { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
+                ];
 
     const handleClick = (itemId, e) => {
         e.preventDefault();
