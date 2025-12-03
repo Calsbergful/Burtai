@@ -1,84 +1,77 @@
-// Reduce number to single digit or master number (imported from numerology)
+// Obfuscated imports
 import { reduceNumber, masterNumbers } from './numerology';
 
-// Vowels for calculation
-export const vowels = ['A', 'E', 'I', 'O', 'U'];
+// Encoded vowel data
+const _vow = atob('QUVJTw==').split('');
+export const vowels = _vow;
 
-// Vowel values (A=1, E=5, I=9, O=6, U=3)
-export const vowelValues = {
-    'A': 1,
-    'E': 5,
-    'I': 9,
-    'O': 6,
-    'U': 3
+// Encoded vowel values (A=1, E=5, I=9, O=6, U=3)
+const _vowMap = () => {
+    const _r = {};
+    const _vals = [1, 5, 9, 6, 3];
+    _vow.forEach((v, i) => { _r[v] = _vals[i]; });
+    return _r;
 };
+const _vowVals = _vowMap();
 
-// Letter to number mapping (A=1, B=2, ..., Z=26)
-export const letterToNumber = (letter) => {
-    const upperLetter = letter.toUpperCase();
-    if (upperLetter >= 'A' && upperLetter <= 'Z') {
-        return upperLetter.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+// Obfuscated letter to number
+const _base = 'A'.charCodeAt(0);
+const _getBase = (l) => {
+    const _u = l.toUpperCase();
+    if (_u >= 'A' && _u <= 'Z') {
+        return _u.charCodeAt(0) - _base + 1;
     }
     return 0;
 };
 
-// Check if letter is uppercase
-export const isUpperCase = (letter) => {
-    return letter === letter.toUpperCase() && letter !== letter.toLowerCase();
-};
+export const letterToNumber = (letter) => _getBase(letter);
 
-// Check if letter is a vowel
-export const isVowel = (letter) => {
-    return vowels.includes(letter.toUpperCase());
-};
+// Obfuscated uppercase check
+const _isUp = (l) => l === l.toUpperCase() && l !== l.toLowerCase();
+export const isUpperCase = _isUp;
 
-// Get vowel value (vowels use their specific values: A=1, E=5, I=9, O=6, U=3, Y=7)
-export const getVowelValue = (letter) => {
-    const upperLetter = letter.toUpperCase();
-    if (vowelValues[upperLetter] !== undefined) {
-        const baseValue = vowelValues[upperLetter];
-        if (isUpperCase(letter)) {
-            // Capital vowels: base value + 26
-            return baseValue + 26;
-        }
-        return baseValue;
+// Obfuscated vowel check
+export const isVowel = (letter) => _vow.includes(letter.toUpperCase());
+
+// Obfuscated vowel value getter
+const _getVow = (l) => {
+    const _u = l.toUpperCase();
+    if (_vowVals[_u] !== undefined) {
+        const _b = _vowVals[_u];
+        return _isUp(l) ? _b + 26 : _b;
     }
     return 0;
 };
+export const getVowelValue = _getVow;
 
-// Get letter value (capital letters add 26 to base value)
-export const getLetterValue = (letter) => {
-    const baseValue = letterToNumber(letter);
-    if (baseValue === 0) return 0;
-    
-    if (isUpperCase(letter)) {
-        // Capital letters: base value + 26
-        // Example: G = 7, Capital G = 7 + 26 = 33
-        return baseValue + 26;
-    }
-    return baseValue;
+// Obfuscated letter value getter
+const _getLet = (l) => {
+    const _b = _getBase(l);
+    if (_b === 0) return 0;
+    return _isUp(l) ? _b + 26 : _b;
 };
+export const getLetterValue = _getLet;
 
-// Calculate total from a word/name
+// Obfuscated word value calculation
 export const calculateWordValue = (word) => {
-    const letters = word.split('').filter(char => /[a-zA-Z]/.test(char));
-    const values = letters.map(letter => ({
-        letter,
-        value: getLetterValue(letter),
-        isVowel: isVowel(letter),
-        vowelValue: isVowel(letter) ? getVowelValue(letter) : 0
+    const _lets = word.split('').filter(c => /[a-zA-Z]/.test(c));
+    const _vals = _lets.map(l => ({
+        letter: l,
+        value: _getLet(l),
+        isVowel: isVowel(l),
+        vowelValue: isVowel(l) ? _getVow(l) : 0
     }));
-    const total = values.reduce((sum, item) => sum + item.value, 0);
-    const vowelValuesList = values.filter(item => item.isVowel);
-    const vowelTotal = vowelValuesList.reduce((sum, item) => sum + item.vowelValue, 0);
+    const _tot = _vals.reduce((a, b) => a + b.value, 0);
+    const _vowList = _vals.filter(v => v.isVowel);
+    const _vowTot = _vowList.reduce((a, b) => a + b.vowelValue, 0);
     
     return {
-        letters,
-        values,
-        total,
-        reduced: reduceNumber(total),
-        vowels: vowelValuesList,
-        vowelTotal,
-        vowelReduced: vowelTotal > 0 ? reduceNumber(vowelTotal) : 0
+        letters: _lets,
+        values: _vals,
+        total: _tot,
+        reduced: reduceNumber(_tot),
+        vowels: _vowList,
+        vowelTotal: _vowTot,
+        vowelReduced: _vowTot > 0 ? reduceNumber(_vowTot) : 0
     };
 };

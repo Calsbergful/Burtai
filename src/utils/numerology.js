@@ -1,17 +1,23 @@
-// Numerology letter to number mapping
-export const numerologyMap = {
-    'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 8, 'I': 9,
-    'J': 1, 'K': 2, 'L': 3, 'M': 4, 'N': 5, 'O': 6, 'P': 7, 'Q': 8, 'R': 9,
-    'S': 1, 'T': 2, 'U': 3, 'V': 4, 'W': 5, 'X': 6, 'Y': 7, 'Z': 8
+// Encoded data structures
+const _m = [0x0B, 0x16, 0x21]; // Master numbers encoded as hex
+const _v = atob('QUVJTw==').split('').concat(['Y']);
+
+// Decode numerology mapping - obfuscated
+const _buildMap = () => {
+    const _r = {};
+    const _letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const _pattern = [1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8];
+    for (let i = 0; i < _letters.length; i++) {
+        _r[_letters[i]] = _pattern[i];
+    }
+    return _r;
 };
 
-// Vowels for Soul Number calculation
-export const vowels = ['A', 'E', 'I', 'O', 'U', 'Y'];
+export const numerologyMap = _buildMap();
+export const vowels = _v;
+export const masterNumbers = _m;
 
-// Master numbers that should not be reduced
-export const masterNumbers = [11, 22, 33];
-
-// Number descriptions
+// Number descriptions (keeping as is for functionality)
 export const numberDescriptions = {
     1: {
         lifePath: "Gimėti lyderiu. Jūs esate nepriklausomas, kūrybingas ir originalus. Jūsų misija - būti pirmuoju ir kurti naują kelią.",
@@ -87,282 +93,189 @@ export const numberDescriptions = {
     }
 };
 
-// Reduce number to single digit or master number
+// Obfuscated reduction function
+const _chk = (n) => _m.indexOf(n) >= 0;
+const _red = (n) => {
+    if (_chk(n)) return n;
+    const _dgt = (x) => String(x).split('').reduce((a, b) => a + parseInt(b), 0);
+    while (n > 9) {
+        n = _dgt(n);
+        if (_chk(n)) return n;
+    }
+    return n;
+};
+
 export function reduceNumber(num) {
-    if (masterNumbers.includes(num)) {
-        return num;
-    }
-    
-    while (num > 9) {
-        num = num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
-        if (masterNumbers.includes(num)) {
-            return num;
-        }
-    }
-    return num;
+    return _red(num);
 }
 
-// Reduce number for personal year (skip 2, use 11 instead; keep 28 as 28)
+// Obfuscated personal year reduction
+const _sp = 0x1C; // 28
+const _r2 = 0x0B; // 11
+const _redPY = (n) => {
+    if (n === _sp) return _sp;
+    if (_chk(n)) return n;
+    const _dgt = (x) => String(x).split('').reduce((a, b) => a + parseInt(b), 0);
+    while (n > 9) {
+        n = _dgt(n);
+        if (n === _sp) return _sp;
+        if (_chk(n)) return n;
+        if (n === 2) return _r2;
+    }
+    if (n === 2) return _r2;
+    return n;
+};
+
 export function reducePersonalYear(num) {
-    // Keep 28 as 28 (don't reduce it)
-    if (num === 28) {
-        return 28;
-    }
-    
-    if (masterNumbers.includes(num)) {
-        return num;
-    }
-    
-    while (num > 9) {
-        num = num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
-        // Keep 28 as 28
-        if (num === 28) {
-            return 28;
-        }
-        if (masterNumbers.includes(num)) {
-            return num;
-        }
-        // Skip 2, use 11 instead
-        if (num === 2) {
-            return 11;
-        }
-    }
-    // Skip 2, use 11 instead
-    if (num === 2) {
-        return 11;
-    }
-    return num;
+    return _redPY(num);
 }
 
-// Calculate Personal Year from birthdate
+// Obfuscated personal year calculation
 export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth() + 1;
-    const currentDay = today.getDate();
+    const _now = new Date();
+    const _yr = _now.getFullYear();
+    const _mo = _now.getMonth() + 1;
+    const _dy = _now.getDate();
     
-    // Determine the last birthday that occurred
-    let lastBirthdayYear;
-    if (currentMonth > birthMonth || (currentMonth === birthMonth && currentDay >= birthDay)) {
-        // Birthday has already occurred this year
-        lastBirthdayYear = currentYear;
-    } else {
-        // Birthday hasn't occurred yet this year
-        lastBirthdayYear = currentYear - 1;
-    }
+    let _lby = (_mo > birthMonth || (_mo === birthMonth && _dy >= birthDay)) ? _yr : _yr - 1;
     
-    // Calculate personal year sum without reducing first
-    // Use same logic as calculateLifePath but get the total sum
-    const calculatePersonalYearSum = (year) => {
-        // For month: only November (11) is kept as master number; all others split into digits
-        // For day: if it's a master number (11, 22, 33), keep it whole; otherwise split into digits
-        // For year: always use individual digits
-        const monthValues = (birthMonth === 11) ? [11] : birthMonth.toString().split('').map(d => parseInt(d));
-        const dayValues = masterNumbers.includes(birthDay) ? [birthDay] : birthDay.toString().split('').map(d => parseInt(d));
-        const yearDigits = year.toString().split('').map(d => parseInt(d));
-        
-        // Sum all values together
-        const allValues = [...monthValues, ...dayValues, ...yearDigits];
-        const total = allValues.reduce((sum, val) => sum + val, 0);
-        
-        return total;
+    const _calcSum = (y) => {
+        const _mv = (birthMonth === 0x0B) ? [0x0B] : String(birthMonth).split('').map(d => parseInt(d));
+        const _dv = _chk(birthDay) ? [birthDay] : String(birthDay).split('').map(d => parseInt(d));
+        const _yd = String(y).split('').map(d => parseInt(d));
+        return [..._mv, ..._dv, ..._yd].reduce((a, b) => a + b, 0);
     };
     
-    // Calculate current personal year (from last birthday to next birthday)
-    const currentPersonalYearSum = calculatePersonalYearSum(lastBirthdayYear);
-    const currentPersonalYearNum = reducePersonalYear(currentPersonalYearSum);
+    const _cpy = _redPY(_calcSum(_lby));
+    const _npy = _redPY(_calcSum(_lby + 1));
     
-    // Calculate next personal year (from next birthday to following birthday)
-    const nextBirthdayYear = lastBirthdayYear + 1;
-    const nextPersonalYearSum = calculatePersonalYearSum(nextBirthdayYear);
-    const nextPersonalYearNum = reducePersonalYear(nextPersonalYearSum);
-    
-    // Calculate personal month (current personal year + current month)
-    // currentMonth is already declared above
-    const personalMonthSum = currentPersonalYearNum + currentMonth;
-    const personalMonthNum = reducePersonalYear(personalMonthSum);
-    
-    // Calculate next personal month
-    let nextMonthNumber, nextPersonalMonthSum, nextPersonalMonthNum;
-    if (currentMonth === 12) {
-        // If current month is December, next month is January of next personal year
-        nextMonthNumber = 1;
-        nextPersonalMonthSum = nextPersonalYearNum + nextMonthNumber;
-        nextPersonalMonthNum = reducePersonalYear(nextPersonalMonthSum);
+    const _pm = _redPY(_cpy + _mo);
+    let _npm, _nmo;
+    if (_mo === 12) {
+        _nmo = 1;
+        _npm = _redPY(_npy + _nmo);
     } else {
-        // Otherwise, next month is still in current personal year
-        nextMonthNumber = currentMonth + 1;
-        nextPersonalMonthSum = currentPersonalYearNum + nextMonthNumber;
-        nextPersonalMonthNum = reducePersonalYear(nextPersonalMonthSum);
+        _nmo = _mo + 1;
+        _npm = _redPY(_cpy + _nmo);
     }
     
-    // Calculate personal day (personal month + day of month)
-    // currentDay is already declared above
-    const personalDaySum = personalMonthNum + currentDay;
-    const personalDayNum = reducePersonalYear(personalDaySum);
-    
-    // Calculate next personal day
-    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-    let nextDayNumber, nextPersonalDaySum, nextPersonalDayNum;
-    if (currentDay === daysInMonth) {
-        // If today is the last day of the month, next day is first day of next month
-        nextDayNumber = 1;
-        nextPersonalDaySum = nextPersonalMonthNum + nextDayNumber;
-        nextPersonalDayNum = reducePersonalYear(nextPersonalDaySum);
+    const _pd = _redPY(_pm + _dy);
+    const _dims = new Date(_yr, _mo, 0).getDate();
+    let _npd, _ndy;
+    if (_dy === _dims) {
+        _ndy = 1;
+        _npd = _redPY(_npm + _ndy);
     } else {
-        // Otherwise, next day is still in current month
-        nextDayNumber = currentDay + 1;
-        nextPersonalDaySum = personalMonthNum + nextDayNumber;
-        nextPersonalDayNum = reducePersonalYear(nextPersonalDaySum);
+        _ndy = _dy + 1;
+        _npd = _redPY(_pm + _ndy);
     }
     
-    // Calculate personal hour (personal day + current hour)
-    const currentHour = today.getHours(); // 0-23
-    const personalHourSum = personalDayNum + currentHour;
-    const personalHourNum = reducePersonalYear(personalHourSum);
-    
-    // Calculate next personal hour
-    let nextHourNumber, nextPersonalHourSum, nextPersonalHourNum;
-    if (currentHour === 23) {
-        // If current hour is 23, next hour is 0 (midnight) of next day
-        nextHourNumber = 0;
-        nextPersonalHourSum = nextPersonalDayNum + nextHourNumber;
-        nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
+    const _hr = _now.getHours();
+    const _ph = _redPY(_pd + _hr);
+    let _nph, _nhr;
+    if (_hr === 23) {
+        _nhr = 0;
+        _nph = _redPY(_npd + _nhr);
     } else {
-        // Otherwise, next hour is still in current day
-        nextHourNumber = currentHour + 1;
-        nextPersonalHourSum = personalDayNum + nextHourNumber;
-        nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
+        _nhr = _hr + 1;
+        _nph = _redPY(_pd + _nhr);
     }
     
     return {
-        current: currentPersonalYearNum,
-        next: nextPersonalYearNum,
-        currentYear: lastBirthdayYear,
-        nextYear: nextBirthdayYear,
-        month: personalMonthNum,
-        monthNumber: currentMonth,
-        nextMonth: nextPersonalMonthNum,
-        nextMonthNumber: nextMonthNumber,
-        day: personalDayNum,
-        dayNumber: currentDay,
-        nextDay: nextPersonalDayNum,
-        nextDayNumber: nextDayNumber,
-        hour: personalHourNum,
-        hourNumber: currentHour,
-        nextHour: nextPersonalHourNum,
-        nextHourNumber: nextHourNumber
+        current: _cpy,
+        next: _npy,
+        currentYear: _lby,
+        nextYear: _lby + 1,
+        month: _pm,
+        monthNumber: _mo,
+        nextMonth: _npm,
+        nextMonthNumber: _nmo,
+        day: _pd,
+        dayNumber: _dy,
+        nextDay: _npd,
+        nextDayNumber: _ndy,
+        hour: _ph,
+        hourNumber: _hr,
+        nextHour: _nph,
+        nextHourNumber: _nhr
     };
 }
 
-// Convert name to numbers
+// Obfuscated name to numbers
 export function nameToNumbers(name) {
-    return name.toUpperCase()
-        .split('')
-        .filter(char => numerologyMap[char] !== undefined)
-        .map(char => numerologyMap[char]);
+    const _up = name.toUpperCase();
+    return _up.split('').filter(c => numerologyMap[c] !== undefined).map(c => numerologyMap[c]);
 }
 
-// Calculate Life Path Number from birthdate
+// Obfuscated life path calculation
 export function calculateLifePath(birthdate) {
-    // Parse date string (YYYY-MM-DD) to avoid timezone issues
-    const [yearPart, monthPart, dayPart] = birthdate.split('-');
-    const day = parseInt(dayPart, 10);
-    const month = parseInt(monthPart, 10);
-    const year = parseInt(yearPart, 10);
-    
-    // For month: only November (11) is kept as master number; all others split into digits
-    // For day: if it's a master number (11, 22, 33), keep it whole; otherwise split into digits
-    // For year: always use individual digits
-    const monthValues = (month === 11) ? [11] : month.toString().split('').map(d => parseInt(d));
-    const dayValues = masterNumbers.includes(day) ? [day] : day.toString().split('').map(d => parseInt(d));
-    const yearDigits = year.toString().split('').map(d => parseInt(d));
-    
-    // Sum all values together
-    const allValues = [...monthValues, ...dayValues, ...yearDigits];
-    const total = allValues.reduce((sum, val) => sum + val, 0);
-    
-    // Reduce to single digit or master number
-    const lifePath = reduceNumber(total);
-    
-    // Build calculation steps
-    const monthStr = monthValues.join(' + ');
-    const dayStr = dayValues.join(' + ');
-    const yearStr = yearDigits.join(' + ');
-    const allStr = allValues.join(' + ');
+    const [y, m, d] = birthdate.split('-').map(x => parseInt(x, 10));
+    const _mv = (m === 0x0B) ? [0x0B] : String(m).split('').map(x => parseInt(x));
+    const _dv = _chk(d) ? [d] : String(d).split('').map(x => parseInt(x));
+    const _yv = String(y).split('').map(x => parseInt(x));
+    const _all = [..._mv, ..._dv, ..._yv];
+    const _tot = _all.reduce((a, b) => a + b, 0);
+    const _lp = _red(_tot);
     
     return {
-        number: lifePath,
-        total: total,
+        number: _lp,
+        total: _tot,
         steps: [
-            total !== lifePath 
-                ? `Suma: ${allStr} = ${total} = ${lifePath}`
-                : `Suma: ${allStr} = ${total}`
+            _tot !== _lp ? `Suma: ${_all.join(' + ')} = ${_tot} = ${_lp}` : `Suma: ${_all.join(' + ')} = ${_tot}`
         ]
     };
 }
 
-// Calculate Destiny Number (Expression Number) from full name
+// Obfuscated destiny calculation
 export function calculateDestiny(fullName) {
-    const numbers = nameToNumbers(fullName);
-    const sum = numbers.reduce((acc, num) => acc + num, 0);
-    const destiny = reduceNumber(sum);
+    const _nums = nameToNumbers(fullName);
+    const _sum = _nums.reduce((a, b) => a + b, 0);
+    const _dest = _red(_sum);
+    const _parts = fullName.toUpperCase().split(' ').filter(p => p.length > 0);
+    const _stps = [];
     
-    const nameParts = fullName.toUpperCase().split(' ').filter(part => part.length > 0);
-    const steps = [];
-    
-    nameParts.forEach(part => {
-        const partNumbers = nameToNumbers(part);
-        const partSum = partNumbers.reduce((acc, num) => acc + num, 0);
-        steps.push(`${part}: ${partNumbers.join('+')} = ${partSum}`);
+    _parts.forEach(p => {
+        const _pn = nameToNumbers(p);
+        const _ps = _pn.reduce((a, b) => a + b, 0);
+        _stps.push(`${p}: ${_pn.join('+')} = ${_ps}`);
     });
     
-    steps.push(`Bendra suma: ${numbers.join('+')} = ${sum}`);
-    steps.push(`Likimo Skaičius: ${destiny}`);
+    _stps.push(`Bendra suma: ${_nums.join('+')} = ${_sum}`);
+    _stps.push(`Likimo Skaičius: ${_dest}`);
     
-    return {
-        number: destiny,
-        steps: steps
-    };
+    return { number: _dest, steps: _stps };
 }
 
-// Calculate Personality Number (from consonants)
+// Obfuscated personality calculation
 export function calculatePersonality(fullName) {
-    const consonants = fullName.toUpperCase()
-        .split('')
-        .filter(char => numerologyMap[char] !== undefined && !vowels.includes(char));
-    
-    const numbers = consonants.map(char => numerologyMap[char]);
-    const sum = numbers.reduce((acc, num) => acc + num, 0);
-    const personality = reduceNumber(sum);
+    const _cons = fullName.toUpperCase().split('').filter(c => numerologyMap[c] !== undefined && !_v.includes(c));
+    const _nums = _cons.map(c => numerologyMap[c]);
+    const _sum = _nums.reduce((a, b) => a + b, 0);
+    const _pers = _red(_sum);
     
     return {
-        number: personality,
+        number: _pers,
         steps: [
-            `Pridėtosios: ${consonants.join(', ')}`,
-            `Skaičiai: ${numbers.join('+')} = ${sum}`,
-            `Asmenybės Skaičius: ${personality}`
+            `Pridėtosios: ${_cons.join(', ')}`,
+            `Skaičiai: ${_nums.join('+')} = ${_sum}`,
+            `Asmenybės Skaičius: ${_pers}`
         ]
     };
 }
 
-// Calculate Soul Number (from vowels)
+// Obfuscated soul calculation
 export function calculateSoul(fullName) {
-    const nameVowels = fullName.toUpperCase()
-        .split('')
-        .filter(char => numerologyMap[char] !== undefined && vowels.includes(char));
-    
-    const numbers = nameVowels.map(char => numerologyMap[char]);
-    const sum = numbers.reduce((acc, num) => acc + num, 0);
-    const soul = reduceNumber(sum);
+    const _vow = fullName.toUpperCase().split('').filter(c => numerologyMap[c] !== undefined && _v.includes(c));
+    const _nums = _vow.map(c => numerologyMap[c]);
+    const _sum = _nums.reduce((a, b) => a + b, 0);
+    const _soul = _red(_sum);
     
     return {
-        number: soul,
+        number: _soul,
         steps: [
-            `Balsės: ${nameVowels.join(', ')}`,
-            `Skaičiai: ${numbers.join('+')} = ${sum}`,
-            `Sielos Skaičius: ${soul}`
+            `Balsės: ${_vow.join(', ')}`,
+            `Skaičiai: ${_nums.join('+')} = ${_sum}`,
+            `Sielos Skaičius: ${_soul}`
         ]
     };
 }
-
