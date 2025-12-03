@@ -216,6 +216,25 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         nextPersonalDayNum = reducePersonalYear(nextPersonalDaySum);
     }
     
+    // Calculate personal hour (personal day + current hour)
+    const currentHour = today.getHours(); // 0-23
+    const personalHourSum = personalDayNum + currentHour;
+    const personalHourNum = reducePersonalYear(personalHourSum);
+    
+    // Calculate next personal hour
+    let nextHourNumber, nextPersonalHourSum, nextPersonalHourNum;
+    if (currentHour === 23) {
+        // If current hour is 23, next hour is 0 (midnight) of next day
+        nextHourNumber = 0;
+        nextPersonalHourSum = nextPersonalDayNum + nextHourNumber;
+        nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
+    } else {
+        // Otherwise, next hour is still in current day
+        nextHourNumber = currentHour + 1;
+        nextPersonalHourSum = personalDayNum + nextHourNumber;
+        nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
+    }
+    
     return {
         current: currentPersonalYearNum,
         next: nextPersonalYearNum,
@@ -228,7 +247,11 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         day: personalDayNum,
         dayNumber: currentDay,
         nextDay: nextPersonalDayNum,
-        nextDayNumber: nextDayNumber
+        nextDayNumber: nextDayNumber,
+        hour: personalHourNum,
+        hourNumber: currentHour,
+        nextHour: nextPersonalHourNum,
+        nextHourNumber: nextHourNumber
     };
 }
 

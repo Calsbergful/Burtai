@@ -478,6 +478,71 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                             </div>
                         )}
 
+                        {/* Personal Hour */}
+                        {results.personalYear && results.personalYear.hour !== undefined && (
+                            <div className="border-t border-purple-400/20 pt-4">
+                                <div className="grid grid-cols-2 gap-4 items-center">
+                                    {/* Current Personal Hour */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const personalHour = results.personalYear.hour;
+                                            const isSpecialHour = masterNumbers.includes(personalHour) || personalHour === 20 || personalHour === 28 || personalHour === 29;
+                                            
+                                            return (
+                                                <>
+                                                    <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninė Valanda</div>
+                                                    <div 
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                            isSpecialHour ? 'text-yellow-300' : 'text-white'
+                                                        }`}
+                                                        style={isSpecialHour ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                        }}
+                                                    >
+                                                        {personalHour}
+                                                    </div>
+                                                    <div className="text-xs text-white/60 mt-1">
+                                                        {String(results.personalYear.hourNumber).padStart(2, '0')}:00
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
+
+                                    {/* Next Personal Hour */}
+                                    <div className="text-center">
+                                        {(() => {
+                                            const nextPersonalHour = results.personalYear.nextHour;
+                                            const isSpecialHour = masterNumbers.includes(nextPersonalHour) || nextPersonalHour === 20 || nextPersonalHour === 28 || nextPersonalHour === 29;
+                                            
+                                            return (
+                                                <>
+                                                    <div className="text-xs sm:text-sm text-white/70 mb-1">Asmeninė Valanda</div>
+                                                    <div 
+                                                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${
+                                                            isSpecialHour ? 'text-yellow-300' : 'text-white'
+                                                        }`}
+                                                        style={isSpecialHour ? {
+                                                            textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.6)'
+                                                        } : {
+                                                            textShadow: '0 0 20px rgba(138, 43, 226, 0.8)'
+                                                        }}
+                                                    >
+                                                        {nextPersonalHour}
+                                                    </div>
+                                                    <div className="text-xs text-white/60 mt-1">
+                                                        {String(results.personalYear.nextHourNumber).padStart(2, '0')}:00
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Zodiac Signs and Relationships */}
                         <div className="border-t border-purple-400/20 pt-4">
                             <div className="flex items-center justify-between gap-4 sm:gap-6 md:gap-8 flex-wrap">
