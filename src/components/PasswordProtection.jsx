@@ -97,14 +97,40 @@ function PasswordProtection({ onPasswordCorrect }) {
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
     setError('')
+    
+    // Get password directly from the form input to avoid state timing issues
+    const form = e.target;
+    const passwordInput = form.querySelector('input[type="password"]') || document.getElementById('password-input');
+    const currentPassword = passwordInput ? passwordInput.value : password;
+    
+    // Debug: Log password state before processing
+    console.log('🔍 ===== FORM SUBMISSION DEBUG =====');
+    console.log('🔍 Form element:', form);
+    console.log('🔍 Password input element:', passwordInput);
+    console.log('🔍 Password from React state:', JSON.stringify(password), 'Length:', password ? password.length : 0);
+    console.log('🔍 Password from input.value:', JSON.stringify(currentPassword), 'Length:', currentPassword ? currentPassword.length : 0);
+    console.log('🔍 Input element value property:', passwordInput ? passwordInput.value : 'N/A');
+    console.log('🔍 Input element type:', passwordInput ? passwordInput.type : 'N/A');
+    console.log('🔍 ====================================');
+    
     setIsSubmitting(true)
 
     try {
-      // Debug: Log password state before processing
-      console.log('🔍 Form submitted - password state:', JSON.stringify(password), 'Length:', password.length);
+      // Use input field value first, fallback to state
+      const rawPassword = currentPassword || password;
+      const inputPwd = rawPassword ? String(rawPassword).trim() : '';
       
-      const inputPwd = password.trim();
-      console.log('🔍 After trim - inputPwd:', JSON.stringify(inputPwd), 'Length:', inputPwd.length);
+      console.log('🔍 After processing - inputPwd:', JSON.stringify(inputPwd), 'Length:', inputPwd.length);
+      
+      // Prevent submission if password is empty
+      if (!inputPwd || inputPwd.length === 0) {
+        console.error('🔍 ❌ ERROR: Password is empty after processing!');
+        console.error('🔍 Raw password:', JSON.stringify(rawPassword));
+        console.error('🔍 Trimmed password:', JSON.stringify(inputPwd));
+        setError('Įveskite slaptažodį');
+        setIsSubmitting(false);
+        return;
+      }
       
       const decoyPassword = getDecoyPassword;
       console.log('🔍 Decoy password:', JSON.stringify(decoyPassword));
@@ -622,13 +648,20 @@ function PasswordProtection({ onPasswordCorrect }) {
                 type="password"
                 value={password}
                 onChange={(e) => {
-                  setPassword(e.target.value)
+                  const newValue = e.target.value;
+                  console.log('🔍 Input onChange - new value:', JSON.stringify(newValue), 'Length:', newValue.length);
+                  setPassword(newValue)
                   setError('')
+                }}
+                onBlur={(e) => {
+                  console.log('🔍 Input onBlur - current value:', JSON.stringify(e.target.value), 'Length:', e.target.value.length);
                 }}
                 placeholder="Bandyk laimę"
                 className="w-full px-4 py-3 rounded-lg bg-purple-900/15 backdrop-blur-sm border border-purple-400/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 transition-all"
                 autoFocus
                 disabled={isSubmitting}
+                id="password-input"
+                name="password"
               />
               {error && (
                 <motion.p
