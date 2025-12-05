@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { calculatePersonalYear, reducePersonalYear } from '../utils/numerology';
+import { getHourAnimal, getFriendlyHours, getEnemyHours, getSoulmateHours } from '../utils/hourAnimals';
 import ResultCard from './ResultCard';
 import CosmicBackground from './CosmicBackground';
 
@@ -72,6 +73,7 @@ export default function PersonalYearCalculator() {
     const [month, setMonth] = useState('');
     const [day, setDay] = useState('');
     const [year, setYear] = useState('');
+    const [birthHour, setBirthHour] = useState(''); // Optional birth hour (0-23)
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const [hourFormat, setHourFormat] = useState('24'); // '24' or '12'
@@ -83,7 +85,7 @@ export default function PersonalYearCalculator() {
         } else {
             setResults(null);
         }
-    }, [month, day, year]);
+    }, [month, day, year, birthHour]);
 
     const calculateResults = () => {
         try {
@@ -180,6 +182,33 @@ export default function PersonalYearCalculator() {
                 nextPHHour24 = nextPHHour === 24 ? 0 : nextPHHour; // For date calculation
             }
 
+            // Check if current hour is friendly/enemy (if birth hour is provided)
+            let hourRelationship = 'neutral'; // 'friendly', 'enemy', or 'neutral'
+            let birthHourAnimal = null;
+            let currentHourAnimal = null;
+            
+            if (birthHour !== '' && !isNaN(parseInt(birthHour))) {
+                const birthHourNum = parseInt(birthHour);
+                if (birthHourNum >= 0 && birthHourNum <= 23) {
+                    birthHourAnimal = getHourAnimal(birthHourNum);
+                    currentHourAnimal = getHourAnimal(currentHour24); // Use 0-23 format for getHourAnimal
+                    
+                    // Check if current hour animal is friendly
+                    const friendlyHours = getFriendlyHours(birthHourAnimal.animal);
+                    const soulmateHours = getSoulmateHours(birthHourAnimal.animal);
+                    const allFriendly = [...friendlyHours, ...soulmateHours];
+                    if (allFriendly.some(ha => ha.animal === currentHourAnimal.animal)) {
+                        hourRelationship = 'friendly';
+                    } else {
+                        // Check if current hour animal is enemy
+                        const enemyHours = getEnemyHours(birthHourAnimal.animal);
+                        if (enemyHours.some(ha => ha.animal === currentHourAnimal.animal)) {
+                            hourRelationship = 'enemy';
+                        }
+                    }
+                }
+            }
+
             setResults({
                 personalYear: {
                     current: currentPY,
@@ -213,7 +242,10 @@ export default function PersonalYearCalculator() {
                     nextDay: nextPHDay,
                     nextMonth: nextPHMonth,
                     nextYear: nextPHYear,
-                    nextDate: `${nextPHYear}-${String(nextPHMonth).padStart(2, '0')}-${String(nextPHDay).padStart(2, '0')} ${formatHourForDate(nextPHHour)}:00`
+                    nextDate: `${nextPHYear}-${String(nextPHMonth).padStart(2, '0')}-${String(nextPHDay).padStart(2, '0')} ${formatHourForDate(nextPHHour)}:00`,
+                    hourRelationship: hourRelationship, // 'friendly', 'enemy', or 'neutral'
+                    birthHourAnimal: birthHourAnimal,
+                    currentHourAnimal: currentHourAnimal
                 }
             });
         } catch (error) {
@@ -338,6 +370,26 @@ export default function PersonalYearCalculator() {
                                 />
                             </div>
                         </div>
+                        
+                        {/* Birth Hour Input (Optional) */}
+                        <div className="mb-4">
+                            <label className="block text-white/80 text-sm mb-2 text-center">Gimimo valanda (neprivaloma)</label>
+                            <input
+                                type="text"
+                                value={birthHour}
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                    setBirthHour(value);
+                                }}
+                                placeholder="03 (Tiger: 03-05)"
+                                className="w-full max-w-xs mx-auto block px-4 py-2 rounded-lg bg-purple-900/30 border border-purple-400/30 text-white text-center text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                                maxLength={2}
+                            />
+                            <p className="text-xs text-white/50 text-center mt-1">
+                                Įveskite gimimo valandą (0-23), pvz. 03 = Tiger (03-05), 11 = Horse (11-13)
+                            </p>
+                        </div>
+                        
                         <p className="text-xs text-white/60 text-center mb-4">
                             Įveskite savo gimimo datą. Skaičiavimai atnaujinami automatiškai.
                         </p>
@@ -469,10 +521,22 @@ export default function PersonalYearCalculator() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, delay: 0.4 }}
                             >
-                                <div className={`bg-gradient-to-br ${getMeaning(results.personalHour.current).color} rounded-xl p-6 border-2 border-white/20`}>
+                                <div className={`bg-gradient-to-br ${getMeaning(results.personalHour.current).color} rounded-xl p-6 border-2 ${
+                                    results.personalHour.hourRelationship === 'friendly' 
+                                        ? 'border-green-400/60 shadow-lg shadow-green-500/30' 
+                                        : results.personalHour.hourRelationship === 'enemy'
+                                        ? 'border-red-400/60 shadow-lg shadow-red-500/30'
+                                        : 'border-white/20'
+                                }`}>
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className="text-xl font-bold text-white">Asmeninės Valandos (PH)</h3>
-                                        <span className="text-4xl font-bold text-white drop-shadow-lg">
+                                        <span className={`text-4xl font-bold drop-shadow-lg ${
+                                            results.personalHour.hourRelationship === 'friendly'
+                                                ? 'text-green-300'
+                                                : results.personalHour.hourRelationship === 'enemy'
+                                                ? 'text-red-300'
+                                                : 'text-white'
+                                        }`}>
                                             {results.personalHour.current}
                                         </span>
                                     </div>
@@ -485,8 +549,18 @@ export default function PersonalYearCalculator() {
                                         </p>
                                     </div>
                                     <div className="text-white/70 text-xs">
-                                        <p>Dabartinė valanda: {formatHour(results.personalHour.currentHour)}</p>
-                                        <p>Kita valanda ({results.personalHour.next}): {(() => {
+                                        <p className={results.personalHour.hourRelationship === 'friendly' ? 'text-green-300 font-semibold' : results.personalHour.hourRelationship === 'enemy' ? 'text-red-300 font-semibold' : 'text-white/70'}>
+                                            Dabartinė valanda: {formatHour(results.personalHour.currentHour)}
+                                            {results.personalHour.hourRelationship === 'friendly' && ' 🟢 Draugiška'}
+                                            {results.personalHour.hourRelationship === 'enemy' && ' 🔴 Priešiška'}
+                                        </p>
+                                        {results.personalHour.birthHourAnimal && results.personalHour.currentHourAnimal && (
+                                            <p className="text-white/50 text-[10px] mt-1">
+                                                Gimimo valanda: {results.personalHour.birthHourAnimal.name} ({formatHour(results.personalHour.birthHourAnimal.start === 23 ? 24 : results.personalHour.birthHourAnimal.start + 1)}-{formatHour(results.personalHour.birthHourAnimal.end === 1 ? 24 : results.personalHour.birthHourAnimal.end)}) | 
+                                                Dabartinė valanda: {results.personalHour.currentHourAnimal.name} ({formatHour(results.personalHour.currentHourAnimal.start === 23 ? 24 : results.personalHour.currentHourAnimal.start + 1)}-{formatHour(results.personalHour.currentHourAnimal.end === 1 ? 24 : results.personalHour.currentHourAnimal.end)})
+                                            </p>
+                                        )}
+                                        <p className="text-white/60 mt-1">Kita valanda ({results.personalHour.next}): {(() => {
                                             const dateParts = results.personalHour.nextDate.split(' ');
                                             const dateStr = dateParts[0];
                                             const hourStr = dateParts[1] || '00:00';
