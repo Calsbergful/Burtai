@@ -195,7 +195,7 @@ function App() {
     }
   }, [databaseUnlocked, databaseSequence]);
 
-  // Render active view component
+  // Render active view component with error boundary
   const renderActiveView = () => {
     try {
       switch (activeView) {
@@ -215,12 +215,15 @@ function App() {
           return <NumerologyCalculator />;
       }
     } catch (error) {
-      console.error('Error rendering view:', error);
+      console.error('Error rendering view:', error, error.stack);
       return (
         <div className="text-white text-center p-8">
-          <p className="text-red-400 mb-4">Error loading component</p>
+          <p className="text-red-400 mb-4">Error loading component: {error.message}</p>
           <button 
-            onClick={() => setActiveView('calculator')}
+            onClick={() => {
+              setActiveView('calculator');
+              window.location.reload();
+            }}
             className="px-4 py-2 bg-purple-500 rounded-lg hover:bg-purple-600"
           >
             Return to Calculator
