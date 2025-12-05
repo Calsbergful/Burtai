@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { calculateLifePath, reduceNumber, masterNumbers, calculatePersonalYear, reducePersonalYear } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
 import { getWesternZodiac, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { soulmateRelationships, friendlyRelationships, enemyRelationships, hourAnimals, getHourAnimal, getFriendlyHours, getEnemyHours, hourAnimalEmojis, formatHourRange } from '../utils/hourAnimals';
 
-export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
+function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
     const [month, setMonth] = useState('');
     const [day, setDay] = useState('');
     const [year, setYear] = useState('');
@@ -13,7 +13,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
     const [minute, setMinute] = useState('');
     const [results, setResults] = useState(null);
 
-    const calculateResults = (m, d, y, h = null, min = null) => {
+    const calculateResults = useCallback((m, d, y, h = null, min = null) => {
         try {
             if (m && d && y) {
                 // Format date as YYYY-MM-DD
@@ -133,7 +133,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             console.error('Error calculating results:', error);
             setResults(null);
         }
-    };
+    }, []);
 
     // Handle personal birthday trigger
     useEffect(() => {
@@ -160,8 +160,7 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             setMinute('');
             setResults(null);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [personalBirthdayTrigger]);
+    }, [personalBirthdayTrigger, calculateResults]);
 
     // Auto-refresh personal stats every minute to keep them up-to-date
     useEffect(() => {
@@ -863,4 +862,6 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
         </motion.div>
     );
 }
+
+export default BirthdayCalculator;
 

@@ -1,7 +1,7 @@
+import { memo, useState, useEffect, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 
-export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
+function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
     const [activeItem, setActiveItem] = useState(activeMenuId || null);
     
     // Update active item when prop changes
@@ -11,30 +11,32 @@ export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = f
         }
     }, [activeMenuId]);
     
-                const menuItems = [
-                    { id: 'calculator', label: 'Kalendorius', icon: '📅' },
-                    { id: 'letterology', label: 'Raidės', icon: '🔤' },
-                    { id: 'hidden-numerology', label: 'Hmmm..', icon: '🔮' },
-                    { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
-                    { id: 'personal-birthday', label: 'Asmeninis', icon: '⭐' },
-                    { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
-                    ...(hideDatabase ? [] : [{ id: 'database', label: 'Bazė', icon: '💾' }]),
-                ];
+    // Memoize menu items to prevent recreation on every render
+    const menuItems = useMemo(() => [
+        { id: 'calculator', label: 'Kalendorius', icon: '📅' },
+        { id: 'letterology', label: 'Raidės', icon: '🔤' },
+        { id: 'hidden-numerology', label: 'Hmmm..', icon: '🔮' },
+        { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
+        { id: 'personal-birthday', label: 'Asmeninis', icon: '⭐' },
+        { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
+        ...(hideDatabase ? [] : [{ id: 'database', label: 'Bazė', icon: '💾' }]),
+    ], [hideDatabase]);
 
-    const handleClick = (itemId, e) => {
+    // Memoize click handler to prevent re-renders
+    const handleClick = useCallback((itemId, e) => {
         e.preventDefault();
         e.stopPropagation();
         setActiveItem(itemId);
         if (onMenuClick) {
             onMenuClick(itemId);
         }
-    };
+    }, [onMenuClick]);
 
     return (
         <motion.footer
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
             className="fixed bottom-0 left-0 right-0 z-50 w-full"
         >
             <div className="backdrop-blur-xl bg-black/50 border-t-2 border-purple-500/40 w-full"
@@ -49,9 +51,9 @@ export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = f
                             key={item.id}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
-                            whileHover={{ scale: 1.1, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
+                            transition={{ duration: 0.3, delay: 0.15 + index * 0.05, ease: [0.4, 0, 0.2, 1] }}
+                            whileHover={{ scale: 1.08, y: -2 }}
+                            whileTap={{ scale: 0.96 }}
                             onClick={(e) => handleClick(item.id, e)}
                             onTouchStart={(e) => {
                                 e.stopPropagation();
@@ -59,10 +61,7 @@ export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = f
                             onTouchEnd={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                setActiveItem(item.id);
-                                if (onMenuClick) {
-                                    onMenuClick(item.id);
-                                }
+                                handleClick(item.id, e);
                             }}
                             className={`
                                 flex flex-col items-center justify-center gap-1 px-3 sm:px-3 md:px-5 py-2 sm:py-1.5 rounded-lg transition-all
@@ -97,4 +96,6 @@ export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = f
         </motion.footer>
     );
 }
+
+export default memo(FooterMenu);
 

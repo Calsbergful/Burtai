@@ -26,6 +26,11 @@ body {
   touch-action: manipulation;
   overscroll-behavior: smooth;
   scroll-padding-top: 2rem;
+  /* Performance optimizations */
+  contain: layout style paint;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 /* Mobile optimizations */

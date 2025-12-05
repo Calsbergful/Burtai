@@ -3,7 +3,7 @@ const _d1 = () => {};
 const _d2 = [1,2,3,4,5];
 const _d3 = {a:1,b:2};
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
@@ -96,7 +96,7 @@ function App() {
     return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
   }
 
-  const handleMenuClick = (menuId) => {
+  const handleMenuClick = useCallback((menuId) => {
     // Check database unlock sequence: calculator -> life-path-settings -> letterology -> personal-birthday
     const expectedSequence = ['calculator', 'life-path-settings', 'letterology', 'personal-birthday'];
     
@@ -157,7 +157,7 @@ function App() {
     } else {
       setActiveView('calculator');
     }
-  };
+  }, [databaseUnlocked, databaseSequence, setPersonalBirthdayTrigger]);
 
   return (
     <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-[95px] sm:pb-[75px] md:pb-[80px]">
@@ -205,7 +205,7 @@ function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             >
               <NumerologyCalculator />
             </motion.div>
@@ -215,7 +215,7 @@ function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             >
               <FriendlyEnemyHours />
             </motion.div>
@@ -225,7 +225,7 @@ function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             >
               <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
             </motion.div>
@@ -235,7 +235,7 @@ function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             >
               <Letterology />
             </motion.div>
@@ -245,7 +245,7 @@ function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             >
               <HiddenNumerology />
             </motion.div>
@@ -255,7 +255,7 @@ function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             >
               <Database />
             </motion.div>

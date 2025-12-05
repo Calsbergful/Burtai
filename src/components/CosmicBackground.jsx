@@ -1,24 +1,34 @@
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 
 export default function CosmicBackground() {
-  // Generate random positions for cosmic elements
-  const floatingParticles = Array.from({ length: 20 }, (_, i) => ({
+  // Generate random positions for cosmic elements - memoized to prevent regeneration on every render
+  // Reduced particle count for better performance
+  const floatingParticles = useMemo(() => Array.from({ length: 15 }, (_, i) => ({
     id: i,
     size: Math.random() * 4 + 1,
     left: Math.random() * 100,
     top: Math.random() * 100,
     duration: 10 + Math.random() * 20,
     delay: Math.random() * 5,
-  }))
+  })), [])
 
-  const glowingOrbs = Array.from({ length: 8 }, (_, i) => ({
+  const glowingOrbs = useMemo(() => Array.from({ length: 8 }, (_, i) => ({
     id: i,
     size: 30 + Math.random() * 50,
     left: Math.random() * 100,
     top: Math.random() * 100,
     color: i % 3 === 0 ? 'rgba(138, 43, 226, 0.3)' : i % 3 === 1 ? 'rgba(99, 102, 241, 0.3)' : 'rgba(147, 51, 234, 0.3)',
     duration: 15 + Math.random() * 10,
-  }))
+  })), [])
+
+  const constellationLines = useMemo(() => Array.from({ length: 15 }, (_, i) => {
+    const x1 = Math.random() * 100
+    const y1 = Math.random() * 100
+    const x2 = x1 + (Math.random() - 0.5) * 20
+    const y2 = y1 + (Math.random() - 0.5) * 20
+    return { id: i, x1, y1, x2, y2, duration: 4 + Math.random() * 2 }
+  }), [])
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
@@ -48,6 +58,7 @@ export default function CosmicBackground() {
             delay: particle.delay,
             repeat: Infinity,
             ease: 'easeInOut',
+            type: 'tween',
           }}
         />
       ))}
@@ -78,37 +89,33 @@ export default function CosmicBackground() {
             delay: orb.id * 2,
             repeat: Infinity,
             ease: 'easeInOut',
+            type: 'tween',
           }}
         />
       ))}
 
       {/* Constellation Lines */}
       <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100" preserveAspectRatio="none">
-        {Array.from({ length: 15 }, (_, i) => {
-          const x1 = Math.random() * 100
-          const y1 = Math.random() * 100
-          const x2 = x1 + (Math.random() - 0.5) * 20
-          const y2 = y1 + (Math.random() - 0.5) * 20
-          return (
-            <motion.line
-              key={i}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke="rgba(138, 43, 226, 0.3)"
-              strokeWidth="0.5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0.2, 0.4, 0.2] }}
+        {constellationLines.map((line) => (
+          <motion.line
+            key={line.id}
+            x1={line.x1}
+            y1={line.y1}
+            x2={line.x2}
+            y2={line.y2}
+            stroke="rgba(138, 43, 226, 0.3)"
+            strokeWidth="0.5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0.2, 0.4, 0.2] }}
               transition={{
-                duration: 4 + Math.random() * 2,
-                delay: i * 0.3,
+                duration: line.duration,
+                delay: line.id * 0.3,
                 repeat: Infinity,
                 ease: 'easeInOut',
+                type: 'tween',
               }}
-            />
-          )
-        })}
+          />
+        ))}
       </svg>
 
       {/* Large Distant Stars */}
@@ -135,6 +142,7 @@ export default function CosmicBackground() {
             delay: i * 0.5,
             repeat: Infinity,
             ease: 'easeInOut',
+            type: 'tween',
           }}
         />
       ))}

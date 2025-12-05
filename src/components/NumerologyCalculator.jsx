@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Calendar from './Calendar';
 import DayRecommendations from './DayRecommendations';
@@ -13,8 +13,8 @@ export default function NumerologyCalculator() {
     const [results, setResults] = useState(null);
     const [isCalculating, setIsCalculating] = useState(false);
 
-    // Calculate date sum (full number) - same logic as Calendar
-    const calculateDateSum = (day, month, year) => {
+    // Calculate date sum (full number) - same logic as Calendar - memoized
+    const calculateDateSum = useCallback((day, month, year) => {
         const monthNum = month; // month is already 1-indexed from date string
         // For month: only November (11) is kept as master number; all others split into digits
         const monthValues = (monthNum === 11) ? [11] : monthNum.toString().split('').map(d => parseInt(d));
@@ -28,9 +28,9 @@ export default function NumerologyCalculator() {
         const total = allValues.reduce((sum, val) => sum + val, 0);
         
         return total;
-    };
+    }, []);
 
-    const handleDateSelect = (date) => {
+    const handleDateSelect = useCallback((date) => {
         // Clear previous results first
         setResults(null);
         setBirthdate(date);
@@ -77,7 +77,7 @@ export default function NumerologyCalculator() {
                 }
             });
         });
-    };
+    }, [calculateDateSum]);
 
     return (
         <div className="w-full max-w-6xl mx-auto mb-1 sm:mb-2">
