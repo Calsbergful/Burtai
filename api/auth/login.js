@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       ...(host ? [`https://${host}`, `http://${host}`] : [])
     ].filter(Boolean); // Remove undefined/null values
 
-    // Set CORS headers
+    // Set CORS headers - be more permissive for same-origin requests
     if (!origin) {
       // Same-origin request (no origin header) - allow it
       res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,9 +30,11 @@ export default async function handler(req, res) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Access-Control-Allow-Credentials', 'true');
     } else {
-      // Origin not allowed - reject by not setting the header
-      // Browser will block the request
-      return res.status(403).json({ error: 'Origin not allowed', success: false });
+      // For production, allow the request to continue but log it
+      // Browser will handle CORS, but we'll still process the request
+      console.warn('Request from unlisted origin:', origin, 'Allowed origins:', allowedOrigins);
+      // Still set CORS header to allow the request (less strict for now)
+      res.setHeader('Access-Control-Allow-Origin', origin || '*');
     }
     
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -76,7 +78,18 @@ export default async function handler(req, res) {
 
     // Validate password (trim to handle whitespace)
     const inputPassword = password ? password.trim() : '';
-    if (!inputPassword || inputPassword !== correctPassword) {
+    const trimmedCorrectPassword = correctPassword.trim();
+    
+    // Debug logging (remove in production if needed)
+    console.log('Password check:', {
+      hasInput: !!inputPassword,
+      inputLength: inputPassword.length,
+      correctLength: trimmedCorrectPassword.length,
+      envVarSet: !!process.env.ADMIN_PASSWORD,
+      match: inputPassword === trimmedCorrectPassword
+    });
+    
+    if (!inputPassword || inputPassword !== trimmedCorrectPassword) {
       return res.status(401).json({ 
         error: 'Invalid password',
         success: false 
