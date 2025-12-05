@@ -256,7 +256,9 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <FriendlyEnemyHours />
+                  <ErrorBoundary>
+                    <FriendlyEnemyHours />
+                  </ErrorBoundary>
                 </motion.div>
               ) : activeView === 'birthday' ? (
                 <motion.div
@@ -266,7 +268,9 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
+                  <ErrorBoundary>
+                    <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
+                  </ErrorBoundary>
                 </motion.div>
               ) : activeView === 'letterology' ? (
                 <motion.div
@@ -276,7 +280,9 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Letterology />
+                  <ErrorBoundary>
+                    <Letterology />
+                  </ErrorBoundary>
                 </motion.div>
               ) : activeView === 'hidden-numerology' ? (
                 <motion.div
@@ -286,7 +292,9 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <HiddenNumerology />
+                  <ErrorBoundary>
+                    <HiddenNumerology />
+                  </ErrorBoundary>
                 </motion.div>
               ) : (
                 <motion.div
@@ -296,7 +304,9 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Database />
+                  <ErrorBoundary>
+                    <Database />
+                  </ErrorBoundary>
                 </motion.div>
               )}
             </AnimatePresence>
