@@ -69,8 +69,16 @@ export default async function handler(req, res) {
     const correctPassword = envPassword ? envPassword.trim() : 'dauns33';
     
     // Log environment variable status (for debugging)
+    console.log('=== ENVIRONMENT CHECK ===');
+    console.log('ADMIN_PASSWORD env var exists:', !!envPassword);
+    console.log('ADMIN_PASSWORD value (first 3 chars only):', envPassword ? envPassword.substring(0, 3) + '...' : 'NOT SET');
+    console.log('ADMIN_PASSWORD length:', envPassword ? envPassword.length : 0);
+    console.log('Using fallback password:', !envPassword);
+    console.log('Correct password to compare:', JSON.stringify(correctPassword), 'Length:', correctPassword.length);
+    console.log('========================');
+    
     if (!envPassword) {
-      console.warn('ADMIN_PASSWORD environment variable not set, using fallback');
+      console.warn('⚠️ ADMIN_PASSWORD environment variable not set, using fallback "dauns33"');
     }
     const jwtSecret = process.env.JWT_SECRET || 'd8f8ed21769ed995d997ef9366efb0b8475df9eeb6483b64fe796fd0d24c95613a6e543a2bc899f81a970d7bd6bf21ba1f67b6bf6b98bca52b5e6e802fb8d223';
 
