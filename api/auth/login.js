@@ -20,26 +20,21 @@ export default async function handler(req, res) {
       ...(host ? [`https://${host}`, `http://${host}`] : [])
     ].filter(Boolean); // Remove undefined/null values
 
-    // Set CORS headers - allow requests from same domain
-    // Check if request is from same domain (no origin or origin matches host)
-    const isSameOrigin = !origin || (host && origin.includes(host.split(':')[0]));
-    
-    if (isSameOrigin || !origin) {
-      // Same-origin request - allow it
-      res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    // Set CORS headers
+    if (!origin) {
+      // Same-origin request (no origin header) - allow it
+      res.setHeader('Access-Control-Allow-Origin', '*');
     } else if (allowedOrigins.includes(origin)) {
       // Origin is in allowed list
       res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
     } else {
-      // Allow request but log it for monitoring
-      console.warn('Request from unlisted origin:', origin, 'Host:', host, 'Allowed:', allowedOrigins);
-      // Set origin to allow the request (temporary - should restrict in production)
-      res.setHeader('Access-Control-Allow-Origin', origin || '*');
+      // Origin not allowed - reject by not setting the header
+      // Browser will block the request
     }
     
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     // Handle preflight
     if (req.method === 'OPTIONS') {
@@ -51,31 +46,9 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Log request details for debugging
-    console.log('=== REQUEST DEBUG ===');
-    console.log('Method:', req.method);
-    console.log('Content-Type:', req.headers['content-type']);
-    console.log('Body type:', typeof req.body);
-    console.log('Body exists:', !!req.body);
-    console.log('Body keys:', req.body ? Object.keys(req.body) : 'N/A');
-    console.log('Raw body:', JSON.stringify(req.body));
-    
-    // Vercel automatically parses JSON, but let's handle it explicitly
-    let body = req.body;
-    
-    // If body is a string, try to parse it
-    if (typeof body === 'string' && body.length > 0) {
-      try {
-        body = JSON.parse(body);
-        console.log('Parsed body from string:', JSON.stringify(body));
-      } catch (e) {
-        console.error('Failed to parse body as JSON:', e);
-      }
-    }
-    
     // Validate request body exists
-    if (!body || typeof body !== 'object') {
-      console.error('Request body is missing or invalid');
+    if (!req.body) {
+      console.error('Request body is missing');
       return res.status(400).json({
         error: 'Bad request',
         success: false,
@@ -83,29 +56,10 @@ export default async function handler(req, res) {
       });
     }
 
-    const { password } = body;
-    console.log('Extracted password:', password !== undefined ? `"${password}" (${String(password).length} chars)` : 'undefined');
-    console.log('Password type:', typeof password);
-    console.log('Password value:', JSON.stringify(password));
-    console.log('====================');
+    const { password } = req.body;
 
     // Get password from environment variable
-    // Check if env var is set, if not use fallback
-    const envPassword = process.env.ADMIN_PASSWORD;
-    const correctPassword = envPassword ? envPassword.trim() : 'dauns33';
-    
-    // Log environment variable status (for debugging)
-    console.log('=== ENVIRONMENT CHECK ===');
-    console.log('ADMIN_PASSWORD env var exists:', !!envPassword);
-    console.log('ADMIN_PASSWORD value (first 3 chars only):', envPassword ? envPassword.substring(0, 3) + '...' : 'NOT SET');
-    console.log('ADMIN_PASSWORD length:', envPassword ? envPassword.length : 0);
-    console.log('Using fallback password:', !envPassword);
-    console.log('Correct password to compare:', JSON.stringify(correctPassword), 'Length:', correctPassword.length);
-    console.log('========================');
-    
-    if (!envPassword) {
-      console.warn('⚠️ ADMIN_PASSWORD environment variable not set, using fallback "dauns33"');
-    }
+    const correctPassword = process.env.ADMIN_PASSWORD || 'dauns33';
     const jwtSecret = process.env.JWT_SECRET || 'd8f8ed21769ed995d997ef9366efb0b8475df9eeb6483b64fe796fd0d24c95613a6e543a2bc899f81a970d7bd6bf21ba1f67b6bf6b98bca52b5e6e802fb8d223';
 
     // Validate JWT secret is not empty
@@ -119,43 +73,13 @@ export default async function handler(req, res) {
     }
 
     // Validate password (trim to handle whitespace)
-    const inputPassword = password ? String(password).trim() : '';
-    const trimmedCorrectPassword = String(correctPassword).trim();
-    
-    // Debug logging to help diagnose issues
-    console.log('=== PASSWORD VALIDATION DEBUG ===');
-    console.log('Input password:', JSON.stringify(inputPassword), 'Length:', inputPassword.length);
-    console.log('Expected password:', JSON.stringify(trimmedCorrectPassword), 'Length:', trimmedCorrectPassword.length);
-    console.log('Environment variable set:', !!process.env.ADMIN_PASSWORD);
-    console.log('Using fallback:', !process.env.ADMIN_PASSWORD);
-    console.log('Passwords match:', inputPassword === trimmedCorrectPassword);
-    console.log('Character codes - Input:', inputPassword.split('').map(c => c.charCodeAt(0)));
-    console.log('Character codes - Expected:', trimmedCorrectPassword.split('').map(c => c.charCodeAt(0)));
-    console.log('================================');
-    
-    if (!inputPassword || inputPassword !== trimmedCorrectPassword) {
-      console.error('❌ PASSWORD MISMATCH');
-      console.error('Received:', JSON.stringify(inputPassword), `(${inputPassword.length} chars)`);
-      console.error('Expected:', JSON.stringify(trimmedCorrectPassword), `(${trimmedCorrectPassword.length} chars)`);
-      console.error('Lengths match:', inputPassword.length === trimmedCorrectPassword.length);
-      console.error('First char match:', inputPassword[0] === trimmedCorrectPassword[0]);
-      console.error('Last char match:', inputPassword[inputPassword.length - 1] === trimmedCorrectPassword[trimmedCorrectPassword.length - 1]);
-      
+    const inputPassword = password ? password.trim() : '';
+    if (!inputPassword || inputPassword !== correctPassword) {
       return res.status(401).json({ 
         error: 'Invalid password',
-        success: false,
-        // Only include debug info in development
-        ...(process.env.VERCEL_ENV !== 'production' && {
-          debug: {
-            receivedLength: inputPassword.length,
-            expectedLength: trimmedCorrectPassword.length,
-            envVarSet: !!process.env.ADMIN_PASSWORD
-          }
-        })
+        success: false 
       });
     }
-    
-    console.log('✅ PASSWORD MATCH - Generating token');
 
     // Generate JWT token (removed manual exp, using expiresIn option only)
     const token = jwt.sign(

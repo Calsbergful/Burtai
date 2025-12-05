@@ -3,53 +3,17 @@ const _d1 = () => {};
 const _d2 = [1,2,3,4,5];
 const _d3 = {a:1,b:2};
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import CosmicBackground from './components/CosmicBackground'
-import FooterMenu from './components/FooterMenu'
-import PasswordProtection from './components/PasswordProtection'
-
-// Import components directly (lazy loading temporarily disabled to fix white screen)
 import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
 import BirthdayCalculator from './components/BirthdayCalculator'
 import Letterology from './components/Letterology'
 import HiddenNumerology from './components/HiddenNumerology'
 import Database from './components/Database'
-
-// Lazy load components for better performance (commented out to fix white screen issue)
-// const NumerologyCalculator = lazy(() => import('./components/NumerologyCalculator'))
-// const FriendlyEnemyHours = lazy(() => import('./components/FriendlyEnemyHours'))
-// const BirthdayCalculator = lazy(() => import('./components/BirthdayCalculator'))
-// const Letterology = lazy(() => import('./components/Letterology'))
-// const HiddenNumerology = lazy(() => import('./components/HiddenNumerology'))
-// const Database = lazy(() => import('./components/Database'))
-
-// Loading fallback component
-const ComponentLoader = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="text-white/60 text-sm"
-    >
-      Loading...
-    </motion.div>
-  </div>
-)
-
-// Error boundary component for lazy loading
-const ErrorFallback = ({ error, resetErrorBoundary }) => (
-  <div className="flex flex-col items-center justify-center min-h-[400px] text-white">
-    <p className="text-red-400 mb-4">Something went wrong</p>
-    <button 
-      onClick={resetErrorBoundary}
-      className="px-4 py-2 bg-purple-500 rounded-lg hover:bg-purple-600"
-    >
-      Try again
-    </button>
-  </div>
-)
+import CosmicBackground from './components/CosmicBackground'
+import FooterMenu from './components/FooterMenu'
+import PasswordProtection from './components/PasswordProtection'
 
 // Dead code injection
 const _dead1 = () => { const x = Math.random() * 1000; return x % 2 === 0; };
@@ -123,16 +87,16 @@ function App() {
     }
   }, [databaseSequence, databaseUnlocked])
 
-  const handlePasswordCorrect = useCallback(() => {
+  const handlePasswordCorrect = () => {
     setIsAuthenticated(true)
-  }, [])
+  }
 
   // Show password protection if not authenticated
   if (!isAuthenticated) {
     return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
   }
 
-  const handleMenuClick = useCallback((menuId) => {
+  const handleMenuClick = (menuId) => {
     // Check database unlock sequence: calculator -> life-path-settings -> letterology -> personal-birthday
     const expectedSequence = ['calculator', 'life-path-settings', 'letterology', 'personal-birthday'];
     
@@ -193,44 +157,6 @@ function App() {
     } else {
       setActiveView('calculator');
     }
-  }, [databaseUnlocked, databaseSequence]);
-
-  // Render active view component with error boundary
-  const renderActiveView = () => {
-    try {
-      switch (activeView) {
-        case 'calculator':
-          return <NumerologyCalculator />;
-        case 'hours':
-          return <FriendlyEnemyHours />;
-        case 'birthday':
-          return <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />;
-        case 'letterology':
-          return <Letterology />;
-        case 'hidden-numerology':
-          return <HiddenNumerology />;
-        case 'database':
-          return <Database />;
-        default:
-          return <NumerologyCalculator />;
-      }
-    } catch (error) {
-      console.error('Error rendering view:', error, error.stack);
-      return (
-        <div className="text-white text-center p-8">
-          <p className="text-red-400 mb-4">Error loading component: {error.message}</p>
-          <button 
-            onClick={() => {
-              setActiveView('calculator');
-              window.location.reload();
-            }}
-            className="px-4 py-2 bg-purple-500 rounded-lg hover:bg-purple-600"
-          >
-            Return to Calculator
-          </button>
-        </div>
-      );
-    }
   };
 
   return (
@@ -272,16 +198,66 @@ function App() {
           </motion.h1>
         </header>
         
-        <AnimatePresence mode="wait" initial={false}>
-          {activeView && (
+        <AnimatePresence mode="wait">
+          {activeView === 'calculator' ? (
             <motion.div
-              key={activeView}
+              key="calculator"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              transition={{ duration: 0.3 }}
             >
-              {renderActiveView()}
+              <NumerologyCalculator />
+            </motion.div>
+          ) : activeView === 'hours' ? (
+            <motion.div
+              key="hours"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <FriendlyEnemyHours />
+            </motion.div>
+          ) : activeView === 'birthday' ? (
+            <motion.div
+              key="birthday"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
+            </motion.div>
+          ) : activeView === 'letterology' ? (
+            <motion.div
+              key="letterology"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Letterology />
+            </motion.div>
+          ) : activeView === 'hidden-numerology' ? (
+            <motion.div
+              key="hidden-numerology"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <HiddenNumerology />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="database"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Database />
             </motion.div>
           )}
         </AnimatePresence>

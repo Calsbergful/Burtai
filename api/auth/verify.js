@@ -23,19 +23,17 @@ export default async function handler(req, res) {
   if (!origin) {
     // Same-origin request (no origin header) - allow it
     res.setHeader('Access-Control-Allow-Origin', '*');
-    // Don't set credentials with wildcard
   } else if (allowedOrigins.includes(origin)) {
     // Origin is in allowed list
     res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
   } else {
     // Origin not allowed - reject by not setting the header
     // Browser will block the request
-    return res.status(403).json({ error: 'Origin not allowed', success: false });
   }
   
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   // Handle preflight
   if (req.method === 'OPTIONS') {

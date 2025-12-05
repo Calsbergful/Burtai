@@ -1,39 +1,7 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import CryptoJS from 'crypto-js'
 import CosmicBackground from './CosmicBackground'
-
-// Move helper functions outside component to avoid recreation
-const _deriveKey = (baseKey, salt) => {
-  // PBKDF2-like key derivation (simplified, obfuscated)
-  const _k1 = CryptoJS.SHA256(baseKey + salt).toString();
-  const _k2 = CryptoJS.SHA256(salt + baseKey).toString();
-  return CryptoJS.SHA256(_k1 + _k2).toString().substring(0, 32);
-};
-
-const _encryptAES = (text, key, salt) => {
-  const _derivedKey = _deriveKey(key, salt);
-  const _encrypted = CryptoJS.AES.encrypt(text, _derivedKey, {
-    mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.Pkcs7,
-    iv: CryptoJS.enc.Utf8.parse(salt.substring(0, 16))
-  });
-  return _encrypted.toString();
-};
-
-const _decryptAES = (encrypted, key, salt) => {
-  try {
-    const _derivedKey = _deriveKey(key, salt);
-    const _decrypted = CryptoJS.AES.decrypt(encrypted, _derivedKey, {
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-      iv: CryptoJS.enc.Utf8.parse(salt.substring(0, 16))
-    });
-    return _decrypted.toString(CryptoJS.enc.Utf8);
-  } catch (e) {
-    return '';
-  }
-};
 
 function PasswordProtection({ onPasswordCorrect }) {
   const [password, setPassword] = useState('')
@@ -41,120 +9,102 @@ function PasswordProtection({ onPasswordCorrect }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [fakeLoading, setFakeLoading] = useState(false)
 
-  // Decoy password (base64) - shows fake loading screen - memoized
-  const getDecoyPassword = useMemo(() => {
+  // Advanced AES encryption with multiple layers and key derivation
+  const _deriveKey = (baseKey, salt) => {
+    // PBKDF2-like key derivation (simplified, obfuscated)
+    const _k1 = CryptoJS.SHA256(baseKey + salt).toString();
+    const _k2 = CryptoJS.SHA256(salt + baseKey).toString();
+    return CryptoJS.SHA256(_k1 + _k2).toString().substring(0, 32);
+  };
+
+  const _encryptAES = (text, key, salt) => {
+    const _derivedKey = _deriveKey(key, salt);
+    const _encrypted = CryptoJS.AES.encrypt(text, _derivedKey, {
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+      iv: CryptoJS.enc.Utf8.parse(salt.substring(0, 16))
+    });
+    return _encrypted.toString();
+  };
+
+  const _decryptAES = (encrypted, key, salt) => {
+    try {
+      const _derivedKey = _deriveKey(key, salt);
+      const _decrypted = CryptoJS.AES.decrypt(encrypted, _derivedKey, {
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+        iv: CryptoJS.enc.Utf8.parse(salt.substring(0, 16))
+      });
+      return _decrypted.toString(CryptoJS.enc.Utf8);
+    } catch (e) {
+      return '';
+    }
+  };
+
+  // Decoy password (base64) - shows fake loading screen
+  const getDecoyPassword = () => {
     const _d1 = [70, 78, 85, 75, 84, 65, 83, 51, 51];
     const _d2 = atob('ZnJ1a3RhczMz');
     return _d2;
-  }, []);
+  }
 
-  // Real password - AES encrypted with multiple layers of obfuscation - memoized
-  const getCorrectPassword = useMemo(() => {
-    try {
-      // Encryption key (scattered and obfuscated)
-      const _keyParts = [107, 101, 121, 51, 51]; // "key33" in char codes
-      const _key = String.fromCharCode(..._keyParts);
-      
-      // Salt (obfuscated) - split across multiple parts
-      const _saltParts1 = [115, 97, 108, 116]; // "salt"
-      const _saltParts2 = [51, 51, 120, 48]; // "33x0"
-      const _saltParts3 = [98, 102, 117, 115, 99, 52, 116, 51]; // "bfusc4t3"
-      const _salt = String.fromCharCode(..._saltParts1) + 
-                    String.fromCharCode(..._saltParts2) + 
-                    String.fromCharCode(..._saltParts3);
-      
-      // AES encrypted password (not visible as plain text)
-      // Encrypted with AES-256-CBC using key derivation
-      const _encrypted = 'U2FsdGVkX1/yOYtSqt527po9Niki0GAY3MN2iEkS0XM=';
-      
-      // Decoy encrypted strings to confuse reverse engineers
-      const _decoy1 = 'U2FsdGVkX1+test1234567890abcdefghijklmnop=';
-      const _decoy2 = 'U2FsdGVkX1+fakePasswordEncryptedStringHere=';
-      const _decoy3 = 'U2FsdGVkX1+anotherDecoyEncryptedValue1234=';
-      
-      // Decoy calculations (unused but look important)
-      const _decoySum = _decoy1.length + _decoy2.length + _decoy3.length;
-      const _decoyHash = CryptoJS.SHA256(_decoy1 + _decoy2).toString();
-      const _decoyMod = _decoySum % 1000;
-      
-      // Decrypt the real password using AES
-      const _decrypted = _decryptAES(_encrypted, _key, _salt);
-      
-      // More obfuscation - verify it's correct through multiple checks
-      const _verify1 = _decrypted && _decrypted.length === 7;
-      const _verify2 = _decrypted && _decrypted.charCodeAt(0) === 100; // 'd'
-      const _verify3 = _decrypted && _decrypted.charCodeAt(6) === 51; // '3'
-      const _verify4 = _decrypted && _decrypted.includes('33');
-      
-      // Return decrypted password only if all verifications pass
-      return (_verify1 && _verify2 && _verify3 && _verify4) ? _decrypted : '';
-    } catch (error) {
-      console.error('Password decryption error:', error);
-      return '';
-    }
-  }, []);
+  // Real password - AES encrypted with multiple layers of obfuscation
+  const getCorrectPassword = () => {
+    // Encryption key (scattered and obfuscated)
+    const _keyParts = [107, 101, 121, 51, 51]; // "key33" in char codes
+    const _key = String.fromCharCode(..._keyParts);
+    
+    // Salt (obfuscated) - split across multiple parts
+    const _saltParts1 = [115, 97, 108, 116]; // "salt"
+    const _saltParts2 = [51, 51, 120, 48]; // "33x0"
+    const _saltParts3 = [98, 102, 117, 115, 99, 52, 116, 51]; // "bfusc4t3"
+    const _salt = String.fromCharCode(..._saltParts1) + 
+                  String.fromCharCode(..._saltParts2) + 
+                  String.fromCharCode(..._saltParts3);
+    
+    // AES encrypted password (not visible as plain text)
+    // Encrypted with AES-256-CBC using key derivation
+    const _encrypted = 'U2FsdGVkX1/yOYtSqt527po9Niki0GAY3MN2iEkS0XM=';
+    
+    // Decoy encrypted strings to confuse reverse engineers
+    const _decoy1 = 'U2FsdGVkX1+test1234567890abcdefghijklmnop=';
+    const _decoy2 = 'U2FsdGVkX1+fakePasswordEncryptedStringHere=';
+    const _decoy3 = 'U2FsdGVkX1+anotherDecoyEncryptedValue1234=';
+    
+    // Decoy calculations (unused but look important)
+    const _decoySum = _decoy1.length + _decoy2.length + _decoy3.length;
+    const _decoyHash = CryptoJS.SHA256(_decoy1 + _decoy2).toString();
+    const _decoyMod = _decoySum % 1000;
+    
+    // Decrypt the real password using AES
+    const _decrypted = _decryptAES(_encrypted, _key, _salt);
+    
+    // More obfuscation - verify it's correct through multiple checks
+    const _verify1 = _decrypted && _decrypted.length === 7;
+    const _verify2 = _decrypted && _decrypted.charCodeAt(0) === 100; // 'd'
+    const _verify3 = _decrypted && _decrypted.charCodeAt(6) === 51; // '3'
+    const _verify4 = _decrypted && _decrypted.includes('33');
+    
+    // Return decrypted password only if all verifications pass
+    return (_verify1 && _verify2 && _verify3 && _verify4) ? _decrypted : '';
+  }
 
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    
-    // Get password directly from the form input to avoid state timing issues
-    const form = e.target;
-    const passwordInput = form.querySelector('input[type="password"]') || document.getElementById('password-input');
-    const currentPassword = passwordInput ? passwordInput.value : password;
-    
-    // Debug: Log password state before processing
-    console.log('🔍 ===== FORM SUBMISSION DEBUG =====');
-    console.log('🔍 Form element:', form);
-    console.log('🔍 Password input element:', passwordInput);
-    console.log('🔍 Password from React state:', JSON.stringify(password), 'Length:', password ? password.length : 0);
-    console.log('🔍 Password from input.value:', JSON.stringify(currentPassword), 'Length:', currentPassword ? currentPassword.length : 0);
-    console.log('🔍 Input element value property:', passwordInput ? passwordInput.value : 'N/A');
-    console.log('🔍 Input element type:', passwordInput ? passwordInput.type : 'N/A');
-    console.log('🔍 ====================================');
-    
     setIsSubmitting(true)
 
     try {
-      // Use input field value first, fallback to state
-      const rawPassword = currentPassword || password;
-      const inputPwd = rawPassword ? String(rawPassword).trim() : '';
-      
-      console.log('🔍 After processing - inputPwd:', JSON.stringify(inputPwd), 'Length:', inputPwd.length);
-      
-      // Prevent submission if password is empty
-      if (!inputPwd || inputPwd.length === 0) {
-        console.error('🔍 ❌ ERROR: Password is empty after processing!');
-        console.error('🔍 Raw password:', JSON.stringify(rawPassword));
-        console.error('🔍 Trimmed password:', JSON.stringify(inputPwd));
-        console.error('🔍 React state password:', JSON.stringify(password));
-        console.error('🔍 Input element:', passwordInput);
-        console.error('🔍 Input element value:', passwordInput ? passwordInput.value : 'N/A');
-        
-        // Use setTimeout to avoid state update during render
-        setTimeout(() => {
-          setError('Įveskite slaptažodį');
-          setIsSubmitting(false);
-        }, 0);
-        return;
-      }
-      
-      const decoyPassword = getDecoyPassword;
-      console.log('🔍 Decoy password:', JSON.stringify(decoyPassword));
+      const inputPwd = password.trim();
+      const decoyPassword = getDecoyPassword();
       
       // Check decoy password first (client-side check)
       if (inputPwd === decoyPassword) {
-        console.log('🔍 Decoy password matched - showing fake loading');
         setIsSubmitting(false);
         setFakeLoading(true);
         setPassword('');
         return;
       }
-
-      // Prepare request body
-      const requestBody = { password: inputPwd };
-      console.log('🔍 Sending request body:', JSON.stringify(requestBody));
-      console.log('🔍 Request body password field:', JSON.stringify(requestBody.password), 'Length:', requestBody.password ? requestBody.password.length : 0);
 
       // Send password to server for validation
       const response = await fetch('/api/auth/login', {
@@ -162,26 +112,16 @@ function PasswordProtection({ onPasswordCorrect }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({ password: inputPwd }),
       });
 
       // Check if response is ok
       if (!response.ok) {
         // Try to get error message
-        let errorMessage = 'Neteisingas slaptažodis';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch (e) {
-          console.error('Failed to parse error response:', e);
-        }
-        
-        // Use setTimeout to avoid state update during render
-        setTimeout(() => {
-          setError(errorMessage);
-          setIsSubmitting(false);
-          setPassword('');
-        }, 0);
+        const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+        setError(errorData.error || 'Neteisingas slaptažodis');
+        setIsSubmitting(false);
+        setPassword('');
         return;
       }
 
@@ -200,19 +140,15 @@ function PasswordProtection({ onPasswordCorrect }) {
     } catch (error) {
       // Better error handling - check if it's a network error
       console.error('Login error:', error);
-      let errorMessage = 'Klaida prisijungiant. Bandykite dar kartą.';
       if (error.message && error.message.includes('Failed to fetch')) {
-        errorMessage = 'Nepavyko prisijungti prie serverio. Naudokite "vercel dev" vietoj "npm run dev".';
+        setError('Nepavyko prisijungti prie serverio. Naudokite "vercel dev" vietoj "npm run dev".');
+      } else {
+        setError('Klaida prisijungiant. Bandykite dar kartą.');
       }
-      
-      // Use setTimeout to avoid state update during render
-      setTimeout(() => {
-        setError(errorMessage);
-        setIsSubmitting(false);
-        setPassword('');
-      }, 0);
+      setIsSubmitting(false);
+      setPassword('');
     }
-  }, [onPasswordCorrect]);
+  }
 
   // Fake loading screen for decoy password - scary glitching ghost animations
   if (fakeLoading) {
@@ -669,20 +605,13 @@ function PasswordProtection({ onPasswordCorrect }) {
                 type="password"
                 value={password}
                 onChange={(e) => {
-                  const newValue = e.target.value;
-                  console.log('🔍 Input onChange - new value:', JSON.stringify(newValue), 'Length:', newValue.length);
-                  setPassword(newValue)
+                  setPassword(e.target.value)
                   setError('')
-                }}
-                onBlur={(e) => {
-                  console.log('🔍 Input onBlur - current value:', JSON.stringify(e.target.value), 'Length:', e.target.value.length);
                 }}
                 placeholder="Bandyk laimę"
                 className="w-full px-4 py-3 rounded-lg bg-purple-900/15 backdrop-blur-sm border border-purple-400/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 transition-all"
                 autoFocus
                 disabled={isSubmitting}
-                id="password-input"
-                name="password"
               />
               {error && (
                 <motion.p

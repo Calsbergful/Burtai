@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 
-function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
+export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
     const [activeItem, setActiveItem] = useState(activeMenuId || null);
     
     // Update active item when prop changes
@@ -11,7 +11,7 @@ function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
         }
     }, [activeMenuId]);
     
-                const menuItems = useMemo(() => [
+                const menuItems = [
                     { id: 'calculator', label: 'Kalendorius', icon: '📅' },
                     { id: 'letterology', label: 'Raidės', icon: '🔤' },
                     { id: 'hidden-numerology', label: 'Hmmm..', icon: '🔮' },
@@ -19,7 +19,7 @@ function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
                     { id: 'personal-birthday', label: 'Asmeninis', icon: '⭐' },
                     { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
                     ...(hideDatabase ? [] : [{ id: 'database', label: 'Bazė', icon: '💾' }]),
-                ], [hideDatabase]);
+                ];
 
     const handleClick = (itemId, e) => {
         e.preventDefault();
@@ -97,6 +97,4 @@ function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
         </motion.footer>
     );
 }
-
-export default FooterMenu;
 
