@@ -5,21 +5,12 @@ const _d3 = {a:1,b:2};
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-// Temporarily disable lazy loading to fix blank screen issue
-// TODO: Re-enable lazy loading after fixing the issue
 import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
 import BirthdayCalculator from './components/BirthdayCalculator'
 import Letterology from './components/Letterology'
 import HiddenNumerology from './components/HiddenNumerology'
 import Database from './components/Database'
-// Lazy load route components for better performance (disabled for now)
-// const NumerologyCalculator = lazy(() => import('./components/NumerologyCalculator'))
-// const FriendlyEnemyHours = lazy(() => import('./components/FriendlyEnemyHours'))
-// const BirthdayCalculator = lazy(() => import('./components/BirthdayCalculator'))
-// const Letterology = lazy(() => import('./components/Letterology'))
-// const HiddenNumerology = lazy(() => import('./components/HiddenNumerology'))
-// const Database = lazy(() => import('./components/Database'))
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 import PasswordProtection from './components/PasswordProtection'
