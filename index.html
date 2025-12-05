@@ -5,9 +5,62 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Geduče Burtai - Numerologijos Skaičiuoklė</title>
+    <style>
+      /* Prevent text selection and copying (less aggressive) */
+      body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      /* Allow selection in input fields */
+      input, textarea {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
+      /* Hide source in view-source */
+      body::before {
+        content: '';
+        display: none;
+      }
+      /* Prevent image dragging */
+      img {
+        -webkit-user-drag: none;
+        user-drag: none;
+      }
+    </style>
+    <script>
+      // Additional inline protection (only in production)
+      (function() {
+        'use strict';
+        // Only apply in production builds (not localhost)
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          return; // Allow in development
+        }
+        
+        // Disable common shortcuts (less aggressive)
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+            e.preventDefault();
+            return false;
+          }
+        }, false);
+        
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          return false;
+        }, false);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <noscript>
+      <meta http-equiv="refresh" content="0; url=about:blank">
+    </noscript>
   </body>
 </html>

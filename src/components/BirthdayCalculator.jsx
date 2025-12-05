@@ -733,6 +733,11 @@ export default function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                                     <div className="text-lg sm:text-xl md:text-2xl xl:text-xl 2xl:text-lg font-bold text-white" style={{ textShadow: '0 0 15px rgba(251, 191, 36, 0.6)' }}>
                                         {zodiacTranslations[results.chineseZodiac.zodiac]}
                                     </div>
+                                    {(parseInt(month) === 1 || parseInt(month) === 2) && results.chineseZodiac.startDate && (
+                                        <div className="text-[9px] sm:text-[10px] text-yellow-300/80 mt-1 italic">
+                                            Kinų N.M. {results.chineseZodiac.startDate.split('-')[0]}: {results.chineseZodiac.startDate.split('-')[2]}.{results.chineseZodiac.startDate.split('-')[1]}.
+                                        </div>
+                                    )}
                                 </div>
                                 
                                 {/* Enemies and Western Zodiac - RIGHT side */}

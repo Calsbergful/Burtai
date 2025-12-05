@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Calendar from './Calendar';
-import ResultCard from './ResultCard';
-import CalculationSteps from './CalculationSteps';
+import DayRecommendations from './DayRecommendations';
 import {
     calculateLifePath,
     reduceNumber,
@@ -14,7 +13,26 @@ export default function NumerologyCalculator() {
     const [results, setResults] = useState(null);
     const [isCalculating, setIsCalculating] = useState(false);
 
+    // Calculate date sum (full number) - same logic as Calendar
+    const calculateDateSum = (day, month, year) => {
+        const monthNum = month; // month is already 1-indexed from date string
+        // For month: only November (11) is kept as master number; all others split into digits
+        const monthValues = (monthNum === 11) ? [11] : monthNum.toString().split('').map(d => parseInt(d));
+        // For day: if it's a master number (11, 22, 33), keep it whole; otherwise split into digits
+        const dayValues = masterNumbers.includes(day) ? [day] : day.toString().split('').map(d => parseInt(d));
+        // For year: always use individual digits
+        const yearDigits = year.toString().split('').map(d => parseInt(d));
+        
+        // Sum all values together
+        const allValues = [...monthValues, ...dayValues, ...yearDigits];
+        const total = allValues.reduce((sum, val) => sum + val, 0);
+        
+        return total;
+    };
+
     const handleDateSelect = (date) => {
+        // Clear previous results first
+        setResults(null);
         setBirthdate(date);
         setIsCalculating(true);
         
@@ -26,14 +44,20 @@ export default function NumerologyCalculator() {
             
             const lifePath = calculateLifePath(selectedDate);
             
-            // Extract day number from selected date
-            const [, , dayPart] = selectedDate.split('-');
+            // Extract day, month, year from selected date
+            const [yearPart, monthPart, dayPart] = selectedDate.split('-');
             const selectedDay = parseInt(dayPart, 10);
+            const selectedMonth = parseInt(monthPart, 10);
+            const selectedYear = parseInt(yearPart, 10);
+            
+            // Calculate full number (date sum)
+            const dateSum = calculateDateSum(selectedDay, selectedMonth, selectedYear);
             
             setResults({
                 lifePath,
                 selectedDay: selectedDay,
                 selectedDate: selectedDate,
+                dateSum: dateSum,
                 calculations: [
                     { title: 'Pilna Data', steps: lifePath.steps }
                 ]
@@ -81,60 +105,13 @@ export default function NumerologyCalculator() {
                                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
                             }}
                         >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-0">
-                                {/* Left side - Full date data */}
-                                <div className="flex flex-col items-center justify-center">
-                                    {(() => {
-                                        const lifePathNum = results.lifePath.number;
-                                        const isSpecialLifePath = masterNumbers.includes(lifePathNum) || lifePathNum === 28 || lifePathNum === 20 || lifePathNum === 29;
-                                        return (
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ duration: 0.3, delay: 0.1 }}
-                                                className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-3 ${
-                                                    isSpecialLifePath ? 'text-yellow-300' : 'text-white'
-                                                }`}
-                                                style={isSpecialLifePath ? {
-                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(245, 158, 11, 0.6), 0 0 60px rgba(217, 119, 6, 0.4)'
-                                                } : {
-                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.6), 0 0 40px rgba(99, 102, 241, 0.4)'
-                                                }}
-                                            >
-                                                {lifePathNum}
-                                            </motion.div>
-                                        );
-                                    })()}
-                                    <CalculationSteps calculations={results.calculations} />
-                                </div>
-                                
-                                {/* Right side - Selected calendar day number */}
-                                <div className="flex flex-col items-center justify-center">
-                                    {(() => {
-                                        const selectedDayNum = results.selectedDay;
-                                        const reducedDay = reduceNumber(selectedDayNum);
-                                        const isSpecialDay = masterNumbers.includes(selectedDayNum) || selectedDayNum === 28 || selectedDayNum === 20 || selectedDayNum === 29 ||
-                                                           masterNumbers.includes(reducedDay) || reducedDay === 28 || reducedDay === 20 || reducedDay === 29;
-                                        return (
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ duration: 0.3, delay: 0.2 }}
-                                                className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-3 ${
-                                                    isSpecialDay ? 'text-yellow-300' : 'text-white'
-                                                }`}
-                                                style={isSpecialDay ? {
-                                                    textShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(245, 158, 11, 0.6), 0 0 60px rgba(217, 119, 6, 0.4)'
-                                                } : {
-                                                    textShadow: '0 0 20px rgba(138, 43, 226, 0.6), 0 0 40px rgba(99, 102, 241, 0.4)'
-                                                }}
-                                            >
-                                                {selectedDayNum}
-                                            </motion.div>
-                                        );
-                                    })()}
-                                </div>
-                            </div>
+                            
+                            {/* Day Recommendations */}
+                            <DayRecommendations 
+                                dayNum={results.selectedDay}
+                                fullNum={results.dateSum}
+                                date={results.selectedDate}
+                            />
                         </motion.div>
                     )}
                 </AnimatePresence>

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-export default function FooterMenu({ onMenuClick, activeMenuId }) {
+export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
     const [activeItem, setActiveItem] = useState(activeMenuId || null);
     
     // Update active item when prop changes
@@ -18,6 +18,7 @@ export default function FooterMenu({ onMenuClick, activeMenuId }) {
                     { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
                     { id: 'personal-birthday', label: 'Asmeninis', icon: '⭐' },
                     { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
+                    ...(hideDatabase ? [] : [{ id: 'database', label: 'Bazė', icon: '💾' }]),
                 ];
 
     const handleClick = (itemId, e) => {

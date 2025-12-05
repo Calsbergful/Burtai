@@ -47,76 +47,95 @@ export const masterNumbers = _m;
 // Number descriptions (keeping as is for functionality)
 export const numberDescriptions = {
     1: {
-        lifePath: "Gimėti lyderiu. Jūs esate nepriklausomas, kūrybingas ir originalus. Jūsų misija - būti pirmuoju ir kurti naują kelią.",
+        lifePath: "Leader, masculine energy, Argumentative, Aggressive",
         destiny: "Jūsų likimas - būti lyderiu ir inovatoriumi. Jūs turite natūralų gebėjimą vadovauti ir kurti naują.",
         personality: "Jūs atrodote savarankiškai ir drąsiai. Kiti mato jūsų stiprumą ir pasitikėjimą savimi.",
-        soul: "Jūsų siela trokšta nepriklausomybės ir saviraiškos. Jūs norite būti unikalus ir originalus."
+        soul: "Jūsų siela trokšta nepriklausomybės ir saviraiškos. Jūs norite būti unikalus ir originalus.",
+        personalYearDay: "Anticipate a rise in argumentativeness and aggression among individuals. Both you and those around you may engage in more conflicts. Remembering it's a 1 days can aid in resolving them swiftly. It's also a favorable day to take the lead and start a new initiative"
     },
     2: {
         lifePath: "Gimėti diplomatu. Jūs esate taikus, jautrus ir puikus komandos žaidėjas. Jūsų misija - sujungti žmones ir kurti harmoniją.",
         destiny: "Jūsų likimas - būti diplomatu ir mediatoriumi. Jūs turite natūralų gebėjimą suprasti ir derinti.",
         personality: "Jūs atrodote ramiai ir draugiškai. Kiti mato jūsų šilumą ir empatiją.",
-        soul: "Jūsų siela trokšta harmonijos ir partnerystės. Jūs norite būti priimti ir mylėti."
+        soul: "Jūsų siela trokšta harmonijos ir partnerystės. Jūs norite būti priimti ir mylėti.",
+        personalYearDay: ""
     },
     3: {
-        lifePath: "Gimėti kūrėju. Jūs esate kūrybingas, optimistiškas ir išraiškingas. Jūsų misija - džiaugtis gyvenimu ir kurti grožį.",
+        lifePath: "Communication, child-like energy, comedian",
         destiny: "Jūsų likimas - būti menininku ir komunikatoriumi. Jūs turite natūralų gebėjimą išreikšti save.",
         personality: "Jūs atrodote linksmai ir charizmatiškai. Kiti mato jūsų energiją ir entuziazmą.",
-        soul: "Jūsų siela trokšta kūrybiškumo ir išraiškos. Jūs norite džiaugtis gyvenimu ir dalytis džiaugsmu."
+        soul: "Jūsų siela trokšta kūrybiškumo ir išraiškos. Jūs norite džiaugtis gyvenimu ir dalytis džiaugsmu.",
+        personalYearDay: "You will find yourself naturally inclined towards increased communication and socializing today. People will exhibit a charming childlike essence. They will be more receptive to jokes and humor."
     },
     4: {
-        lifePath: "Gimėti statytoju. Jūs esate praktiškas, patikimas ir disciplinuotas. Jūsų misija - kurti tvarką ir stabilumą.",
+        lifePath: "Hardworker, law and order, organized",
         destiny: "Jūsų likimas - būti organizatoriumi ir statytoju. Jūs turite natūralų gebėjimą kurti tvarką.",
         personality: "Jūs atrodote patikimai ir stabiliai. Kiti mato jūsų praktiškumą ir discipliną.",
-        soul: "Jūsų siela trokšta stabilumo ir saugumo. Jūs norite kurti tvarką ir struktūrą."
+        soul: "Jūsų siela trokšta stabilumo ir saugumo. Jūs norite kurti tvarką ir struktūrą.",
+        personalYearDay: "Number of law and order. It is advised to refrain from breaking any laws. You may feel a heightened inclination towards hard work, motivating you to tackle tasks diligently and persistently."
     },
     5: {
-        lifePath: "Gimėti nuotykių ieškotoju. Jūs esate laisvas, dinamiškas ir mėgstate pokyčius. Jūsų misija - patirti gyvenimą visapusiškai.",
+        lifePath: "Goodlooks, well traveled, sexual, entertainer",
         destiny: "Jūsų likimas - būti keliautoju ir tyrinėtoju. Jūs turite natūralų gebėjimą prisitaikyti.",
         personality: "Jūs atrodote energingai ir dinamiškai. Kiti mato jūsų laisvę ir nuotykių troškimą.",
-        soul: "Jūsų siela trokšta laisvės ir nuotykių. Jūs norite patirti viską, ką gali pasiūlyti gyvenimas."
+        soul: "Jūsų siela trokšta laisvės ir nuotykių. Jūs norite patirti viską, ką gali pasiūlyti gyvenimas.",
+        personalYearDay: "You and those in your vicinity will exhibit a greater openness to change. There will be a noticeable increase in sexual energy among individuals. Good day to travel"
     },
     6: {
-        lifePath: "Gimėti globėju. Jūs esate rūpestingas, atsakingas ir šeimyniškas. Jūsų misija - rūpintis kitais ir kurti namus.",
+        lifePath: "homebody, family important to them",
         destiny: "Jūsų likimas - būti globėju ir mokytoju. Jūs turite natūralų gebėjimą rūpintis kitais.",
         personality: "Jūs atrodote šiltai ir rūpestingai. Kiti mato jūsų širdingumą ir atsakingumą.",
-        soul: "Jūsų siela trokšta meilės ir šeimos. Jūs norite rūpintis kitais ir kurti harmoningą namus."
+        soul: "Jūsų siela trokšta meilės ir šeimos. Jūs norite rūpintis kitais ir kurti harmoningą namus.",
+        personalYearDay: "Wonderful day to attend to the needs of your home and cherish quality time with your family. It's an ideal opportunity to nurture your living space, ensuring its upkeep and creating a warm and welcoming environment. Dedicate valuable moments to connect with your loved ones, strengthening bonds and fostering a sense of togetherness."
     },
     7: {
-        lifePath: "Gimėti mąstytoju. Jūs esate analitiškas, introspektyvus ir dvasinis. Jūsų misija - ieškoti tiesos ir suprasti pasaulį.",
+        lifePath: "Genius, Injury and disease prone, loner",
         destiny: "Jūsų likimas - būti mokslininku ir filosofu. Jūs turite natūralų gebėjimą analizuoti ir suprasti.",
         personality: "Jūs atrodote mistiškai ir išmintingai. Kiti mato jūsų gylį ir introspekciją.",
-        soul: "Jūsų siela trokšta žinių ir dvasinio supratimo. Jūs norite atrasti gyvenimo prasmę."
+        soul: "Jūsų siela trokšta žinių ir dvasinio supratimo. Jūs norite atrasti gyvenimo prasmę.",
+        personalYearDay: "Individuals will be more inclined to spend time in solitude, seeking moments of introspection and personal reflection. It is a favorable day to dedicate time for learning, acquiring new knowledge or skills. However, it is advised to avoid engaging in gambling activities, as luck may not be in your favor. Additionally, exercising caution is recommended, and it's best to avoid the gym to minimize the risk of potential injuries. Prioritize safety and focus on individual pursuits that promote personal growth and well-being"
     },
     8: {
-        lifePath: "Gimėti verslininku. Jūs esate ambicingas, organizuotas ir materialiai orientuotas. Jūsų misija - pasiekti sėkmę ir valdyti.",
+        lifePath: "Money, Power, Karma",
         destiny: "Jūsų likimas - būti lyderiu ir verslininku. Jūs turite natūralų gebėjimą valdyti ir organizuoti.",
         personality: "Jūs atrodote galingai ir sėkmingai. Kiti mato jūsų ambicijas ir pasiekimus.",
-        soul: "Jūsų siela trokšta sėkmės ir pripažinimo. Jūs norite pasiekti materialinę ir profesinę sėkmę."
+        soul: "Jūsų siela trokšta sėkmės ir pripažinimo. Jūs norite pasiekti materialinę ir profesinę sėkmę.",
+        personalYearDay: "Favorable opportunity to pursue financial success and secure monetary gains. It is a day where you can actively work towards achieving your financial goals and focusing on opportunities to increase your income. Harness your determination and take productive steps towards securing financial stability and prosperity."
     },
     9: {
-        lifePath: "Gimėti humanitaru. Jūs esate dosnus, empatiškas ir universalus. Jūsų misija - tarnauti žmonijai ir padėti kitiems.",
+        lifePath: "Adaptable",
         destiny: "Jūsų likimas - būti humanitaru ir mokytoju. Jūs turite natūralų gebėjimą suprasti ir padėti kitiems.",
         personality: "Jūs atrodote dosniai ir empatiškai. Kiti mato jūsų širdingumą ir universalumą.",
-        soul: "Jūsų siela trokšta tarnauti ir padėti kitiems. Jūs norite palikti teigiamą įtaką pasauliui."
+        soul: "Jūsų siela trokšta tarnauti ir padėti kitiems. Jūs norite palikti teigiamą įtaką pasauliui.",
+        personalYearDay: "People will be more adaptive. Expect conclusions. Good day to bring an end to things no longer serving you."
     },
     11: {
-        lifePath: "Gimėti dvasiniu mokytoju. Jūs esate intuityvus, įkvėptas ir turite ypatingą misiją. Jūsų misija - vesti kitus į aukštesnį supratimą.",
+        lifePath: "Master Visionary, emotional, charismatic",
         destiny: "Jūsų likimas - būti dvasiniu lyderiu ir įkvėpėju. Jūs turite natūralų gebėjimą sujungti materialų ir dvasinį pasaulį.",
         personality: "Jūs atrodote mistiškai ir įkvėptai. Kiti mato jūsų ypatingą energiją ir intuiciją.",
-        soul: "Jūsų siela trokšta dvasinio supratimo ir misijos. Jūs norite vesti kitus į aukštesnę sąmonę."
+        soul: "Jūsų siela trokšta dvasinio supratimo ir misijos. Jūs norite vesti kitus į aukštesnę sąmonę.",
+        personalYearDay: "Prepare for heightened emotions and increased sensitivity among individuals. People may be more prone to emotional reactions and may require additional care and understanding. Additionally, remain vigilant for potential technology issues that could arise. Avoid airline travel on 11 days"
     },
     22: {
-        lifePath: "Gimėti meistru statytoju. Jūs esate praktiškas idealistas su gebėjimu kurti didelius projektus. Jūsų misija - kurti kažką, kas tarnaus žmonijai.",
+        lifePath: "Master Builder, Destroyer",
         destiny: "Jūsų likimas - būti meistru organizatoriumi ir statytoju. Jūs turite natūralų gebėjimą kurti didelius ir tvarus projektus.",
         personality: "Jūs atrodote galingai ir praktiškai. Kiti mato jūsų gebėjimą kurti ir organizuoti.",
-        soul: "Jūsų siela trokšta kurti kažką didingo ir tvaraus. Jūs norite palikti įspūdingą palikimą."
+        soul: "Jūsų siela trokšta kurti kažką didingo ir tvaraus. Jūs norite palikti įspūdingą palikimą.",
+        personalYearDay: "Build baby build"
+    },
+    28: {
+        lifePath: "",
+        destiny: "",
+        personality: "",
+        soul: "",
+        personalYearDay: "Get that bag"
     },
     33: {
-        lifePath: "Gimėti meistru mokytoju. Jūs esate dosnus, rūpestingas ir turite ypatingą misiją padėti žmonijai. Jūsų misija - mokyti ir globoti kitus.",
+        lifePath: "Master Teacher, Influence",
         destiny: "Jūsų likimas - būti meistru humanitaru ir mokytoju. Jūs turite natūralų gebėjimą sujungti praktiškumą su dosnumu.",
         personality: "Jūs atrodote šiltai ir įkvėptai. Kiti mato jūsų ypatingą gebėjimą rūpintis ir mokyti.",
-        soul: "Jūsų siela trokšta tarnauti ir padėti kitiems aukščiausiu lygiu. Jūs norite palikti teigiamą įtaką pasauliui."
+        soul: "Jūsų siela trokšta tarnauti ir padėti kitiems aukščiausiu lygiu. Jūs norite palikti teigiamą įtaką pasauliui.",
+        personalYearDay: "Influence"
     }
 };
 

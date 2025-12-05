@@ -1,3 +1,8 @@
+// Obfuscated imports with decoy variables
+const _d1 = () => {};
+const _d2 = [1,2,3,4,5];
+const _d3 = {a:1,b:2};
+
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import NumerologyCalculator from './components/NumerologyCalculator'
@@ -5,22 +10,82 @@ import FriendlyEnemyHours from './components/FriendlyEnemyHours'
 import BirthdayCalculator from './components/BirthdayCalculator'
 import Letterology from './components/Letterology'
 import HiddenNumerology from './components/HiddenNumerology'
+import Database from './components/Database'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 import PasswordProtection from './components/PasswordProtection'
+
+// Dead code injection
+const _dead1 = () => { const x = Math.random() * 1000; return x % 2 === 0; };
+const _dead2 = (a, b) => { for(let i=0;i<100;i++){a+=b;} return a; };
+const _dead3 = [1,2,3,4,5].map(x => x*x).filter(x => x > 10);
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [activeView, setActiveView] = useState('calculator');
   const [personalBirthdayTrigger, setPersonalBirthdayTrigger] = useState(0);
+  const [databaseSequence, setDatabaseSequence] = useState([]); // Track sequence: ['calculator', 'life-path-settings', 'letterology', 'personal-birthday']
+  const [databaseUnlocked, setDatabaseUnlocked] = useState(false);
+  const [sequenceTimeout, setSequenceTimeout] = useState(null);
 
   useEffect(() => {
-    // Check if user is already authenticated
-    const authStatus = sessionStorage.getItem('isAuthenticated')
-    if (authStatus === 'true') {
-      setIsAuthenticated(true)
-    }
+    // Verify authentication token with server on page load
+    const verifyAuth = async () => {
+      const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100); // "isAuthenticated"
+      const token = sessionStorage.getItem(_authKey);
+      
+      if (!token) {
+        setIsAuthenticated(false);
+        return;
+      }
+
+      try {
+        // Verify token with server
+        const response = await fetch('/api/auth/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
+        });
+
+        const data = await response.json();
+
+        if (data.authenticated) {
+          setIsAuthenticated(true);
+        } else {
+          sessionStorage.removeItem(_authKey);
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        // If server verification fails, clear token and require re-authentication
+        sessionStorage.removeItem(_authKey);
+        setIsAuthenticated(false);
+      }
+    };
+
+    verifyAuth();
+    
+    // Database is always hidden on page load/reload - sequence must be entered each time
+    setDatabaseUnlocked(false);
+    const _dbKey = String.fromCharCode(100, 97, 116, 97, 98, 97, 115, 101, 85, 110, 108, 111, 99, 107, 101, 100); // "databaseUnlocked"
+    sessionStorage.removeItem(_dbKey);
   }, [])
+
+  // Reset sequence after 10 seconds of inactivity
+  useEffect(() => {
+    if (databaseSequence.length > 0 && !databaseUnlocked) {
+      if (sequenceTimeout) {
+        clearTimeout(sequenceTimeout)
+      }
+      const timeout = setTimeout(() => {
+        setDatabaseSequence([])
+      }, 10000) // 10 seconds
+      setSequenceTimeout(timeout)
+      
+      return () => clearTimeout(timeout)
+    }
+  }, [databaseSequence, databaseUnlocked])
 
   const handlePasswordCorrect = () => {
     setIsAuthenticated(true)
@@ -32,10 +97,46 @@ function App() {
   }
 
   const handleMenuClick = (menuId) => {
+    // Check database unlock sequence: calculator -> life-path-settings -> letterology -> personal-birthday
+    const expectedSequence = ['calculator', 'life-path-settings', 'letterology', 'personal-birthday'];
+    
+    // If database is already unlocked, allow direct access
+    if (databaseUnlocked && menuId === 'database') {
+      setActiveView('database');
+      return;
+    }
+    
+    // Check if this click is part of the sequence
+    const currentStep = databaseSequence.length;
+    const expectedNext = expectedSequence[currentStep];
+    
+    if (menuId === expectedNext) {
+      // Correct step in sequence
+      const newSequence = [...databaseSequence, menuId];
+      setDatabaseSequence(newSequence);
+      
+      // Check if sequence is complete
+      if (newSequence.length === expectedSequence.length) {
+        setDatabaseUnlocked(true);
+        // Don't persist to sessionStorage - Database will be hidden on reload
+        setActiveView('database');
+        setDatabaseSequence([]);
+        return;
+      }
+    } else if (menuId === 'calculator' && currentStep === 0) {
+      // Allow starting the sequence
+      setDatabaseSequence(['calculator']);
+    } else if (databaseSequence.length > 0) {
+      // Wrong step - reset sequence
+      setDatabaseSequence([]);
+    }
+    
+    // Handle normal menu clicks
     if (menuId === 'calculator') {
       setActiveView('calculator');
     } else if (menuId === 'friendly-enemy-hours') {
       setActiveView('hours');
+      setDatabaseSequence([]); // Reset sequence on wrong click
     } else if (menuId === 'life-path-settings') {
       setActiveView('birthday');
       setPersonalBirthdayTrigger(0); // Reset to show regular birthday input
@@ -46,6 +147,13 @@ function App() {
       setActiveView('letterology');
     } else if (menuId === 'hidden-numerology') {
       setActiveView('hidden-numerology');
+      setDatabaseSequence([]); // Reset sequence on wrong click
+    } else if (menuId === 'database' && !databaseUnlocked) {
+      // Don't allow direct access if not unlocked
+      setDatabaseSequence([]); // Reset sequence
+      return;
+    } else if (menuId === 'database' && databaseUnlocked) {
+      setActiveView('database');
     } else {
       setActiveView('calculator');
     }
@@ -131,7 +239,7 @@ function App() {
             >
               <Letterology />
             </motion.div>
-          ) : (
+          ) : activeView === 'hidden-numerology' ? (
             <motion.div
               key="hidden-numerology"
               initial={{ opacity: 0, y: 20 }}
@@ -140,6 +248,16 @@ function App() {
               transition={{ duration: 0.3 }}
             >
               <HiddenNumerology />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="database"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Database />
             </motion.div>
           )}
         </AnimatePresence>
@@ -150,15 +268,20 @@ function App() {
         HOMAGE TO GARRY 33 FEET SNAKE
       </div>
 
-      <FooterMenu onMenuClick={handleMenuClick} activeMenuId={
-        activeView === 'calculator' ? 'calculator' :
-        activeView === 'hours' ? 'friendly-enemy-hours' : 
-        activeView === 'birthday' && personalBirthdayTrigger > 0 ? 'personal-birthday' :
-        activeView === 'birthday' ? 'life-path-settings' : 
-        activeView === 'letterology' ? 'letterology' :
-        activeView === 'hidden-numerology' ? 'hidden-numerology' :
-        null
-      } />
+      <FooterMenu 
+        onMenuClick={handleMenuClick} 
+        activeMenuId={
+          activeView === 'calculator' ? 'calculator' :
+          activeView === 'hours' ? 'friendly-enemy-hours' : 
+          activeView === 'birthday' && personalBirthdayTrigger > 0 ? 'personal-birthday' :
+          activeView === 'birthday' ? 'life-path-settings' : 
+          activeView === 'letterology' ? 'letterology' :
+          activeView === 'hidden-numerology' ? 'hidden-numerology' :
+          activeView === 'database' ? 'database' :
+          null
+        }
+        hideDatabase={!databaseUnlocked}
+      />
     </div>
   )
 }
