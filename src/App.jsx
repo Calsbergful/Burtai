@@ -5,13 +5,21 @@ const _d3 = {a:1,b:2};
 
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-// Lazy load route components for better performance
-const NumerologyCalculator = lazy(() => import('./components/NumerologyCalculator'))
-const FriendlyEnemyHours = lazy(() => import('./components/FriendlyEnemyHours'))
-const BirthdayCalculator = lazy(() => import('./components/BirthdayCalculator'))
-const Letterology = lazy(() => import('./components/Letterology'))
-const HiddenNumerology = lazy(() => import('./components/HiddenNumerology'))
-const Database = lazy(() => import('./components/Database'))
+// Temporarily disable lazy loading to fix blank screen issue
+// TODO: Re-enable lazy loading after fixing the issue
+import NumerologyCalculator from './components/NumerologyCalculator'
+import FriendlyEnemyHours from './components/FriendlyEnemyHours'
+import BirthdayCalculator from './components/BirthdayCalculator'
+import Letterology from './components/Letterology'
+import HiddenNumerology from './components/HiddenNumerology'
+import Database from './components/Database'
+// Lazy load route components for better performance (disabled for now)
+// const NumerologyCalculator = lazy(() => import('./components/NumerologyCalculator'))
+// const FriendlyEnemyHours = lazy(() => import('./components/FriendlyEnemyHours'))
+// const BirthdayCalculator = lazy(() => import('./components/BirthdayCalculator'))
+// const Letterology = lazy(() => import('./components/Letterology'))
+// const HiddenNumerology = lazy(() => import('./components/HiddenNumerology'))
+// const Database = lazy(() => import('./components/Database'))
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 import PasswordProtection from './components/PasswordProtection'
@@ -90,13 +98,7 @@ function App() {
   }, [databaseSequence, databaseUnlocked])
 
   const handlePasswordCorrect = useCallback(() => {
-    // Preload the default component when authentication succeeds
-    import('./components/NumerologyCalculator').then(() => {
-      setIsAuthenticated(true)
-    }).catch((error) => {
-      console.error('Failed to preload component:', error);
-      setIsAuthenticated(true); // Still set authenticated even if preload fails
-    })
+    setIsAuthenticated(true)
   }, [])
 
   // Show password protection if not authenticated
@@ -207,18 +209,7 @@ function App() {
         </header>
         
         <ErrorBoundary>
-          <Suspense fallback={
-            <div className="flex items-center justify-center min-h-[400px] w-full">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-white/60 text-lg"
-              >
-                Kraunama...
-              </motion.div>
-            </div>
-          }>
-            <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait">
               {activeView === 'calculator' ? (
                 <motion.div
                   key="calculator"
@@ -280,8 +271,7 @@ function App() {
                   <Database />
                 </motion.div>
               )}
-            </Suspense>
-          </AnimatePresence>
+            </AnimatePresence>
         </ErrorBoundary>
       </main>
 
