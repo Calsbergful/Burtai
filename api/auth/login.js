@@ -2,10 +2,39 @@ import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
   try {
-    // Set CORS headers for local development
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Secure CORS configuration
+    const origin = req.headers.origin;
+    const host = req.headers.host;
+    
+    // Build list of allowed origins
+    const allowedOrigins = [
+      // Local development
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:5173',
+      // Vercel deployment domains (from environment or request)
+      process.env.ALLOWED_ORIGIN,
+      ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+      // Allow same-origin (when frontend and API are on same domain)
+      ...(host ? [`https://${host}`, `http://${host}`] : [])
+    ].filter(Boolean); // Remove undefined/null values
+
+    // Set CORS headers
+    if (!origin) {
+      // Same-origin request (no origin header) - allow it
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    } else if (allowedOrigins.includes(origin)) {
+      // Origin is in allowed list
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    } else {
+      // Origin not allowed - reject by not setting the header
+      // Browser will block the request
+    }
+    
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     // Handle preflight
     if (req.method === 'OPTIONS') {
