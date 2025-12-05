@@ -41,7 +41,12 @@ function App() {
 
       try {
         // Verify token with server
-        const response = await fetch('/api/auth/verify', {
+        // Use absolute URL for Vercel, relative for local with vercel dev
+        const apiUrl = import.meta.env.PROD 
+          ? '/api/auth/verify' 
+          : (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/verify` : '/api/auth/verify');
+        
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

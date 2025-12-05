@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:vercel": "vercel dev",
     "build": "vite build && node scripts/obfuscate-build.js && echo 'Build completed with obfuscation'",
     "preview": "vite preview"
   },
