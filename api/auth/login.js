@@ -64,7 +64,14 @@ export default async function handler(req, res) {
     const { password } = req.body;
 
     // Get password from environment variable
-    const correctPassword = process.env.ADMIN_PASSWORD || 'dauns33';
+    // Check if env var is set, if not use fallback
+    const envPassword = process.env.ADMIN_PASSWORD;
+    const correctPassword = envPassword ? envPassword.trim() : 'dauns33';
+    
+    // Log environment variable status (for debugging)
+    if (!envPassword) {
+      console.warn('ADMIN_PASSWORD environment variable not set, using fallback');
+    }
     const jwtSecret = process.env.JWT_SECRET || 'd8f8ed21769ed995d997ef9366efb0b8475df9eeb6483b64fe796fd0d24c95613a6e543a2bc899f81a970d7bd6bf21ba1f67b6bf6b98bca52b5e6e802fb8d223';
 
     // Validate JWT secret is not empty
@@ -78,36 +85,43 @@ export default async function handler(req, res) {
     }
 
     // Validate password (trim to handle whitespace)
-    const inputPassword = password ? password.trim() : '';
-    const trimmedCorrectPassword = correctPassword.trim();
+    const inputPassword = password ? String(password).trim() : '';
+    const trimmedCorrectPassword = String(correctPassword).trim();
     
     // Debug logging to help diagnose issues
-    console.log('Password validation:', {
-      hasInput: !!inputPassword,
-      inputLength: inputPassword.length,
-      inputFirstChar: inputPassword ? inputPassword.charCodeAt(0) : null,
-      inputLastChar: inputPassword ? inputPassword.charCodeAt(inputPassword.length - 1) : null,
-      correctLength: trimmedCorrectPassword.length,
-      correctFirstChar: trimmedCorrectPassword.charCodeAt(0),
-      correctLastChar: trimmedCorrectPassword.charCodeAt(trimmedCorrectPassword.length - 1),
-      envVarSet: !!process.env.ADMIN_PASSWORD,
-      usingFallback: !process.env.ADMIN_PASSWORD,
-      match: inputPassword === trimmedCorrectPassword,
-      inputPassword: inputPassword ? `"${inputPassword}"` : 'empty',
-      correctPassword: `"${trimmedCorrectPassword}"`
-    });
+    console.log('=== PASSWORD VALIDATION DEBUG ===');
+    console.log('Input password:', JSON.stringify(inputPassword), 'Length:', inputPassword.length);
+    console.log('Expected password:', JSON.stringify(trimmedCorrectPassword), 'Length:', trimmedCorrectPassword.length);
+    console.log('Environment variable set:', !!process.env.ADMIN_PASSWORD);
+    console.log('Using fallback:', !process.env.ADMIN_PASSWORD);
+    console.log('Passwords match:', inputPassword === trimmedCorrectPassword);
+    console.log('Character codes - Input:', inputPassword.split('').map(c => c.charCodeAt(0)));
+    console.log('Character codes - Expected:', trimmedCorrectPassword.split('').map(c => c.charCodeAt(0)));
+    console.log('================================');
     
     if (!inputPassword || inputPassword !== trimmedCorrectPassword) {
-      console.error('Password mismatch:', {
-        received: inputPassword ? `"${inputPassword}"` : 'empty',
-        expected: `"${trimmedCorrectPassword}"`,
-        lengthsMatch: inputPassword.length === trimmedCorrectPassword.length
-      });
+      console.error('❌ PASSWORD MISMATCH');
+      console.error('Received:', JSON.stringify(inputPassword), `(${inputPassword.length} chars)`);
+      console.error('Expected:', JSON.stringify(trimmedCorrectPassword), `(${trimmedCorrectPassword.length} chars)`);
+      console.error('Lengths match:', inputPassword.length === trimmedCorrectPassword.length);
+      console.error('First char match:', inputPassword[0] === trimmedCorrectPassword[0]);
+      console.error('Last char match:', inputPassword[inputPassword.length - 1] === trimmedCorrectPassword[trimmedCorrectPassword.length - 1]);
+      
       return res.status(401).json({ 
         error: 'Invalid password',
-        success: false 
+        success: false,
+        // Only include debug info in development
+        ...(process.env.VERCEL_ENV !== 'production' && {
+          debug: {
+            receivedLength: inputPassword.length,
+            expectedLength: trimmedCorrectPassword.length,
+            envVarSet: !!process.env.ADMIN_PASSWORD
+          }
+        })
       });
     }
+    
+    console.log('✅ PASSWORD MATCH - Generating token');
 
     // Generate JWT token (removed manual exp, using expiresIn option only)
     const token = jwt.sign(
