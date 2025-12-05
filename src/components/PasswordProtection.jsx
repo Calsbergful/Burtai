@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import { motion } from 'framer-motion'
 import CryptoJS from 'crypto-js'
 import CosmicBackground from './CosmicBackground'
 
-function PasswordProtection({ onPasswordCorrect }) {
+const PasswordProtection = memo(function PasswordProtection({ onPasswordCorrect }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -41,15 +41,15 @@ function PasswordProtection({ onPasswordCorrect }) {
     }
   };
 
-  // Decoy password (base64) - shows fake loading screen
-  const getDecoyPassword = () => {
+  // Decoy password (base64) - shows fake loading screen - memoized
+  const getDecoyPassword = useMemo(() => {
     const _d1 = [70, 78, 85, 75, 84, 65, 83, 51, 51];
     const _d2 = atob('ZnJ1a3RhczMz');
     return _d2;
-  }
+  }, []);
 
-  // Real password - AES encrypted with multiple layers of obfuscation
-  const getCorrectPassword = () => {
+  // Real password - AES encrypted with multiple layers of obfuscation - memoized
+  const getCorrectPassword = useMemo(() => {
     // Encryption key (scattered and obfuscated)
     const _keyParts = [107, 101, 121, 51, 51]; // "key33" in char codes
     const _key = String.fromCharCode(..._keyParts);
@@ -87,16 +87,16 @@ function PasswordProtection({ onPasswordCorrect }) {
     
     // Return decrypted password only if all verifications pass
     return (_verify1 && _verify2 && _verify3 && _verify4) ? _decrypted : '';
-  }
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
     setError('')
     setIsSubmitting(true)
 
     try {
       const inputPwd = password.trim();
-      const decoyPassword = getDecoyPassword();
+      const decoyPassword = getDecoyPassword;
       
       // Check decoy password first (client-side check)
       if (inputPwd === decoyPassword) {
@@ -148,7 +148,7 @@ function PasswordProtection({ onPasswordCorrect }) {
       setIsSubmitting(false);
       setPassword('');
     }
-  }
+  }, [onPasswordCorrect]);
 
   // Fake loading screen for decoy password - scary glitching ghost animations
   if (fakeLoading) {
@@ -641,7 +641,7 @@ function PasswordProtection({ onPasswordCorrect }) {
       </motion.div>
     </div>
   )
-}
+})
 
 export default PasswordProtection
 

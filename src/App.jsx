@@ -3,17 +3,32 @@ const _d1 = () => {};
 const _d2 = [1,2,3,4,5];
 const _d3 = {a:1,b:2};
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import NumerologyCalculator from './components/NumerologyCalculator'
-import FriendlyEnemyHours from './components/FriendlyEnemyHours'
-import BirthdayCalculator from './components/BirthdayCalculator'
-import Letterology from './components/Letterology'
-import HiddenNumerology from './components/HiddenNumerology'
-import Database from './components/Database'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 import PasswordProtection from './components/PasswordProtection'
+
+// Lazy load components for better performance
+const NumerologyCalculator = lazy(() => import('./components/NumerologyCalculator'))
+const FriendlyEnemyHours = lazy(() => import('./components/FriendlyEnemyHours'))
+const BirthdayCalculator = lazy(() => import('./components/BirthdayCalculator'))
+const Letterology = lazy(() => import('./components/Letterology'))
+const HiddenNumerology = lazy(() => import('./components/HiddenNumerology'))
+const Database = lazy(() => import('./components/Database'))
+
+// Loading fallback component
+const ComponentLoader = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="text-white/60 text-sm"
+    >
+      Loading...
+    </motion.div>
+  </div>
+)
 
 // Dead code injection
 const _dead1 = () => { const x = Math.random() * 1000; return x % 2 === 0; };
@@ -87,16 +102,16 @@ function App() {
     }
   }, [databaseSequence, databaseUnlocked])
 
-  const handlePasswordCorrect = () => {
+  const handlePasswordCorrect = useCallback(() => {
     setIsAuthenticated(true)
-  }
+  }, [])
 
   // Show password protection if not authenticated
   if (!isAuthenticated) {
     return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
   }
 
-  const handleMenuClick = (menuId) => {
+  const handleMenuClick = useCallback((menuId) => {
     // Check database unlock sequence: calculator -> life-path-settings -> letterology -> personal-birthday
     const expectedSequence = ['calculator', 'life-path-settings', 'letterology', 'personal-birthday'];
     
@@ -157,7 +172,7 @@ function App() {
     } else {
       setActiveView('calculator');
     }
-  };
+  }, [databaseUnlocked, databaseSequence]);
 
   return (
     <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-[95px] sm:pb-[75px] md:pb-[80px]">
@@ -199,67 +214,69 @@ function App() {
         </header>
         
         <AnimatePresence mode="wait">
-          {activeView === 'calculator' ? (
-            <motion.div
-              key="calculator"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <NumerologyCalculator />
-            </motion.div>
-          ) : activeView === 'hours' ? (
-            <motion.div
-              key="hours"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <FriendlyEnemyHours />
-            </motion.div>
-          ) : activeView === 'birthday' ? (
-            <motion.div
-              key="birthday"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
-            </motion.div>
-          ) : activeView === 'letterology' ? (
-            <motion.div
-              key="letterology"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Letterology />
-            </motion.div>
-          ) : activeView === 'hidden-numerology' ? (
-            <motion.div
-              key="hidden-numerology"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <HiddenNumerology />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="database"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Database />
-            </motion.div>
-          )}
+          <Suspense fallback={<ComponentLoader />}>
+            {activeView === 'calculator' ? (
+              <motion.div
+                key="calculator"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <NumerologyCalculator />
+              </motion.div>
+            ) : activeView === 'hours' ? (
+              <motion.div
+                key="hours"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <FriendlyEnemyHours />
+              </motion.div>
+            ) : activeView === 'birthday' ? (
+              <motion.div
+                key="birthday"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
+              </motion.div>
+            ) : activeView === 'letterology' ? (
+              <motion.div
+                key="letterology"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <Letterology />
+              </motion.div>
+            ) : activeView === 'hidden-numerology' ? (
+              <motion.div
+                key="hidden-numerology"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <HiddenNumerology />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="database"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <Database />
+              </motion.div>
+            )}
+          </Suspense>
         </AnimatePresence>
       </main>
 
@@ -270,16 +287,16 @@ function App() {
 
       <FooterMenu 
         onMenuClick={handleMenuClick} 
-        activeMenuId={
-          activeView === 'calculator' ? 'calculator' :
-          activeView === 'hours' ? 'friendly-enemy-hours' : 
-          activeView === 'birthday' && personalBirthdayTrigger > 0 ? 'personal-birthday' :
-          activeView === 'birthday' ? 'life-path-settings' : 
-          activeView === 'letterology' ? 'letterology' :
-          activeView === 'hidden-numerology' ? 'hidden-numerology' :
-          activeView === 'database' ? 'database' :
-          null
-        }
+        activeMenuId={useMemo(() => {
+          if (activeView === 'calculator') return 'calculator';
+          if (activeView === 'hours') return 'friendly-enemy-hours';
+          if (activeView === 'birthday' && personalBirthdayTrigger > 0) return 'personal-birthday';
+          if (activeView === 'birthday') return 'life-path-settings';
+          if (activeView === 'letterology') return 'letterology';
+          if (activeView === 'hidden-numerology') return 'hidden-numerology';
+          if (activeView === 'database') return 'database';
+          return null;
+        }, [activeView, personalBirthdayTrigger])}
         hideDatabase={!databaseUnlocked}
       />
     </div>

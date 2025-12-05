@@ -150,11 +150,24 @@ body {
 }
 
 /* Optimize animations for GPU acceleration */
-[class*="motion-"], [data-framer-name] {
+[class*="motion-"], [data-framer-name], [data-framer-component] {
   will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
+}
+
+/* Optimize all motion components */
+[data-framer-motion] {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  contain: layout style paint;
+}
+
+/* Reduce repaints on animated elements */
+.motion-div, .framer-motion {
+  contain: layout style paint;
+  isolation: isolate;
 }
 
 /* Smooth transitions */
