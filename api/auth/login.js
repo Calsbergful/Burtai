@@ -84,7 +84,9 @@ export default async function handler(req, res) {
     }
 
     const { password } = body;
-    console.log('Extracted password:', password ? `"${password}" (${password.length} chars)` : 'undefined');
+    console.log('Extracted password:', password !== undefined ? `"${password}" (${String(password).length} chars)` : 'undefined');
+    console.log('Password type:', typeof password);
+    console.log('Password value:', JSON.stringify(password));
     console.log('====================');
 
     // Get password from environment variable
