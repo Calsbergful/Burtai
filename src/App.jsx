@@ -102,31 +102,22 @@ function App() {
   }, [databaseSequence, databaseUnlocked])
 
   const handlePasswordCorrect = useCallback(() => {
-    try {
-      setIsLoading(true);
-      // Small delay to ensure state updates properly
-      setTimeout(() => {
-        setIsAuthenticated(true);
-        setIsLoading(false);
-      }, 100);
-    } catch (error) {
-      console.error('Error in handlePasswordCorrect:', error);
-      setIsLoading(false);
-    }
+    setIsAuthenticated(true)
+    setIsLoading(false)
   }, [])
 
-  // Show loading state
+  // Show password protection if not authenticated
+  if (!isAuthenticated) {
+    return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
+  }
+
+  // Show loading state only during initial auth check
   if (isLoading) {
     return (
       <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-white/60 text-lg">Kraunama...</div>
       </div>
     );
-  }
-
-  // Show password protection if not authenticated
-  if (!isAuthenticated) {
-    return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
   }
 
   const handleMenuClick = useCallback((menuId) => {
@@ -240,13 +231,8 @@ function App() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
-                  onError={(error) => {
-                    console.error('Error rendering NumerologyCalculator:', error);
-                  }}
                 >
-                  <ErrorBoundary>
-                    <NumerologyCalculator />
-                  </ErrorBoundary>
+                  <NumerologyCalculator />
                 </motion.div>
               ) : activeView === 'hours' ? (
                 <motion.div
@@ -256,9 +242,7 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ErrorBoundary>
-                    <FriendlyEnemyHours />
-                  </ErrorBoundary>
+                  <FriendlyEnemyHours />
                 </motion.div>
               ) : activeView === 'birthday' ? (
                 <motion.div
@@ -268,9 +252,7 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ErrorBoundary>
-                    <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
-                  </ErrorBoundary>
+                  <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
                 </motion.div>
               ) : activeView === 'letterology' ? (
                 <motion.div
@@ -280,9 +262,7 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ErrorBoundary>
-                    <Letterology />
-                  </ErrorBoundary>
+                  <Letterology />
                 </motion.div>
               ) : activeView === 'hidden-numerology' ? (
                 <motion.div
@@ -292,9 +272,7 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ErrorBoundary>
-                    <HiddenNumerology />
-                  </ErrorBoundary>
+                  <HiddenNumerology />
                 </motion.div>
               ) : (
                 <motion.div
@@ -304,9 +282,7 @@ function App() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ErrorBoundary>
-                    <Database />
-                  </ErrorBoundary>
+                  <Database />
                 </motion.div>
               )}
             </AnimatePresence>
