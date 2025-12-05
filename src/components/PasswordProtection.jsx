@@ -127,8 +127,15 @@ function PasswordProtection({ onPasswordCorrect }) {
         console.error('🔍 ❌ ERROR: Password is empty after processing!');
         console.error('🔍 Raw password:', JSON.stringify(rawPassword));
         console.error('🔍 Trimmed password:', JSON.stringify(inputPwd));
-        setError('Įveskite slaptažodį');
-        setIsSubmitting(false);
+        console.error('🔍 React state password:', JSON.stringify(password));
+        console.error('🔍 Input element:', passwordInput);
+        console.error('🔍 Input element value:', passwordInput ? passwordInput.value : 'N/A');
+        
+        // Use setTimeout to avoid state update during render
+        setTimeout(() => {
+          setError('Įveskite slaptažodį');
+          setIsSubmitting(false);
+        }, 0);
         return;
       }
       
@@ -161,10 +168,20 @@ function PasswordProtection({ onPasswordCorrect }) {
       // Check if response is ok
       if (!response.ok) {
         // Try to get error message
-        const errorData = await response.json().catch(() => ({ error: 'Server error' }));
-        setError(errorData.error || 'Neteisingas slaptažodis');
-        setIsSubmitting(false);
-        setPassword('');
+        let errorMessage = 'Neteisingas slaptažodis';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+        }
+        
+        // Use setTimeout to avoid state update during render
+        setTimeout(() => {
+          setError(errorMessage);
+          setIsSubmitting(false);
+          setPassword('');
+        }, 0);
         return;
       }
 
@@ -183,13 +200,17 @@ function PasswordProtection({ onPasswordCorrect }) {
     } catch (error) {
       // Better error handling - check if it's a network error
       console.error('Login error:', error);
+      let errorMessage = 'Klaida prisijungiant. Bandykite dar kartą.';
       if (error.message && error.message.includes('Failed to fetch')) {
-        setError('Nepavyko prisijungti prie serverio. Naudokite "vercel dev" vietoj "npm run dev".');
-      } else {
-        setError('Klaida prisijungiant. Bandykite dar kartą.');
+        errorMessage = 'Nepavyko prisijungti prie serverio. Naudokite "vercel dev" vietoj "npm run dev".';
       }
-      setIsSubmitting(false);
-      setPassword('');
+      
+      // Use setTimeout to avoid state update during render
+      setTimeout(() => {
+        setError(errorMessage);
+        setIsSubmitting(false);
+        setPassword('');
+      }, 0);
     }
   }, [onPasswordCorrect]);
 
