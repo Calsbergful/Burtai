@@ -3,7 +3,7 @@ const _d1 = () => {};
 const _d2 = [1,2,3,4,5];
 const _d3 = {a:1,b:2};
 
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 // Temporarily disable lazy loading to fix blank screen issue
 // TODO: Re-enable lazy loading after fixing the issue
