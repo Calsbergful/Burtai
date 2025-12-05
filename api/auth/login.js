@@ -20,20 +20,21 @@ export default async function handler(req, res) {
       ...(host ? [`https://${host}`, `http://${host}`] : [])
     ].filter(Boolean); // Remove undefined/null values
 
-    // Set CORS headers - be more permissive for same-origin requests
-    if (!origin) {
-      // Same-origin request (no origin header) - allow it
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      // Don't set credentials with wildcard
+    // Set CORS headers - allow requests from same domain
+    // Check if request is from same domain (no origin or origin matches host)
+    const isSameOrigin = !origin || (host && origin.includes(host.split(':')[0]));
+    
+    if (isSameOrigin || !origin) {
+      // Same-origin request - allow it
+      res.setHeader('Access-Control-Allow-Origin', origin || '*');
     } else if (allowedOrigins.includes(origin)) {
       // Origin is in allowed list
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Access-Control-Allow-Credentials', 'true');
     } else {
-      // For production, allow the request to continue but log it
-      // Browser will handle CORS, but we'll still process the request
-      console.warn('Request from unlisted origin:', origin, 'Allowed origins:', allowedOrigins);
-      // Still set CORS header to allow the request (less strict for now)
+      // Allow request but log it for monitoring
+      console.warn('Request from unlisted origin:', origin, 'Host:', host, 'Allowed:', allowedOrigins);
+      // Set origin to allow the request (temporary - should restrict in production)
       res.setHeader('Access-Control-Allow-Origin', origin || '*');
     }
     
