@@ -100,16 +100,28 @@ function PasswordProtection({ onPasswordCorrect }) {
     setIsSubmitting(true)
 
     try {
+      // Debug: Log password state before processing
+      console.log('🔍 Form submitted - password state:', JSON.stringify(password), 'Length:', password.length);
+      
       const inputPwd = password.trim();
+      console.log('🔍 After trim - inputPwd:', JSON.stringify(inputPwd), 'Length:', inputPwd.length);
+      
       const decoyPassword = getDecoyPassword;
+      console.log('🔍 Decoy password:', JSON.stringify(decoyPassword));
       
       // Check decoy password first (client-side check)
       if (inputPwd === decoyPassword) {
+        console.log('🔍 Decoy password matched - showing fake loading');
         setIsSubmitting(false);
         setFakeLoading(true);
         setPassword('');
         return;
       }
+
+      // Prepare request body
+      const requestBody = { password: inputPwd };
+      console.log('🔍 Sending request body:', JSON.stringify(requestBody));
+      console.log('🔍 Request body password field:', JSON.stringify(requestBody.password), 'Length:', requestBody.password ? requestBody.password.length : 0);
 
       // Send password to server for validation
       const response = await fetch('/api/auth/login', {
@@ -117,7 +129,7 @@ function PasswordProtection({ onPasswordCorrect }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password: inputPwd }),
+        body: JSON.stringify(requestBody),
       });
 
       // Check if response is ok
