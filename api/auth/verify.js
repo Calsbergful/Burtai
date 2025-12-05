@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   const { token } = req.body;
-  const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-this';
+  const jwtSecret = process.env.JWT_SECRET || 'd8f8ed21769ed995d997ef9366efb0b8475df9eeb6483b64fe796fd0d24c95613a6e543a2bc899f81a970d7bd6bf21ba1f67b6bf6b98bca52b5e6e802fb8d223';
 
   if (!token) {
     return res.status(401).json({ 
