@@ -107,12 +107,7 @@ function PasswordProtection({ onPasswordCorrect }) {
       }
 
       // Send password to server for validation
-      // Use absolute URL for Vercel, relative for local with vercel dev
-      const apiUrl = import.meta.env.PROD 
-        ? '/api/auth/login' 
-        : (import.meta.env.VITE_API_URL || '/api/auth/login');
-      
-      const response = await fetch(apiUrl, {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
