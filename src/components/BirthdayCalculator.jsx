@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { calculateLifePath, reduceNumber, masterNumbers, calculatePersonalYear, reducePersonalYear } from '../utils/numerology';
 import { getChineseZodiac, zodiacTranslations, zodiacEmojis } from '../utils/chineseZodiac';
@@ -13,7 +13,7 @@ function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
     const [minute, setMinute] = useState('');
     const [results, setResults] = useState(null);
 
-    const calculateResults = useCallback((m, d, y, h = null, min = null) => {
+    const calculateResults = (m, d, y, h = null, min = null) => {
         try {
             if (m && d && y) {
                 // Format date as YYYY-MM-DD
@@ -133,7 +133,7 @@ function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             console.error('Error calculating results:', error);
             setResults(null);
         }
-    }, []);
+    };
 
     // Handle personal birthday trigger
     useEffect(() => {
@@ -160,7 +160,8 @@ function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
             setMinute('');
             setResults(null);
         }
-    }, [personalBirthdayTrigger, calculateResults]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [personalBirthdayTrigger]);
 
     // Auto-refresh personal stats every minute to keep them up-to-date
     useEffect(() => {

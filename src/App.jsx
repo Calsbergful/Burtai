@@ -3,7 +3,7 @@ const _d1 = () => {};
 const _d2 = [1,2,3,4,5];
 const _d3 = {a:1,b:2};
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
@@ -96,7 +96,7 @@ function App() {
     return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
   }
 
-  const handleMenuClick = useCallback((menuId) => {
+  const handleMenuClick = (menuId) => {
     // Check database unlock sequence: calculator -> life-path-settings -> letterology -> personal-birthday
     const expectedSequence = ['calculator', 'life-path-settings', 'letterology', 'personal-birthday'];
     
@@ -157,7 +157,7 @@ function App() {
     } else {
       setActiveView('calculator');
     }
-  }, [databaseUnlocked, databaseSequence, setPersonalBirthdayTrigger]);
+  };
 
   return (
     <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-[95px] sm:pb-[75px] md:pb-[80px]">
