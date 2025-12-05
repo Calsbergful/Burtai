@@ -3,19 +3,27 @@ const _d1 = () => {};
 const _d2 = [1,2,3,4,5];
 const _d3 = {a:1,b:2};
 
-import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 import PasswordProtection from './components/PasswordProtection'
 
-// Lazy load components for better performance
-const NumerologyCalculator = lazy(() => import('./components/NumerologyCalculator'))
-const FriendlyEnemyHours = lazy(() => import('./components/FriendlyEnemyHours'))
-const BirthdayCalculator = lazy(() => import('./components/BirthdayCalculator'))
-const Letterology = lazy(() => import('./components/Letterology'))
-const HiddenNumerology = lazy(() => import('./components/HiddenNumerology'))
-const Database = lazy(() => import('./components/Database'))
+// Import components directly (lazy loading temporarily disabled to fix white screen)
+import NumerologyCalculator from './components/NumerologyCalculator'
+import FriendlyEnemyHours from './components/FriendlyEnemyHours'
+import BirthdayCalculator from './components/BirthdayCalculator'
+import Letterology from './components/Letterology'
+import HiddenNumerology from './components/HiddenNumerology'
+import Database from './components/Database'
+
+// Lazy load components for better performance (commented out to fix white screen issue)
+// const NumerologyCalculator = lazy(() => import('./components/NumerologyCalculator'))
+// const FriendlyEnemyHours = lazy(() => import('./components/FriendlyEnemyHours'))
+// const BirthdayCalculator = lazy(() => import('./components/BirthdayCalculator'))
+// const Letterology = lazy(() => import('./components/Letterology'))
+// const HiddenNumerology = lazy(() => import('./components/HiddenNumerology'))
+// const Database = lazy(() => import('./components/Database'))
 
 // Loading fallback component
 const ComponentLoader = () => (
@@ -27,6 +35,19 @@ const ComponentLoader = () => (
     >
       Loading...
     </motion.div>
+  </div>
+)
+
+// Error boundary component for lazy loading
+const ErrorFallback = ({ error, resetErrorBoundary }) => (
+  <div className="flex flex-col items-center justify-center min-h-[400px] text-white">
+    <p className="text-red-400 mb-4">Something went wrong</p>
+    <button 
+      onClick={resetErrorBoundary}
+      className="px-4 py-2 bg-purple-500 rounded-lg hover:bg-purple-600"
+    >
+      Try again
+    </button>
   </div>
 )
 
@@ -213,9 +234,8 @@ function App() {
           </motion.h1>
         </header>
         
-        <AnimatePresence mode="wait">
-          <Suspense fallback={<ComponentLoader />}>
-            {activeView === 'calculator' ? (
+        <AnimatePresence mode="wait" initial={false}>
+            {activeView === 'calculator' && (
               <motion.div
                 key="calculator"
                 initial={{ opacity: 0, y: 20 }}
@@ -225,7 +245,8 @@ function App() {
               >
                 <NumerologyCalculator />
               </motion.div>
-            ) : activeView === 'hours' ? (
+            )}
+            {activeView === 'hours' && (
               <motion.div
                 key="hours"
                 initial={{ opacity: 0, y: 20 }}
@@ -235,7 +256,8 @@ function App() {
               >
                 <FriendlyEnemyHours />
               </motion.div>
-            ) : activeView === 'birthday' ? (
+            )}
+            {activeView === 'birthday' && (
               <motion.div
                 key="birthday"
                 initial={{ opacity: 0, y: 20 }}
@@ -245,7 +267,8 @@ function App() {
               >
                 <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
               </motion.div>
-            ) : activeView === 'letterology' ? (
+            )}
+            {activeView === 'letterology' && (
               <motion.div
                 key="letterology"
                 initial={{ opacity: 0, y: 20 }}
@@ -255,7 +278,8 @@ function App() {
               >
                 <Letterology />
               </motion.div>
-            ) : activeView === 'hidden-numerology' ? (
+            )}
+            {activeView === 'hidden-numerology' && (
               <motion.div
                 key="hidden-numerology"
                 initial={{ opacity: 0, y: 20 }}
@@ -265,7 +289,8 @@ function App() {
               >
                 <HiddenNumerology />
               </motion.div>
-            ) : (
+            )}
+            {activeView === 'database' && (
               <motion.div
                 key="database"
                 initial={{ opacity: 0, y: 20 }}
@@ -276,8 +301,7 @@ function App() {
                 <Database />
               </motion.div>
             )}
-          </Suspense>
-        </AnimatePresence>
+          </AnimatePresence>
       </main>
 
       {/* Homage Text */}

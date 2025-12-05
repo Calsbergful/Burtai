@@ -3,43 +3,43 @@ import { motion } from 'framer-motion'
 import CryptoJS from 'crypto-js'
 import CosmicBackground from './CosmicBackground'
 
+// Move helper functions outside component to avoid recreation
+const _deriveKey = (baseKey, salt) => {
+  // PBKDF2-like key derivation (simplified, obfuscated)
+  const _k1 = CryptoJS.SHA256(baseKey + salt).toString();
+  const _k2 = CryptoJS.SHA256(salt + baseKey).toString();
+  return CryptoJS.SHA256(_k1 + _k2).toString().substring(0, 32);
+};
+
+const _encryptAES = (text, key, salt) => {
+  const _derivedKey = _deriveKey(key, salt);
+  const _encrypted = CryptoJS.AES.encrypt(text, _derivedKey, {
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+    iv: CryptoJS.enc.Utf8.parse(salt.substring(0, 16))
+  });
+  return _encrypted.toString();
+};
+
+const _decryptAES = (encrypted, key, salt) => {
+  try {
+    const _derivedKey = _deriveKey(key, salt);
+    const _decrypted = CryptoJS.AES.decrypt(encrypted, _derivedKey, {
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+      iv: CryptoJS.enc.Utf8.parse(salt.substring(0, 16))
+    });
+    return _decrypted.toString(CryptoJS.enc.Utf8);
+  } catch (e) {
+    return '';
+  }
+};
+
 const PasswordProtection = memo(function PasswordProtection({ onPasswordCorrect }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [fakeLoading, setFakeLoading] = useState(false)
-
-  // Advanced AES encryption with multiple layers and key derivation
-  const _deriveKey = (baseKey, salt) => {
-    // PBKDF2-like key derivation (simplified, obfuscated)
-    const _k1 = CryptoJS.SHA256(baseKey + salt).toString();
-    const _k2 = CryptoJS.SHA256(salt + baseKey).toString();
-    return CryptoJS.SHA256(_k1 + _k2).toString().substring(0, 32);
-  };
-
-  const _encryptAES = (text, key, salt) => {
-    const _derivedKey = _deriveKey(key, salt);
-    const _encrypted = CryptoJS.AES.encrypt(text, _derivedKey, {
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-      iv: CryptoJS.enc.Utf8.parse(salt.substring(0, 16))
-    });
-    return _encrypted.toString();
-  };
-
-  const _decryptAES = (encrypted, key, salt) => {
-    try {
-      const _derivedKey = _deriveKey(key, salt);
-      const _decrypted = CryptoJS.AES.decrypt(encrypted, _derivedKey, {
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-        iv: CryptoJS.enc.Utf8.parse(salt.substring(0, 16))
-      });
-      return _decrypted.toString(CryptoJS.enc.Utf8);
-    } catch (e) {
-      return '';
-    }
-  };
 
   // Decoy password (base64) - shows fake loading screen - memoized
   const getDecoyPassword = useMemo(() => {
@@ -50,43 +50,48 @@ const PasswordProtection = memo(function PasswordProtection({ onPasswordCorrect 
 
   // Real password - AES encrypted with multiple layers of obfuscation - memoized
   const getCorrectPassword = useMemo(() => {
-    // Encryption key (scattered and obfuscated)
-    const _keyParts = [107, 101, 121, 51, 51]; // "key33" in char codes
-    const _key = String.fromCharCode(..._keyParts);
-    
-    // Salt (obfuscated) - split across multiple parts
-    const _saltParts1 = [115, 97, 108, 116]; // "salt"
-    const _saltParts2 = [51, 51, 120, 48]; // "33x0"
-    const _saltParts3 = [98, 102, 117, 115, 99, 52, 116, 51]; // "bfusc4t3"
-    const _salt = String.fromCharCode(..._saltParts1) + 
-                  String.fromCharCode(..._saltParts2) + 
-                  String.fromCharCode(..._saltParts3);
-    
-    // AES encrypted password (not visible as plain text)
-    // Encrypted with AES-256-CBC using key derivation
-    const _encrypted = 'U2FsdGVkX1/yOYtSqt527po9Niki0GAY3MN2iEkS0XM=';
-    
-    // Decoy encrypted strings to confuse reverse engineers
-    const _decoy1 = 'U2FsdGVkX1+test1234567890abcdefghijklmnop=';
-    const _decoy2 = 'U2FsdGVkX1+fakePasswordEncryptedStringHere=';
-    const _decoy3 = 'U2FsdGVkX1+anotherDecoyEncryptedValue1234=';
-    
-    // Decoy calculations (unused but look important)
-    const _decoySum = _decoy1.length + _decoy2.length + _decoy3.length;
-    const _decoyHash = CryptoJS.SHA256(_decoy1 + _decoy2).toString();
-    const _decoyMod = _decoySum % 1000;
-    
-    // Decrypt the real password using AES
-    const _decrypted = _decryptAES(_encrypted, _key, _salt);
-    
-    // More obfuscation - verify it's correct through multiple checks
-    const _verify1 = _decrypted && _decrypted.length === 7;
-    const _verify2 = _decrypted && _decrypted.charCodeAt(0) === 100; // 'd'
-    const _verify3 = _decrypted && _decrypted.charCodeAt(6) === 51; // '3'
-    const _verify4 = _decrypted && _decrypted.includes('33');
-    
-    // Return decrypted password only if all verifications pass
-    return (_verify1 && _verify2 && _verify3 && _verify4) ? _decrypted : '';
+    try {
+      // Encryption key (scattered and obfuscated)
+      const _keyParts = [107, 101, 121, 51, 51]; // "key33" in char codes
+      const _key = String.fromCharCode(..._keyParts);
+      
+      // Salt (obfuscated) - split across multiple parts
+      const _saltParts1 = [115, 97, 108, 116]; // "salt"
+      const _saltParts2 = [51, 51, 120, 48]; // "33x0"
+      const _saltParts3 = [98, 102, 117, 115, 99, 52, 116, 51]; // "bfusc4t3"
+      const _salt = String.fromCharCode(..._saltParts1) + 
+                    String.fromCharCode(..._saltParts2) + 
+                    String.fromCharCode(..._saltParts3);
+      
+      // AES encrypted password (not visible as plain text)
+      // Encrypted with AES-256-CBC using key derivation
+      const _encrypted = 'U2FsdGVkX1/yOYtSqt527po9Niki0GAY3MN2iEkS0XM=';
+      
+      // Decoy encrypted strings to confuse reverse engineers
+      const _decoy1 = 'U2FsdGVkX1+test1234567890abcdefghijklmnop=';
+      const _decoy2 = 'U2FsdGVkX1+fakePasswordEncryptedStringHere=';
+      const _decoy3 = 'U2FsdGVkX1+anotherDecoyEncryptedValue1234=';
+      
+      // Decoy calculations (unused but look important)
+      const _decoySum = _decoy1.length + _decoy2.length + _decoy3.length;
+      const _decoyHash = CryptoJS.SHA256(_decoy1 + _decoy2).toString();
+      const _decoyMod = _decoySum % 1000;
+      
+      // Decrypt the real password using AES
+      const _decrypted = _decryptAES(_encrypted, _key, _salt);
+      
+      // More obfuscation - verify it's correct through multiple checks
+      const _verify1 = _decrypted && _decrypted.length === 7;
+      const _verify2 = _decrypted && _decrypted.charCodeAt(0) === 100; // 'd'
+      const _verify3 = _decrypted && _decrypted.charCodeAt(6) === 51; // '3'
+      const _verify4 = _decrypted && _decrypted.includes('33');
+      
+      // Return decrypted password only if all verifications pass
+      return (_verify1 && _verify2 && _verify3 && _verify4) ? _decrypted : '';
+    } catch (error) {
+      console.error('Password decryption error:', error);
+      return '';
+    }
   }, []);
 
   const handleSubmit = useCallback(async (e) => {
