@@ -139,8 +139,9 @@ function PasswordProtection({ onPasswordCorrect }) {
       }
     } catch (error) {
       // Better error handling - check if it's a network error
+      console.error('Login error:', error);
       if (error.message && error.message.includes('Failed to fetch')) {
-        setError('Nepavyko prisijungti prie serverio. Patikrinkite interneto ryšį.');
+        setError('Nepavyko prisijungti prie serverio. Naudokite "vercel dev" vietoj "npm run dev".');
       } else {
         setError('Klaida prisijungiant. Bandykite dar kartą.');
       }
