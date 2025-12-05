@@ -12,8 +12,12 @@ export default async function handler(req, res) {
   const correctPassword = process.env.ADMIN_PASSWORD || 'dauns33';
   const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
-  // Validate password
-  if (!password || password !== correctPassword) {
+  // Debug logging (remove in production if needed)
+  // console.log('Login attempt:', { hasPassword: !!password, envPassword: !!correctPassword });
+
+  // Validate password (trim to handle whitespace)
+  const inputPassword = password ? password.trim() : '';
+  if (!inputPassword || inputPassword !== correctPassword) {
     return res.status(401).json({ 
       error: 'Invalid password',
       success: false 

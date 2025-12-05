@@ -115,6 +115,16 @@ function PasswordProtection({ onPasswordCorrect }) {
         body: JSON.stringify({ password: inputPwd }),
       });
 
+      // Check if response is ok
+      if (!response.ok) {
+        // Try to get error message
+        const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+        setError(errorData.error || 'Neteisingas slaptažodis');
+        setIsSubmitting(false);
+        setPassword('');
+        return;
+      }
+
       const data = await response.json();
 
       if (data.success && data.token) {
@@ -123,12 +133,17 @@ function PasswordProtection({ onPasswordCorrect }) {
         sessionStorage.setItem(_authKey, data.token);
         onPasswordCorrect();
       } else {
-        setError('Neteisingas slaptažodis');
+        setError(data.error || 'Neteisingas slaptažodis');
         setIsSubmitting(false);
         setPassword('');
       }
     } catch (error) {
-      setError('Klaida prisijungiant. Bandykite dar kartą.');
+      // Better error handling - check if it's a network error
+      if (error.message && error.message.includes('Failed to fetch')) {
+        setError('Nepavyko prisijungti prie serverio. Patikrinkite interneto ryšį.');
+      } else {
+        setError('Klaida prisijungiant. Bandykite dar kartą.');
+      }
       setIsSubmitting(false);
       setPassword('');
     }
