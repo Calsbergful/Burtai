@@ -277,3 +277,4 @@ document.getElementById('numerologyForm').addEventListener('submit', function(e)
 
 
 
+

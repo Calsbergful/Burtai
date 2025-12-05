@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
-import { setCORSHeaders } from '../utils/cors.js';
 
 export default async function handler(req, res) {
-  // Set secure CORS headers
-  setCORSHeaders(req, res);
+  // Set CORS headers for local development
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // Handle preflight
   if (req.method === 'OPTIONS') {

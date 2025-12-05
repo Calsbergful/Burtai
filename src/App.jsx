@@ -3,7 +3,7 @@ const _d1 = () => {};
 const _d2 = [1,2,3,4,5];
 const _d3 = {a:1,b:2};
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import NumerologyCalculator from './components/NumerologyCalculator'
 import FriendlyEnemyHours from './components/FriendlyEnemyHours'
@@ -14,7 +14,6 @@ import Database from './components/Database'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 import PasswordProtection from './components/PasswordProtection'
-import ErrorBoundary from './components/ErrorBoundary'
 
 // Dead code injection
 const _dead1 = () => { const x = Math.random() * 1000; return x % 2 === 0; };
@@ -22,33 +21,25 @@ const _dead2 = (a, b) => { for(let i=0;i<100;i++){a+=b;} return a; };
 const _dead3 = [1,2,3,4,5].map(x => x*x).filter(x => x > 10);
 
 function App() {
-  console.log('App component rendering...');
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
   const [activeView, setActiveView] = useState('calculator');
   const [personalBirthdayTrigger, setPersonalBirthdayTrigger] = useState(0);
   const [databaseSequence, setDatabaseSequence] = useState([]); // Track sequence: ['calculator', 'life-path-settings', 'letterology', 'personal-birthday']
   const [databaseUnlocked, setDatabaseUnlocked] = useState(false);
   const [sequenceTimeout, setSequenceTimeout] = useState(null);
-  
-  console.log('App state:', { isAuthenticated, isLoading, activeView });
 
   useEffect(() => {
-    console.log('useEffect running - checking auth...');
     // Verify authentication token with server on page load
     const verifyAuth = async () => {
-      try {
-        const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100); // "isAuthenticated"
-        const token = sessionStorage.getItem(_authKey);
-        
-        console.log('Token check:', token ? 'Token found' : 'No token');
-        
-        if (!token) {
-          setIsAuthenticated(false);
-          setIsLoading(false);
-          return;
-        }
+      const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100); // "isAuthenticated"
+      const token = sessionStorage.getItem(_authKey);
+      
+      if (!token) {
+        setIsAuthenticated(false);
+        return;
+      }
 
+      try {
         // Verify token with server
         const response = await fetch('/api/auth/verify', {
           method: 'POST',
@@ -59,25 +50,17 @@ function App() {
         });
 
         const data = await response.json();
-        console.log('Auth verify response:', data);
 
         if (data.authenticated) {
-          console.log('Setting authenticated to true');
           setIsAuthenticated(true);
         } else {
-          console.log('Token invalid, clearing');
           sessionStorage.removeItem(_authKey);
           setIsAuthenticated(false);
         }
       } catch (error) {
         // If server verification fails, clear token and require re-authentication
-        console.error('Auth verification error:', error);
-        const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100);
         sessionStorage.removeItem(_authKey);
         setIsAuthenticated(false);
-      } finally {
-        console.log('Setting isLoading to false');
-        setIsLoading(false);
       }
     };
 
@@ -104,38 +87,16 @@ function App() {
     }
   }, [databaseSequence, databaseUnlocked])
 
-  const handlePasswordCorrect = useCallback(() => {
-    console.log('handlePasswordCorrect called');
-    try {
-      setIsAuthenticated(true);
-      setIsLoading(false);
-      console.log('State updated: authenticated=true, loading=false');
-    } catch (error) {
-      console.error('Error in handlePasswordCorrect:', error);
-    }
-  }, [])
-
-  console.log('Rendering decision:', { isAuthenticated, isLoading });
-  
-  // Show loading state only during initial auth check
-  if (isLoading) {
-    console.log('Rendering loading screen');
-    return (
-      <div className="min-h-screen gradient-bg flex items-center justify-center">
-        <div className="text-white/60 text-lg">Kraunama...</div>
-      </div>
-    );
+  const handlePasswordCorrect = () => {
+    setIsAuthenticated(true)
   }
 
   // Show password protection if not authenticated
   if (!isAuthenticated) {
-    console.log('Rendering PasswordProtection');
     return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
   }
 
-  console.log('Rendering main app content');
-
-  const handleMenuClick = useCallback((menuId) => {
+  const handleMenuClick = (menuId) => {
     // Check database unlock sequence: calculator -> life-path-settings -> letterology -> personal-birthday
     const expectedSequence = ['calculator', 'life-path-settings', 'letterology', 'personal-birthday'];
     
@@ -196,14 +157,13 @@ function App() {
     } else {
       setActiveView('calculator');
     }
-  }, [databaseUnlocked, databaseSequence]);
+  };
 
-  try {
-    return (
-      <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-[95px] sm:pb-[75px] md:pb-[80px]">
-        <CosmicBackground />
-        <main className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-180px)]">
-          <header className="text-center text-white mb-2 sm:mb-3 md:mb-4 relative z-10 w-full">
+  return (
+    <div className="min-h-screen gradient-bg py-4 px-3 sm:py-8 sm:px-4 relative pb-[95px] sm:pb-[75px] md:pb-[80px]">
+      <CosmicBackground />
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-180px)]">
+        <header className="text-center text-white mb-2 sm:mb-3 md:mb-4 relative z-10 w-full">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ 
@@ -238,71 +198,69 @@ function App() {
           </motion.h1>
         </header>
         
-        <ErrorBoundary>
-          <AnimatePresence mode="wait">
-              {activeView === 'calculator' ? (
-                <motion.div
-                  key="calculator"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <NumerologyCalculator />
-                </motion.div>
-              ) : activeView === 'hours' ? (
-                <motion.div
-                  key="hours"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <FriendlyEnemyHours />
-                </motion.div>
-              ) : activeView === 'birthday' ? (
-                <motion.div
-                  key="birthday"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
-                </motion.div>
-              ) : activeView === 'letterology' ? (
-                <motion.div
-                  key="letterology"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Letterology />
-                </motion.div>
-              ) : activeView === 'hidden-numerology' ? (
-                <motion.div
-                  key="hidden-numerology"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <HiddenNumerology />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="database"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Database />
-                </motion.div>
-              )}
-            </AnimatePresence>
-        </ErrorBoundary>
+        <AnimatePresence mode="wait">
+          {activeView === 'calculator' ? (
+            <motion.div
+              key="calculator"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <NumerologyCalculator />
+            </motion.div>
+          ) : activeView === 'hours' ? (
+            <motion.div
+              key="hours"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <FriendlyEnemyHours />
+            </motion.div>
+          ) : activeView === 'birthday' ? (
+            <motion.div
+              key="birthday"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
+            </motion.div>
+          ) : activeView === 'letterology' ? (
+            <motion.div
+              key="letterology"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Letterology />
+            </motion.div>
+          ) : activeView === 'hidden-numerology' ? (
+            <motion.div
+              key="hidden-numerology"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <HiddenNumerology />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="database"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Database />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       {/* Homage Text */}
@@ -324,26 +282,8 @@ function App() {
         }
         hideDatabase={!databaseUnlocked}
       />
-      </div>
-    )
-  } catch (error) {
-    console.error('Error rendering App:', error);
-    return (
-      <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
-        <div className="bg-red-900/20 backdrop-blur-xl rounded-2xl p-8 max-w-md text-center border border-red-500/20">
-          <h2 className="text-2xl font-bold text-white mb-4">Klaida</h2>
-          <p className="text-white/80 mb-2">Įvyko klaida: {error.message}</p>
-          <p className="text-white/60 text-sm mb-6">{error.stack}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-red-500/80 hover:bg-red-500 rounded-lg text-white font-semibold transition-all"
-          >
-            Perkrauti puslapį
-          </button>
-        </div>
-      </div>
-    );
-  }
+    </div>
+  )
 }
 
 export default App

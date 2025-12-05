@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
-import { memo } from 'react';
 
-function ResultCard({ number, title, description, delay = 0 }) {
+export default function ResultCard({ number, title, description, delay = 0 }) {
     const isMasterNumber = [11, 22, 33].includes(number);
     
     return (
@@ -35,6 +34,4 @@ function ResultCard({ number, title, description, delay = 0 }) {
         </motion.div>
     );
 }
-
-export default memo(ResultCard);
 
