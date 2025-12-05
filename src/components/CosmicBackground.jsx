@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
+import { memo } from 'react'
 
-export default function CosmicBackground() {
+function CosmicBackground() {
   // Generate random positions for cosmic elements
   const floatingParticles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
@@ -141,4 +142,6 @@ export default function CosmicBackground() {
     </div>
   )
 }
+
+export default memo(CosmicBackground)
 

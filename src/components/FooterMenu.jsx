@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
-export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
+function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = false }) {
     const [activeItem, setActiveItem] = useState(activeMenuId || null);
     
     // Update active item when prop changes
@@ -97,4 +97,6 @@ export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = f
         </motion.footer>
     );
 }
+
+export default memo(FooterMenu);
 

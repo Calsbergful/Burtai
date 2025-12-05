@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
+import { setCORSHeaders } from '../utils/cors.js';
+import { rateLimiter, clearRateLimit, getClientId } from '../utils/rateLimiter.js';
 
 export default async function handler(req, res) {
   try {
-    // Set CORS headers for local development
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    // Set secure CORS headers
+    setCORSHeaders(req, res);
 
     // Handle preflight
     if (req.method === 'OPTIONS') {
@@ -15,6 +15,20 @@ export default async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Rate limiting - prevent brute force attacks
+    const rateLimit = rateLimiter({ maxAttempts: 5, windowMs: 15 * 60 * 1000 }); // 5 attempts per 15 minutes
+    const rateLimitResult = rateLimit(req, res);
+    
+    if (!rateLimitResult.allowed) {
+      res.setHeader('Retry-After', rateLimitResult.retryAfter);
+      return res.status(429).json({
+        error: 'Too many requests',
+        success: false,
+        message: 'Too many login attempts. Please try again later.',
+        retryAfter: rateLimitResult.retryAfter
+      });
     }
 
     // Validate request body exists
@@ -46,6 +60,10 @@ export default async function handler(req, res) {
     // Validate password (trim to handle whitespace)
     const inputPassword = password ? password.trim() : '';
     if (!inputPassword || inputPassword !== correctPassword) {
+      // Add rate limit headers even on failed attempts
+      res.setHeader('X-RateLimit-Remaining', rateLimitResult.remaining);
+      res.setHeader('X-RateLimit-Reset', new Date(rateLimitResult.resetTime).toISOString());
+      
       return res.status(401).json({ 
         error: 'Invalid password',
         success: false 
@@ -62,6 +80,10 @@ export default async function handler(req, res) {
       { expiresIn: '24h' }
     );
 
+    // Clear rate limit on successful login
+    const clientId = getClientId(req);
+    clearRateLimit(clientId);
+    
     // Return token
     return res.status(200).json({
       success: true,
@@ -73,13 +95,17 @@ export default async function handler(req, res) {
     console.error('Error stack:', error.stack);
     console.error('Error name:', error.name);
     
+    // Only show detailed errors in development
+    const isDevelopment = process.env.VERCEL_ENV === 'development' || 
+                          (!process.env.VERCEL && process.env.NODE_ENV === 'development');
+    
     // Check if it's a JWT-related error
     if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
       return res.status(500).json({
         error: 'JWT token error',
         success: false,
-        message: error.message,
-        details: 'Token generation failed'
+        message: isDevelopment ? error.message : 'Token generation failed',
+        details: isDevelopment ? 'Token generation failed' : undefined
       });
     }
     
@@ -88,16 +114,17 @@ export default async function handler(req, res) {
       return res.status(500).json({
         error: 'Module import error',
         success: false,
-        message: error.message,
-        details: 'jsonwebtoken package may not be installed'
+        message: isDevelopment ? error.message : 'Server configuration error',
+        details: isDevelopment ? 'jsonwebtoken package may not be installed' : undefined
       });
     }
     
     return res.status(500).json({
       error: 'Server error',
       success: false,
-      message: error.message || 'Unknown error occurred',
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      message: isDevelopment ? error.message : 'An error occurred. Please try again later.',
+      // Never expose stack traces in production
+      details: isDevelopment ? error.stack : undefined
     });
   }
 }
