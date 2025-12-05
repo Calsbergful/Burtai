@@ -32,6 +32,7 @@ const _dead3 = [1,2,3,4,5].map(x => x*x).filter(x => x > 10);
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [activeView, setActiveView] = useState('calculator');
   const [personalBirthdayTrigger, setPersonalBirthdayTrigger] = useState(0);
   const [databaseSequence, setDatabaseSequence] = useState([]); // Track sequence: ['calculator', 'life-path-settings', 'letterology', 'personal-birthday']
@@ -69,8 +70,11 @@ function App() {
         }
       } catch (error) {
         // If server verification fails, clear token and require re-authentication
+        console.error('Auth verification error:', error);
         sessionStorage.removeItem(_authKey);
         setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -98,8 +102,27 @@ function App() {
   }, [databaseSequence, databaseUnlocked])
 
   const handlePasswordCorrect = useCallback(() => {
-    setIsAuthenticated(true)
+    try {
+      setIsLoading(true);
+      // Small delay to ensure state updates properly
+      setTimeout(() => {
+        setIsAuthenticated(true);
+        setIsLoading(false);
+      }, 100);
+    } catch (error) {
+      console.error('Error in handlePasswordCorrect:', error);
+      setIsLoading(false);
+    }
   }, [])
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
+        <div className="text-white/60 text-lg">Kraunama...</div>
+      </div>
+    );
+  }
 
   // Show password protection if not authenticated
   if (!isAuthenticated) {
@@ -217,8 +240,13 @@ function App() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
+                  onError={(error) => {
+                    console.error('Error rendering NumerologyCalculator:', error);
+                  }}
                 >
-                  <NumerologyCalculator />
+                  <ErrorBoundary>
+                    <NumerologyCalculator />
+                  </ErrorBoundary>
                 </motion.div>
               ) : activeView === 'hours' ? (
                 <motion.div
