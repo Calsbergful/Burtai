@@ -15,6 +15,7 @@ const Database = lazy(() => import('./components/Database'))
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
 import PasswordProtection from './components/PasswordProtection'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Dead code injection
 const _dead1 = () => { const x = Math.random() * 1000; return x % 2 === 0; };
@@ -89,7 +90,13 @@ function App() {
   }, [databaseSequence, databaseUnlocked])
 
   const handlePasswordCorrect = useCallback(() => {
-    setIsAuthenticated(true)
+    // Preload the default component when authentication succeeds
+    import('./components/NumerologyCalculator').then(() => {
+      setIsAuthenticated(true)
+    }).catch((error) => {
+      console.error('Failed to preload component:', error);
+      setIsAuthenticated(true); // Still set authenticated even if preload fails
+    })
   }, [])
 
   // Show password protection if not authenticated
@@ -199,79 +206,83 @@ function App() {
           </motion.h1>
         </header>
         
-        <AnimatePresence mode="wait">
+        <ErrorBoundary>
           <Suspense fallback={
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center justify-center min-h-[400px]"
-            >
-              <div className="text-white/60">Kraunama...</div>
-            </motion.div>
+            <div className="flex items-center justify-center min-h-[400px] w-full">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-white/60 text-lg"
+              >
+                Kraunama...
+              </motion.div>
+            </div>
           }>
-            {activeView === 'calculator' ? (
-              <motion.div
-                key="calculator"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <NumerologyCalculator />
-              </motion.div>
-            ) : activeView === 'hours' ? (
-              <motion.div
-                key="hours"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <FriendlyEnemyHours />
-              </motion.div>
-            ) : activeView === 'birthday' ? (
-              <motion.div
-                key="birthday"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
-              </motion.div>
-            ) : activeView === 'letterology' ? (
-              <motion.div
-                key="letterology"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Letterology />
-              </motion.div>
-            ) : activeView === 'hidden-numerology' ? (
-              <motion.div
-                key="hidden-numerology"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <HiddenNumerology />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="database"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Database />
-              </motion.div>
-            )}
-          </Suspense>
-        </AnimatePresence>
+            <AnimatePresence mode="wait">
+              {activeView === 'calculator' ? (
+                <motion.div
+                  key="calculator"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <NumerologyCalculator />
+                </motion.div>
+              ) : activeView === 'hours' ? (
+                <motion.div
+                  key="hours"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <FriendlyEnemyHours />
+                </motion.div>
+              ) : activeView === 'birthday' ? (
+                <motion.div
+                  key="birthday"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <BirthdayCalculator personalBirthdayTrigger={personalBirthdayTrigger} />
+                </motion.div>
+              ) : activeView === 'letterology' ? (
+                <motion.div
+                  key="letterology"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Letterology />
+                </motion.div>
+              ) : activeView === 'hidden-numerology' ? (
+                <motion.div
+                  key="hidden-numerology"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <HiddenNumerology />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="database"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Database />
+                </motion.div>
+              )}
+            </Suspense>
+          </AnimatePresence>
+        </ErrorBoundary>
       </main>
 
       {/* Homage Text */}
