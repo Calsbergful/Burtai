@@ -34,3 +34,4 @@ export function setCORSHeaders(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 }
+
