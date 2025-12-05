@@ -80,16 +80,28 @@ export default async function handler(req, res) {
     const inputPassword = password ? password.trim() : '';
     const trimmedCorrectPassword = correctPassword.trim();
     
-    // Debug logging (remove in production if needed)
-    console.log('Password check:', {
+    // Debug logging to help diagnose issues
+    console.log('Password validation:', {
       hasInput: !!inputPassword,
       inputLength: inputPassword.length,
+      inputFirstChar: inputPassword ? inputPassword.charCodeAt(0) : null,
+      inputLastChar: inputPassword ? inputPassword.charCodeAt(inputPassword.length - 1) : null,
       correctLength: trimmedCorrectPassword.length,
+      correctFirstChar: trimmedCorrectPassword.charCodeAt(0),
+      correctLastChar: trimmedCorrectPassword.charCodeAt(trimmedCorrectPassword.length - 1),
       envVarSet: !!process.env.ADMIN_PASSWORD,
-      match: inputPassword === trimmedCorrectPassword
+      usingFallback: !process.env.ADMIN_PASSWORD,
+      match: inputPassword === trimmedCorrectPassword,
+      inputPassword: inputPassword ? `"${inputPassword}"` : 'empty',
+      correctPassword: `"${trimmedCorrectPassword}"`
     });
     
     if (!inputPassword || inputPassword !== trimmedCorrectPassword) {
+      console.error('Password mismatch:', {
+        received: inputPassword ? `"${inputPassword}"` : 'empty',
+        expected: `"${trimmedCorrectPassword}"`,
+        lengthsMatch: inputPassword.length === trimmedCorrectPassword.length
+      });
       return res.status(401).json({ 
         error: 'Invalid password',
         success: false 
