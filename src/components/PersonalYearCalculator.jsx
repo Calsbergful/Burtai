@@ -74,6 +74,7 @@ export default function PersonalYearCalculator() {
     const [year, setYear] = useState('');
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [hourFormat, setHourFormat] = useState('24'); // '24' or '12'
 
     useEffect(() => {
         // Auto-calculate when all fields are filled
@@ -212,7 +213,7 @@ export default function PersonalYearCalculator() {
                     nextDay: nextPHDay,
                     nextMonth: nextPHMonth,
                     nextYear: nextPHYear,
-                    nextDate: `${nextPHYear}-${String(nextPHMonth).padStart(2, '0')}-${String(nextPHDay).padStart(2, '0')} ${nextPHHour === 24 ? '00' : String(nextPHHour24).padStart(2, '0')}:00`
+                    nextDate: `${nextPHYear}-${String(nextPHMonth).padStart(2, '0')}-${String(nextPHDay).padStart(2, '0')} ${formatHourForDate(nextPHHour)}:00`
                 }
             });
         } catch (error) {
@@ -238,6 +239,35 @@ export default function PersonalYearCalculator() {
             month: 'long', 
             day: 'numeric' 
         });
+    };
+
+    const formatHour = (hour24) => {
+        // hour24 is in 1-24 format
+        if (hourFormat === '12') {
+            if (hour24 === 24) {
+                return '12:00 AM';
+            } else if (hour24 === 12) {
+                return '12:00 PM';
+            } else if (hour24 > 12) {
+                return `${hour24 - 12}:00 PM`;
+            } else {
+                return `${hour24}:00 AM`;
+            }
+        } else {
+            // 24-hour format
+            if (hour24 === 24) {
+                return '24:00 (00:00)';
+            } else {
+                return `${String(hour24).padStart(2, '0')}:00`;
+            }
+        }
+    };
+
+    const formatHourForDate = (hour24) => {
+        // For date strings, convert 24-hour format (1-24) to JavaScript hour (0-23)
+        // Always use 24-hour format in date strings for consistency
+        const jsHour = hour24 === 24 ? 0 : hour24;
+        return String(jsHour).padStart(2, '0');
     };
 
     return (
@@ -308,9 +338,36 @@ export default function PersonalYearCalculator() {
                                 />
                             </div>
                         </div>
-                        <p className="text-xs text-white/60 text-center">
+                        <p className="text-xs text-white/60 text-center mb-4">
                             Įveskite savo gimimo datą. Skaičiavimai atnaujinami automatiškai.
                         </p>
+                        
+                        {/* Hour Format Toggle */}
+                        <div className="flex items-center justify-center gap-4">
+                            <label className="text-white/80 text-sm">Valandų formatas:</label>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setHourFormat('24')}
+                                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                        hourFormat === '24'
+                                            ? 'bg-purple-600 text-white shadow-lg'
+                                            : 'bg-purple-900/30 text-white/70 hover:bg-purple-800/40'
+                                    }`}
+                                >
+                                    24 val. (1-24)
+                                </button>
+                                <button
+                                    onClick={() => setHourFormat('12')}
+                                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                        hourFormat === '12'
+                                            ? 'bg-purple-600 text-white shadow-lg'
+                                            : 'bg-purple-900/30 text-white/70 hover:bg-purple-800/40'
+                                    }`}
+                                >
+                                    12 val. (AM/PM)
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Results */}
@@ -428,8 +485,16 @@ export default function PersonalYearCalculator() {
                                         </p>
                                     </div>
                                     <div className="text-white/70 text-xs">
-                                        <p>Dabartinė valanda: {results.personalHour.currentHour === 24 ? '24:00 (00:00)' : String(results.personalHour.currentHour).padStart(2, '0') + ':00'}</p>
-                                        <p>Kita valanda ({results.personalHour.next}): {results.personalHour.nextDate}</p>
+                                        <p>Dabartinė valanda: {formatHour(results.personalHour.currentHour)}</p>
+                                        <p>Kita valanda ({results.personalHour.next}): {(() => {
+                                            const dateParts = results.personalHour.nextDate.split(' ');
+                                            const dateStr = dateParts[0];
+                                            const hourStr = dateParts[1] || '00:00';
+                                            const hour24 = parseInt(hourStr.split(':')[0]);
+                                            // Convert JavaScript hour (0-23) to numerology hour (1-24) for display
+                                            const numerologyHour = hour24 === 0 ? 24 : hour24;
+                                            return `${dateStr} ${formatHour(numerologyHour)}`;
+                                        })()}</p>
                                     </div>
                                 </div>
                             </motion.div>
