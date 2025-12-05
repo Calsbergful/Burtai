@@ -51,9 +51,31 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    // Log request details for debugging
+    console.log('=== REQUEST DEBUG ===');
+    console.log('Method:', req.method);
+    console.log('Content-Type:', req.headers['content-type']);
+    console.log('Body type:', typeof req.body);
+    console.log('Body exists:', !!req.body);
+    console.log('Body keys:', req.body ? Object.keys(req.body) : 'N/A');
+    console.log('Raw body:', JSON.stringify(req.body));
+    
+    // Vercel automatically parses JSON, but let's handle it explicitly
+    let body = req.body;
+    
+    // If body is a string, try to parse it
+    if (typeof body === 'string' && body.length > 0) {
+      try {
+        body = JSON.parse(body);
+        console.log('Parsed body from string:', JSON.stringify(body));
+      } catch (e) {
+        console.error('Failed to parse body as JSON:', e);
+      }
+    }
+    
     // Validate request body exists
-    if (!req.body) {
-      console.error('Request body is missing');
+    if (!body || typeof body !== 'object') {
+      console.error('Request body is missing or invalid');
       return res.status(400).json({
         error: 'Bad request',
         success: false,
@@ -61,7 +83,9 @@ export default async function handler(req, res) {
       });
     }
 
-    const { password } = req.body;
+    const { password } = body;
+    console.log('Extracted password:', password ? `"${password}" (${password.length} chars)` : 'undefined');
+    console.log('====================');
 
     // Get password from environment variable
     // Check if env var is set, if not use fallback
