@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, memo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import CryptoJS from 'crypto-js'
 import CosmicBackground from './CosmicBackground'
@@ -35,7 +35,7 @@ const _decryptAES = (encrypted, key, salt) => {
   }
 };
 
-const PasswordProtection = memo(function PasswordProtection({ onPasswordCorrect }) {
+function PasswordProtection({ onPasswordCorrect }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -646,7 +646,7 @@ const PasswordProtection = memo(function PasswordProtection({ onPasswordCorrect 
       </motion.div>
     </div>
   )
-})
+}
 
 export default PasswordProtection
 

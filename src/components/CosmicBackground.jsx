@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { useMemo, memo } from 'react'
+import { useMemo } from 'react'
 
-const CosmicBackground = memo(function CosmicBackground() {
+function CosmicBackground() {
   // Generate random positions for cosmic elements - memoized to prevent regeneration
   const floatingParticles = useMemo(() => Array.from({ length: 15 }, (_, i) => ({
     id: i,
@@ -141,7 +141,7 @@ const CosmicBackground = memo(function CosmicBackground() {
       )), [])}
     </div>
   )
-})
+}
 
 export default CosmicBackground
 
