@@ -1410,10 +1410,24 @@ export default function Database() {
                                                     </td>
                                                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map(colNum => {
                                                         const relationship = getNumerologyRelationship(rowNum, colNum);
+                                                        // Get emoji/symbol for relationship type
+                                                        const getRelationshipSymbol = (rel) => {
+                                                            if (!rel) return '';
+                                                            switch(rel) {
+                                                                case 'enemy': return '❌';
+                                                                case 'bad': return '⚠️';
+                                                                case 'neutral': return '⚪';
+                                                                case 'good': return '✅';
+                                                                case 'best': return '⭐';
+                                                                case 'ms': return '💜';
+                                                                default: return '';
+                                                            }
+                                                        };
                                                         return (
                                                             <td 
                                                                 key={colNum} 
-                                                                className={`p-0 text-center w-[40px] h-[40px] transition-all duration-200`}
+                                                                onClick={() => handleRelationshipClick(rowNum, colNum)}
+                                                                className={`p-0 text-center w-[40px] h-[40px] transition-all duration-200 cursor-pointer hover:opacity-80`}
                                                                 style={relationship ? {
                                                                     background: relationship === 'enemy' ? 'radial-gradient(circle, #f87171 0%, #ef4444 40%, #dc2626 100%)' :
                                                                                 relationship === 'bad' ? 'radial-gradient(circle, #fb923c 0%, #f97316 40%, #ea580c 100%)' :
@@ -1435,8 +1449,14 @@ export default function Database() {
                                                                     background: 'linear-gradient(135deg, rgba(31, 41, 55, 0.5) 0%, rgba(17, 24, 39, 0.5) 100%)',
                                                                     border: '2px solid rgba(107, 114, 128, 0.3)'
                                                                 }}
-                                                                title={`${rowNum} ir ${colNum}: ${getRelationshipLabel(relationship)}`}
+                                                                title={`${rowNum} ir ${colNum}: ${getRelationshipLabel(relationship)} (Click to change)`}
                                                             >
+                                                                <span className="text-lg font-bold" style={{ 
+                                                                    textShadow: relationship ? '0 1px 2px rgba(0,0,0,0.5)' : 'none',
+                                                                    filter: relationship ? 'drop-shadow(0 0 2px rgba(255,255,255,0.3))' : 'none'
+                                                                }}>
+                                                                    {getRelationshipSymbol(relationship)}
+                                                                </span>
                                                             </td>
                                                         );
                                                     })}
@@ -5451,6 +5471,536 @@ export default function Database() {
                         </div>
                     </motion.div>
                 )}
+                
+                {/* Practical Numerology Tips */}
+                <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                    id="practical-tips"
+                    title="💡 Praktinės Numerologijos Patarimai"
+                    isOpen={expandedSections['practical-tips'] ?? false}
+                    onToggle={toggleSection}
+                    searchQuery={searchQuery}
+                    expandedSearchTerms={expandedSearchTerms}
+                    searchMatch={matchesSearch('Praktinės Patarimai Tips Practical Numerology')}
+                    contentText="praktiniai patarimai numerologija kaip naudoti skaičius gyvenime kasdienybė"
+                >
+                    <div className="bg-emerald-900/30 border border-emerald-500/40 rounded-lg p-4">
+                        <div className="text-sm text-white/90 space-y-4">
+                            <div>
+                                <p className="font-semibold text-emerald-300 mb-2">Kasdienės Skaičių Energijos:</p>
+                                <ul className="list-disc list-inside space-y-1 ml-2 text-xs">
+                                    <li><span className="font-semibold">Geros dienos svarbiems sprendimams:</span> 1, 8, 11, 22, 28</li>
+                                    <li><span className="font-semibold">Vengti svarbių sprendimų:</span> 4, 7, 13 (jei atsitinka)</li>
+                                    <li><span className="font-semibold">Finansinės operacijos:</span> 8, 17, 26 - geros dienos</li>
+                                    <li><span className="font-semibold">Kūrybinis darbas:</span> 3, 5, 9 - geros dienos</li>
+                                    <li><span className="font-semibold">Mokymasis ir studijos:</span> 2, 6, 11 - geros dienos</li>
+                                </ul>
+                            </div>
+                            
+                            <div className="border-t border-emerald-500/30 pt-3">
+                                <p className="font-semibold text-emerald-300 mb-2">Skaičių Kombinacijos Telefone:</p>
+                                <p className="text-xs mb-2">
+                                    Jei matote pasikartojančius skaičius telefone (pvz., 11:11, 22:22, 3:33), 
+                                    tai gali būti <span className="font-semibold">synchronizacija su jūsų skaičių energija</span>.
+                                </p>
+                                <ul className="list-disc list-inside space-y-1 ml-2 text-xs">
+                                    <li><span className="font-semibold">11:11</span> - Master skaičius, dvasinis žingsnis</li>
+                                    <li><span className="font-semibold">22:22</span> - Master skaičius, praktinis žingsnis</li>
+                                    <li><span className="font-semibold">3:33</span> - Kūrybiškumas ir komunikacija</li>
+                                    <li><span className="font-semibold">4:44</span> - Stabilumas ir struktūra</li>
+                                    <li><span className="font-semibold">5:55</span> - Pokyčiai ir laisvė</li>
+                                </ul>
+                            </div>
+                            
+                            <div className="border-t border-emerald-500/30 pt-3">
+                                <p className="font-semibold text-emerald-300 mb-2">Vardų ir Pavardžių Keitimas:</p>
+                                <p className="text-xs mb-2">
+                                    Keičiant vardą arba pavardę, <span className="font-semibold">nauji skaičiai pakeičia jūsų energiją</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Tai gali pakeisti jūsų <span className="font-semibold">Destiny Number (Likimo Skaičių)</span> ir 
+                                    <span className="font-semibold">Personality Number (Asmenybės Skaičių)</span>.
+                                </p>
+                                <p className="text-xs">
+                                    Apskaičiuokite naują skaičių prieš keisdami, kad žinotumėte, kokią energiją pritrauksite.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-emerald-500/30 pt-3">
+                                <p className="font-semibold text-emerald-300 mb-2">Skaičių Energijos Namuose:</p>
+                                <ul className="list-disc list-inside space-y-1 ml-2 text-xs">
+                                    <li><span className="font-semibold">Adreso numeris:</span> Pridėkite visus skaičius iki vieno skaitmens</li>
+                                    <li><span className="font-semibold">Buto numeris:</span> Atskiras skaičius, turintis savo energiją</li>
+                                    <li><span className="font-semibold">Pašto kodas:</span> Gali turėti įtakos jūsų gyvenimo sričiai</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </AccordionSection>
+                
+                {/* Chinese Zodiac Hour Animals Guide */}
+                <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                    id="hour-animals-guide"
+                    title="⏰ Valandų Gyvūnų Vadovas"
+                    isOpen={expandedSections['hour-animals-guide'] ?? false}
+                    onToggle={toggleSection}
+                    searchQuery={searchQuery}
+                    expandedSearchTerms={expandedSearchTerms}
+                    searchMatch={matchesSearch('Valandų Gyvūnai Hour Animals Valandos')}
+                    contentText="valandų gyvūnai kinų zodiakas valandos 23 1 3 5 7 9 11 13 15 17 19 21"
+                >
+                    <div className="bg-cyan-900/30 border border-cyan-500/40 rounded-lg p-4">
+                        <div className="text-sm text-white/90 space-y-4">
+                            <div>
+                                <p className="font-semibold text-cyan-300 mb-2">Valandų Gyvūnų Sistema:</p>
+                                <p className="text-xs mb-2">
+                                    Kiekviena <span className="font-semibold">2 valandų laikotarpis</span> yra susijęs su konkretaus gyvūno energija.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Jūsų <span className="font-semibold">gimimo valanda</span> nustato jūsų valandų gyvūną, 
+                                    kuris turi įtakos jūsų asmenybei ir suderinamumui su kitais.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-cyan-500/30 pt-3">
+                                <p className="font-semibold text-cyan-300 mb-2">Valandų Gyvūnų Sąrašas:</p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐭 Žiurkė (Rat):</span> 23:00 - 01:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐂 Jautis (Ox):</span> 01:00 - 03:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐅 Tigras (Tiger):</span> 03:00 - 05:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐱 Katė (Cat):</span> 05:00 - 07:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐉 Drakonas (Dragon):</span> 07:00 - 09:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐍 Gyvatė (Snake):</span> 09:00 - 11:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐴 Arklys (Horse):</span> 11:00 - 13:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐐 Ožka (Goat):</span> 13:00 - 15:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐵 Beždžionė (Monkey):</span> 15:00 - 17:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐓 Gaidys (Rooster):</span> 17:00 - 19:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐕 Šuo (Dog):</span> 19:00 - 21:00
+                                    </div>
+                                    <div className="bg-cyan-950/40 rounded p-2">
+                                        <span className="font-semibold">🐷 Kiaulė (Pig):</span> 21:00 - 23:00
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="border-t border-cyan-500/30 pt-3">
+                                <p className="font-semibold text-cyan-300 mb-2">Valandų Gyvūnų Reikšmė:</p>
+                                <p className="text-xs mb-2">
+                                    Jūsų valandų gyvūnas atskleidžia <span className="font-semibold">jūsų vidinę asmenybę</span> 
+                                    ir kaip jūs elgiatės <span className="font-semibold">privačiai</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Jūsų <span className="font-semibold">metų gyvūnas</span> (iš gimimo metų) rodo, 
+                                    kaip kiti mato jus viešai.
+                                </p>
+                                <p className="text-xs">
+                                    <span className="font-semibold">Draugiškos valandos</span> - geros dienos svarbiems susitikimams. 
+                                    <span className="font-semibold">Priešiškos valandos</span> - vengti konfliktų ir svarbių sprendimų.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </AccordionSection>
+                
+                {/* Number Combinations */}
+                <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                    id="number-combinations"
+                    title="🔢 Skaičių Kombinacijos ir Jų Reikšmės"
+                    isOpen={expandedSections['number-combinations'] ?? false}
+                    onToggle={toggleSection}
+                    searchQuery={searchQuery}
+                    expandedSearchTerms={expandedSearchTerms}
+                    searchMatch={matchesSearch('Skaičių Kombinacijos Combinations Reikšmės')}
+                    contentText="skaičių kombinacijos reikšmės numerologija 11 22 33 master skaičiai"
+                >
+                    <div className="bg-rose-900/30 border border-rose-500/40 rounded-lg p-4">
+                        <div className="text-sm text-white/90 space-y-4">
+                            <div>
+                                <p className="font-semibold text-rose-300 mb-2">Master Skaičių Kombinacijos:</p>
+                                <ul className="list-disc list-inside space-y-2 ml-2 text-xs">
+                                    <li>
+                                        <span className="font-semibold">11 + 22 = 33:</span> Aukščiausia dvasinė ir praktinė energija. 
+                                        Derinys intuicijos ir materialinio pasiekimo.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold">11 + 11 = 22:</span> Dviguba intuicija, 
+                                        bet reikia praktinio pritaikymo.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold">22 + 22 = 44:</span> Super praktinė energija, 
+                                        bet gali būti per daug struktūros.
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div className="border-t border-rose-500/30 pt-3">
+                                <p className="font-semibold text-rose-300 mb-2">Gyvenimo Kelio ir Dienos Deriniai:</p>
+                                <ul className="list-disc list-inside space-y-1 ml-2 text-xs">
+                                    <li><span className="font-semibold">LP 1 + Diena 1:</span> Labai stipri lyderystės energija</li>
+                                    <li><span className="font-semibold">LP 8 + Diena 8:</span> Maksimali materialinė galia</li>
+                                    <li><span className="font-semibold">LP 11 + Diena 11:</span> Ekstremali dvasinė energija</li>
+                                    <li><span className="font-semibold">LP 3 + Diena 5:</span> Kūrybiškumas ir laisvė</li>
+                                    <li><span className="font-semibold">LP 7 + Diena 7:</span> Gylis ir misticizmas</li>
+                                </ul>
+                            </div>
+                            
+                            <div className="border-t border-rose-500/30 pt-3">
+                                <p className="font-semibold text-rose-300 mb-2">Skaičių Priešpriešos:</p>
+                                <p className="text-xs mb-2">
+                                    Kai turite <span className="font-semibold">priešingus skaičius</span> (pvz., LP 1 ir Destiny 2), 
+                                    tai sukuria <span className="font-semibold">vidinį konfliktą</span>, bet taip pat suteikia 
+                                    <span className="font-semibold">balansą</span>.
+                                </p>
+                                <ul className="list-disc list-inside space-y-1 ml-2 text-xs">
+                                    <li><span className="font-semibold">1 vs 2:</span> Lyderystė vs bendradarbiavimas</li>
+                                    <li><span className="font-semibold">3 vs 4:</span> Kūrybiškumas vs struktūra</li>
+                                    <li><span className="font-semibold">5 vs 6:</span> Laisvė vs atsakomybė</li>
+                                    <li><span className="font-semibold">7 vs 8:</span> Dvasinumas vs materializmas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </AccordionSection>
+                
+                {/* Monkey Year Energy and Global Economics */}
+                <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                    id="monkey-energy-economics"
+                    title="🐵 Beždžionės Metai ir Pasaulinė Ekonomika"
+                    isOpen={expandedSections['monkey-energy-economics'] ?? false}
+                    onToggle={toggleSection}
+                    searchQuery={searchQuery}
+                    expandedSearchTerms={expandedSearchTerms}
+                    searchMatch={matchesSearch('Beždžionė Monkey Metai Ekonomika Petrodollar Petrodoleris')}
+                    contentText="beždžionės metai monkey year petrodollar petrodoleris JAV Amerika Rusija valiuta doleris rublis saudi arabia"
+                >
+                    <div className="bg-amber-900/30 border border-amber-500/40 rounded-lg p-4">
+                        <div className="text-sm text-white/90 space-y-4">
+                            <div>
+                                <p className="font-semibold text-amber-300 mb-2">Beždžionės Amžius (1933-2033):</p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">JAV įkurta Beždžionės metais</span>. Nuo 1933 m. sausio 1 d. 
+                                    prasidėjo Beždžionės amžius, kuris tęsiasi iki <span className="font-semibold">2033 m. sausio 1 d.</span>
+                                </p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">Saudo Arabija (House of Saad)</span> įkurta 1932 m., 
+                                    Beždžionės metais. Jie labai naudojosi šiuo Beždžionės amžiumi.
+                                </p>
+                                <p className="text-xs">
+                                    Kai kalba eina apie energiją, <span className="font-semibold">ypač kai tai amžius, 
+                                    valdomas tos energijos, tai turi reikšmės</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Petrodolerio Sistema:</p>
+                                <p className="text-xs mb-2">
+                                    1944 m. buvo konferencija pasaulio elito. <span className="font-semibold">Susitarimas, 
+                                    kad JAV doleris būtų pririštas prie aukso</span>. Nixonas jį nuėmė nuo aukso standarto 
+                                    1971 m., <span className="font-semibold">Kiaulės metais</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">Black Friday 1869</span>, Gyvatės metais, auksas patyrė 
+                                    smūgį.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    70-aisiais, <span className="font-semibold">Amerika ir Saudo Arabija sudarė susitarimą</span>. 
+                                    Dvi Beždžionės šalys Beždžionės amžiuje sudarė susitarimą. 
+                                    <span className="font-semibold">Petrodolerio sistema</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Saudo Arabija iš esmės yra OPEC, jie valdo didžiąją dalį pasaulio naftos. 
+                                    Jie yra silpna teokratija.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Jie sudarė susitarimą su Amerika - <span className="font-semibold">Amerika juos laiko 
+                                    valdžioje, kad niekas su jais nesikištų</span>. Amerika saugo Saudo Arabijos karalių, 
+                                    ne šalį - karališkąją šeimą, kuri ją valdo.
+                                </p>
+                                <p className="text-xs">
+                                    Jie <span className="font-semibold">parduoda savo naftą tik JAV doleriais</span>. 
+                                    Kai Kinija, Europa atvyksta pas juos, jie gali parduoti naftą tik JAV doleriais. 
+                                    Tai verčia visus parduoti savo prekes, kad gautų JAV dolerius.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Kaip Sistema Veikia:</p>
+                                <p className="text-xs mb-2">
+                                    Kol ši sistema veikia, <span className="font-semibold">JAV gali turėti karinius 
+                                    bazes visame pasaulyje</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Saudo Arabija turi daug dolerių, jie paima dalį tų pinigų ir <span className="font-semibold">
+                                    perdirba juos į iždo vertybinius popierius</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">Amerika spausdina dolerius</span>, visi aplink juos 
+                                    turi reikti šių pinigų, tie doleriai eina į Saudo Arabiją.
+                                </p>
+                                <p className="text-xs">
+                                    Tai <span className="font-semibold">apgavystė</span>. Bet jei esate amerikietis, be šios 
+                                    apgavystės, be šios tęstinės apgavystės, visas šis namelis griūva, dauguma amerikiečių 
+                                    supras, kas yra tikras skurdas.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Saddam Hussein ir Priešprieša:</p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">Saddam Hussein pasakė: "Nenoriu jūsų dolerių už naftą"</span>. 
+                                    Amerika jį pašalino.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Viskas, ko reikia, yra <span className="font-semibold">nafta būtų parduodama JAV doleriais</span>.
+                                </p>
+                                <p className="text-xs">
+                                    Pirmasis jo įsakymas buvo užtikrinti, kad <span className="font-semibold">Irako nafta būtų 
+                                    parduodama JAV doleriais</span>. Tai paaiškina, kodėl Amerika yra supervalstybė.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Amerikos Įtaka Krenta:</p>
+                                <p className="text-xs mb-2">
+                                    Kadangi <span className="font-semibold">Amerikos įtaka krenta</span>, kitos šalys 
+                                    bando Ameriką. Iranas jau parduoda savo naftą eurais, todėl jie yra <span className="font-semibold">
+                                    sankcionuojami JAV</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Jie <span className="font-semibold">nukirto jų pinigų tiekimą</span>. Taip amerikiečiai 
+                                    tai daro.
+                                </p>
+                                <p className="text-xs">
+                                    Jei būtų tik Iranas, tai nebūtų didelė problema. Dabar <span className="font-semibold">Rusija 
+                                    tai daro</span>. Tai buvo ypač nereikalinga.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Rusija ir Tigro Metai:</p>
+                                <p className="text-xs mb-2">
+                                    2013 m., <span className="font-semibold">kvailas Tigras pabėgo iš Ukrainos</span> ir 
+                                    Amerika perėmė valdžios vakuumą. Amerikos vyriausybė perėmė valdžią 2014 m., 
+                                    rusai turėjo karinę bazę Kryme ir negalėjo jos atsisakyti.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">Rusijos valiuta įkurta 1992 m., Beždžionės metais</span>. 
+                                    Aš kalbėjau apie tai, kaip Saudo Arabija ir Amerika dirbo kartu, kad naudotųsi viena kitai.
+                                </p>
+                                <p className="text-xs">
+                                    Dabar Amerika puola <span className="font-semibold">valiutą, kuri buvo įkurta tame pačiame 
+                                    metais, kuriame buvo Tigro metai</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Rusijos Rublis ir Sankcijos:</p>
+                                <p className="text-xs mb-2">
+                                    Nuo 2014 m., kai Rusija buvo uždėta sankcijų, <span className="font-semibold">Rublis 
+                                    nukrito nuo 30:1 JAV dolerio iki 60:1 dolerio</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    2022 m., tiesiog prieš invaziją, <span className="font-semibold">Rusijos rublis buvo apie 80</span>. 
+                                    Vėlgi, Amerikos infliacija taip pat buvo labai aukšta. Amerikiečiai uždėjo tokias aukštas 
+                                    sankcijas, kad jų valiuta pakilo iki <span className="font-semibold">144</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Tai reiškia, kad <span className="font-semibold">Rusijos ekonomika negali pirkti Amerikos 
+                                    ar Europos prekių</span>, jai to nereikia.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Jei norite mano naftos, <span className="font-semibold">man reikia tik Rublių</span>. 
+                                    Tai reiškia, kad Europos šalys, kurios nori šios naftos, turi keisti savo valiutą į rublius. 
+                                    Tai padidina paklausą, dabar rublis yra <span className="font-semibold">96</span>.
+                                </p>
+                                <p className="text-xs">
+                                    Jis atsikūrė, <span className="font-semibold">Putinas padarė savo valiutą vertingesnę</span>. 
+                                    Tai iš tikrųjų reiškia, kad <span className="font-semibold">JAV valiuta yra mažiau paklausi 
+                                    nei anksčiau</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Infliacijos Grėsmė:</p>
+                                <p className="text-xs mb-2">
+                                    Net rusai, kurie yra priešai, vis dar gauna mokėjimą <span className="font-semibold">Amerikos 
+                                    valiuta</span>. Jie <span className="font-semibold">nukirto savo pirštą</span>. 
+                                    Mes nevaldome tos pasaulio dalies.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Dabar <span className="font-semibold">europiečiams nereikia tiek daug dolerių</span>. 
+                                    Tai reiškia, kad <span className="font-semibold">infliacija labai pakils</span>. 
+                                    Daug dalykų labai pakils, nebent Federalinė rezervo sistema padidins palūkanų normas, 
+                                    o tai reiškia <span className="font-semibold">recesiją</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Žmonės valdžioje nieko nedaro ir mes galime būti <span className="font-semibold">hiperinfliacijos 
+                                    pradžioje</span>. Amerika bus <span className="font-semibold">8 energijoje, priešo metais</span>. 
+                                    Ne gerai finansiniu požiūriu.
+                                </p>
+                                <p className="text-xs">
+                                    Rusija bando pakenkti Rusijai, bet <span className="font-semibold">Rusijos valiuta turi tą pačią 
+                                    energiją kaip Amerika</span>, jie iš esmės <span className="font-semibold">perpjauna sau gerklę</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Rusijos Kariuomenė:</p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">Rusijos kariuomenė įkurta Beždžionės metais</span>.
+                                </p>
+                                <p className="text-xs">
+                                    Visi milijardieriai, su kuriais kalbu, pasakė man, kad <span className="font-semibold">jie 
+                                    nesitiki, kad doleris bankrutuos dar 10 metų</span>. Remiantis mano laikotarpiu, 
+                                    kai amžius keičiasi nuo Beždžionės iki Žiurkės <span className="font-semibold">2033 m</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Karas ir Naftos Vamzdynai:</p>
+                                <p className="text-xs mb-2">
+                                    Pagalvokite apie šį karą. Ar žinojote, kad <span className="font-semibold">per šį karą, 
+                                    kai jie žudo vienas kitą, 50,000 žmonių žuvo abiejose pusėse</span>. Bet jie 
+                                    <span className="font-semibold">neliečia vamzdynų</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Rusija žino, kad jei jie <span className="font-semibold">uždarys naftą, jie pakvies 
+                                    NATO į didesnį karą</span>.
+                                </p>
+                                <p className="text-xs">
+                                    Ukrainai buvo pasakyta, kad jie gali pamiršti visą savo paramą. <span className="font-semibold">
+                                    Viskas dėl pinigų, viskas dėl šou</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Federalinė Rezervo Sistema ir Istorija:</p>
+                                <p className="text-xs mb-2">
+                                    Antrojo pasaulinio karo metu, <span className="font-semibold">Federalinė rezervo sistema 
+                                    laiko visų šalių pinigus</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Tai yra tai, ką FED daro - <span className="font-semibold">jie spausdina visų auksą</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Kai <span className="font-semibold">Naciai kariavo su Amerika ir Europa</span>, FED leido 
+                                    jiems <span className="font-semibold">sulaikyti tai iš jų bankų</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">Niekada istorijoje neturėjome banko, kuris sulaikytų ką nors</span>. 
+                                    Rusai turi <span className="font-semibold">$300 milijardų užšaldytų JAV</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Amerika <span className="font-semibold">užšaldė tuos pinigus</span>. Jie tai padarė vieną kartą 
+                                    anksčiau, <span className="font-semibold">1979 m. su Iranu</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Jie <span className="font-semibold">laikė visus Irano pinigus</span>. Dalį Irano susitarimo 
+                                    buvo, kad jie gauna visus tuos pinigus.
+                                </p>
+                                <p className="text-xs">
+                                    Iš tų <span className="font-semibold">$120 milijardų, kuriuos Iranas gavo, Obama gavo 
+                                    $20 milijardų</span>. Kodėl manote, kad <span className="font-semibold">Bidenas nori sudaryti 
+                                    susitarimą su Iranu</span>?
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Sistema ir Istorija:</p>
+                                <p className="text-xs mb-2">
+                                    Aš stengiuosi, kad jūs suprastumėte, <span className="font-semibold">kaip ši sistema veikia</span>. 
+                                    Tai <span className="font-semibold">niekada nebuvo padaryta istorijoje</span>. 
+                                    Jie <span className="font-semibold">pavogė $300 milijardų iš Putino</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Galbūt jie nori <span className="font-semibold">sunaikinti JAV dolerį</span>. 
+                                    Kuo mažiau žmonių naudoja JAV dolerį, tuo daugiau <span className="font-semibold">infliacija 
+                                    kyla</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Aš galėjau pradėti <span className="font-semibold">1912 m., kai Titanicas nuskendo</span>.
+                                </p>
+                                <p className="text-xs">
+                                    <span className="font-semibold">Titanicas buvo nužudymas</span>. 
+                                    Kai žmonės gavo savo Federalinės rezervo sistemos, jie turėjo pakankamai pinigų 
+                                    <span className="font-semibold">finansuoti karą</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Kinijos Grėsmė:</p>
+                                <p className="text-xs mb-2">
+                                    Rusija nėra tokia didelė žaidėja. <span className="font-semibold">Kinija galėtų 
+                                    pabaigti Ameriką</span>. Jei Kinija pasakytų, kad pradės pirkti visą Rusijos naftą 
+                                    <span className="font-semibold">Yuan</span>, galite <span className="font-semibold">atsisveikinti 
+                                    su šiuo Amerikos gyvenimu</span>, tai paveiks visus.
+                                </p>
+                                <p className="text-xs">
+                                    <span className="font-semibold">Atsarginkite viską</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3">
+                                <p className="font-semibold text-amber-300 mb-2">Dolerio Bankrotas ir Ateitis:</p>
+                                <p className="text-xs mb-2">
+                                    Jei Amerika bankrutuoja, jei esate <span className="font-semibold">Europoje, JK, Kanadoje, 
+                                    Meksikoje</span>, bet kas, kas pririšta prie dolerio - <span className="font-semibold">mes einame, 
+                                    jūs einate</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Kai <span className="font-semibold">doleris bankrutuos</span>. Tai įvyks greičiausiai 
+                                    <span className="font-semibold">2034 m</span>, tai yra greičiausiai, toliausiai tai įvyks 
+                                    <span className="font-semibold">2046 m</span>. Aš ruošiuosi, tarsi tai būtų šiais metais.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Dabar net <span className="font-semibold">Saudo Arabija svarsto susitarimą parduoti savo 
+                                    naftą Yuan</span>.
+                                </p>
+                                <p className="text-xs mb-2">
+                                    Kai <span className="font-semibold">petrodolerio sistema bus galiausiai sugadinta</span>, 
+                                    JAV doleriai nebereikės. Jie bus <span className="font-semibold">grąžinti atgal į JAV</span>. 
+                                    Tai yra ateitis, tai įvyks.
+                                </p>
+                                <p className="text-xs">
+                                    <span className="font-semibold">Beždžionė daro savižudybę, puolant savo pačios energiją</span>.
+                                </p>
+                            </div>
+                            
+                            <div className="border-t border-amber-500/30 pt-3 bg-amber-950/40 rounded p-3">
+                                <p className="font-semibold text-amber-300 mb-2">Kur Dėti Pinigus:</p>
+                                <p className="text-xs mb-2">
+                                    <span className="font-semibold">Diversifikuokite</span>: kriptovaliutos, turėkite šiek tiek 
+                                    grynųjų pinigų, šiek tiek eurų, šveicarišką, <span className="font-semibold">turėkite šiek tiek 
+                                    visko</span>.
+                                </p>
+                                <p className="text-xs">
+                                    Jei mes atsisakysime savo petrodolerio sistemos, vieną dieną jūs pabudsite ir 
+                                    <span className="font-semibold">jūsų JAV doleriai nieko nevertės</span>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </AccordionSection>
             </div>
         </div>
     );

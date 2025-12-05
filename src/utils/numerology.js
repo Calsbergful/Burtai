@@ -298,18 +298,27 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
     }
     
     // Decoy hour calculations
-    const _hr = _now.getHours();
+    const _hr = _now.getHours(); // 0-23 from JavaScript
+    // Convert to 1-24 format for numerology (0 becomes 24, 1-23 stay as 1-23)
+    const _hr24 = _hr === 0 ? 24 : _hr;
     const _decoyHour = _hr * 60;
     const _decoyHour2 = _decoyHour / 60;
     
-    const _ph = _redPY(_pd + _hr);
-    let _nph, _nhr;
+    const _ph = _redPY(_pd + _hr24);
+    let _nph, _nhr, _nhr24;
     if (_hr === 23) {
         _nhr = 0;
-        _nph = _redPY(_npd + _nhr);
+        _nhr24 = 24; // Next hour is midnight, convert to 24
+        _nph = _redPY(_npd + _nhr24);
+    } else if (_hr === 0) {
+        // Current is midnight (24), next is 1:00 (1)
+        _nhr = 1;
+        _nhr24 = 1;
+        _nph = _redPY(_pd + _nhr24);
     } else {
         _nhr = _hr + 1;
-        _nph = _redPY(_pd + _nhr);
+        _nhr24 = _nhr === 0 ? 24 : _nhr; // Convert if needed
+        _nph = _redPY(_pd + _nhr24);
     }
     
     return {
@@ -326,9 +335,9 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         nextDay: _npd,
         nextDayNumber: _ndy,
         hour: _ph,
-        hourNumber: _hr,
+        hourNumber: _hr24, // Return 1-24 format
         nextHour: _nph,
-        nextHourNumber: _nhr
+        nextHourNumber: _nhr24 // Return 1-24 format
     };
 }
 

@@ -10,6 +10,7 @@ import FriendlyEnemyHours from './components/FriendlyEnemyHours'
 import BirthdayCalculator from './components/BirthdayCalculator'
 import Letterology from './components/Letterology'
 import HiddenNumerology from './components/HiddenNumerology'
+import PersonalYearCalculator from './components/PersonalYearCalculator'
 import Database from './components/Database'
 import CosmicBackground from './components/CosmicBackground'
 import FooterMenu from './components/FooterMenu'
@@ -148,6 +149,9 @@ function App() {
     } else if (menuId === 'hidden-numerology') {
       setActiveView('hidden-numerology');
       setDatabaseSequence([]); // Reset sequence on wrong click
+    } else if (menuId === 'personal-year') {
+      setActiveView('personal-year');
+      setDatabaseSequence([]); // Reset sequence on wrong click
     } else if (menuId === 'database' && !databaseUnlocked) {
       // Don't allow direct access if not unlocked
       setDatabaseSequence([]); // Reset sequence
@@ -249,6 +253,16 @@ function App() {
             >
               <HiddenNumerology />
             </motion.div>
+          ) : activeView === 'personal-year' ? (
+            <motion.div
+              key="personal-year"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <PersonalYearCalculator />
+            </motion.div>
           ) : (
             <motion.div
               key="database"
@@ -277,6 +291,7 @@ function App() {
           activeView === 'birthday' ? 'life-path-settings' : 
           activeView === 'letterology' ? 'letterology' :
           activeView === 'hidden-numerology' ? 'hidden-numerology' :
+          activeView === 'personal-year' ? 'personal-year' :
           activeView === 'database' ? 'database' :
           null
         }

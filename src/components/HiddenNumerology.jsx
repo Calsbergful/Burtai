@@ -502,7 +502,7 @@ export default function HiddenNumerology() {
                                                     {personalHour}
                                                 </div>
                                                 <div className="text-[9px] text-white/60 mt-0.5">
-                                                    {String(results.personalYear.hourNumber).padStart(2, '0')}:00
+                                                    {results.personalYear.hourNumber === 24 ? '24:00 (00:00)' : String(results.personalYear.hourNumber).padStart(2, '0') + ':00'}
                                                 </div>
                                             </>
                                         );

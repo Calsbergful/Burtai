@@ -17,6 +17,7 @@ export default function FooterMenu({ onMenuClick, activeMenuId, hideDatabase = f
                     { id: 'hidden-numerology', label: 'Hmmm..', icon: '🔮' },
                     { id: 'life-path-settings', label: 'Gimtadienis', icon: '🎂' },
                     { id: 'personal-birthday', label: 'Asmeninis', icon: '⭐' },
+                    { id: 'personal-year', label: 'PY/PM/PD', icon: '📊' },
                     { id: 'friendly-enemy-hours', label: 'Valandos', icon: '⏰' },
                     ...(hideDatabase ? [] : [{ id: 'database', label: 'Bazė', icon: '💾' }]),
                 ];
