@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { numberDescriptions } from '../utils/numerology';
 import { zodiacSigns, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { zodiacAnimals, zodiacTranslations, zodiacEmojis, enemySigns, trineGroups, specialRelationships, zodiacLyingTypes, zodiacStrongSides, zodiacDislikes } from '../utils/chineseZodiac';
-import { defaultCellColors } from '../utils/defaultCellColors';
 
 
 // Accordion Component for Collapsible Sections
@@ -39,6 +38,76 @@ function AccordionSection({ id, title, children, isOpen, onToggle, className = "
     );
 }
 
+// Protected Image Component
+function NumberMatchImage() {
+    const [imageSrc, setImageSrc] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadImage = async () => {
+            try {
+                // Get authentication token
+                const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100); // "isAuthenticated"
+                const token = sessionStorage.getItem(_authKey);
+                
+                if (!token) {
+                    setError('Not authenticated');
+                    return;
+                }
+
+                // Fetch image from protected endpoint
+                const response = await fetch(`/api/assets/number-match?token=${encodeURIComponent(token)}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load image');
+                }
+
+                // Convert response to blob URL
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                setImageSrc(url);
+            } catch (err) {
+                console.error('Error loading image:', err);
+                setError('Failed to load image');
+            }
+        };
+
+        loadImage();
+
+        // Cleanup blob URL on unmount
+        return () => {
+            if (imageSrc) {
+                URL.revokeObjectURL(imageSrc);
+            }
+        };
+    }, []);
+
+    if (error) {
+        return (
+            <div className="text-red-400 text-center p-4">
+                {error}
+            </div>
+        );
+    }
+
+    if (!imageSrc) {
+        return (
+            <div className="text-white/70 text-center p-4">
+                Loading...
+            </div>
+        );
+    }
+
+    return (
+        <img 
+            src={imageSrc}
+            alt="Number Match Table"
+            className="max-w-full h-auto rounded-lg shadow-lg"
+            style={{ maxHeight: '80vh' }}
+        />
+    );
+}
+
 export default function Database() {
     const [editingItem, setEditingItem] = useState(null);
     const [editData, setEditData] = useState({});
@@ -47,12 +116,6 @@ export default function Database() {
         const saved = localStorage.getItem('database_custom');
         return saved ? JSON.parse(saved) : {};
     });
-    const [cellColors, setCellColors] = useState(() => {
-        // Initialize with empty object, will be loaded in useEffect
-        // This prevents hydration issues on mobile
-        return {};
-    });
-    const [selectedCell, setSelectedCell] = useState(null);
 
     // Translation system for UI text
     const t = {
@@ -83,119 +146,6 @@ export default function Database() {
     useEffect(() => {
         localStorage.setItem('database_custom', JSON.stringify(customData));
     }, [customData]);
-
-    // Save cell colors to localStorage with error handling and multiple backups
-    useEffect(() => {
-        // Don't save if colors object is empty (initial state)
-        if (Object.keys(cellColors).length === 0) {
-            return;
-        }
-        
-        try {
-            const colorsJson = JSON.stringify(cellColors);
-            localStorage.setItem('database_cell_colors', colorsJson);
-            // Multiple backups for redundancy
-            localStorage.setItem('database_cell_colors_backup', colorsJson);
-            localStorage.setItem('database_cell_colors_backup2', colorsJson);
-            // Also save timestamp
-            localStorage.setItem('database_cell_colors_timestamp', new Date().toISOString());
-        } catch (error) {
-            console.error('Failed to save cell colors to localStorage:', error);
-        }
-    }, [cellColors]);
-
-    // Load cell colors on mount and restore from backup if needed
-    useEffect(() => {
-        const loadColors = () => {
-            try {
-                const saved = localStorage.getItem('database_cell_colors');
-                const backup = localStorage.getItem('database_cell_colors_backup');
-                const backup2 = localStorage.getItem('database_cell_colors_backup2');
-                
-                let colorsToLoad = null;
-                
-                if (saved) {
-                    try {
-                        const parsed = JSON.parse(saved);
-                        if (typeof parsed === 'object' && parsed !== null) {
-                            colorsToLoad = parsed;
-                        }
-                    } catch (e) {
-                        console.warn('Failed to parse main colors, trying backup...');
-                    }
-                }
-                
-                if (!colorsToLoad && backup) {
-                    try {
-                        const parsed = JSON.parse(backup);
-                        if (typeof parsed === 'object' && parsed !== null) {
-                            colorsToLoad = parsed;
-                        }
-                    } catch (e) {
-                        console.warn('Failed to parse backup colors, trying backup2...');
-                    }
-                }
-                
-                if (!colorsToLoad && backup2) {
-                    try {
-                        const parsed = JSON.parse(backup2);
-                        if (typeof parsed === 'object' && parsed !== null) {
-                            colorsToLoad = parsed;
-                        }
-                    } catch (e) {
-                        console.warn('Failed to parse backup2 colors');
-                    }
-                }
-                
-                if (colorsToLoad && Object.keys(colorsToLoad).length > 0) {
-                    // Merge with defaults (defaults are base, saved colors override)
-                    const merged = { ...defaultCellColors, ...colorsToLoad };
-                    setCellColors(merged);
-                    // Restore to all storage locations
-                    const colorsJson = JSON.stringify(merged);
-                    localStorage.setItem('database_cell_colors', colorsJson);
-                    localStorage.setItem('database_cell_colors_backup', colorsJson);
-                    localStorage.setItem('database_cell_colors_backup2', colorsJson);
-                } else {
-                    // Always use defaults if no saved colors (ensures permanent colors are always available)
-                    if (Object.keys(defaultCellColors).length > 0) {
-                        setCellColors({ ...defaultCellColors });
-                        // Save defaults to localStorage so they persist
-                        const defaultsJson = JSON.stringify(defaultCellColors);
-                        localStorage.setItem('database_cell_colors', defaultsJson);
-                        localStorage.setItem('database_cell_colors_backup', defaultsJson);
-                        localStorage.setItem('database_cell_colors_backup2', defaultsJson);
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to load cell colors from localStorage:', error);
-            }
-        };
-
-        // Load immediately
-        loadColors();
-        
-        // Also listen for storage events (for cross-tab sync and mobile issues)
-        const handleStorageChange = (e) => {
-            if (e.key === 'database_cell_colors' || e.key === 'database_cell_colors_backup' || e.key === 'database_cell_colors_backup2') {
-                loadColors();
-            }
-        };
-        
-        window.addEventListener('storage', handleStorageChange);
-        
-        // Multiple retry attempts for mobile browsers (localStorage can be slow on mobile)
-        const retryTimer1 = setTimeout(loadColors, 100);
-        const retryTimer2 = setTimeout(loadColors, 500);
-        const retryTimer3 = setTimeout(loadColors, 1000);
-        
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-            clearTimeout(retryTimer1);
-            clearTimeout(retryTimer2);
-            clearTimeout(retryTimer3);
-        };
-    }, []);
 
 
     // Toggle section expansion
@@ -288,196 +238,14 @@ export default function Database() {
                 >
                         {/* Number Color Table */}
                         <AccordionSection
-                            id="number-color-table"
-                            title="🎨 Skaičių Spalvų Lentelė"
-                            isOpen={expandedSections['number-color-table'] ?? false}
+                            id="number-match"
+                            title="🔢 Number Match"
+                            isOpen={expandedSections['number-match'] ?? false}
                             onToggle={toggleSection}
                         >
                             <div className="bg-purple-900/30 border border-purple-500/40 rounded-lg p-4">
-                                <div className="space-y-4">
-                                    {/* Export/Import Controls */}
-                                    <div className="bg-purple-950/40 rounded-lg p-3 mb-4">
-                                        <p className="text-white/70 text-xs mb-2">
-                                            💡 Spalvos automatiškai išsaugomos. Eksportuokite, kad išsaugotumėte kopiją, arba importuokite iš failo.
-                                        </p>
-                                        <div className="flex flex-wrap gap-2">
-                                            <button
-                                                onClick={() => {
-                                                    const dataStr = JSON.stringify(cellColors, null, 2);
-                                                    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-                                                    const url = URL.createObjectURL(dataBlob);
-                                                    const link = document.createElement('a');
-                                                    link.href = url;
-                                                    link.download = 'spalvu-lentele-colors.json';
-                                                    document.body.appendChild(link);
-                                                    link.click();
-                                                    document.body.removeChild(link);
-                                                    URL.revokeObjectURL(url);
-                                                }}
-                                                className="px-4 py-2 bg-green-600/60 hover:bg-green-600/80 text-white rounded-lg font-semibold text-sm transition-all"
-                                            >
-                                                💾 Eksportuoti Spalvas
-                                            </button>
-                                            <label className="px-4 py-2 bg-blue-600/60 hover:bg-blue-600/80 text-white rounded-lg font-semibold text-sm transition-all cursor-pointer">
-                                                📥 Importuoti Spalvas
-                                                <input
-                                                    type="file"
-                                                    accept=".json"
-                                                    className="hidden"
-                                                    onChange={(e) => {
-                                                        const file = e.target.files[0];
-                                                        if (file) {
-                                                            const reader = new FileReader();
-                                                            reader.onload = (event) => {
-                                                                try {
-                                                                    const imported = JSON.parse(event.target.result);
-                                                                    if (typeof imported === 'object' && imported !== null) {
-                                                                        setCellColors(imported);
-                                                                        localStorage.setItem('database_cell_colors', JSON.stringify(imported));
-                                                                        localStorage.setItem('database_cell_colors_backup', JSON.stringify(imported));
-                                                                    }
-                                                                } catch (error) {
-                                                                    alert('Klaida importuojant failą. Patikrinkite, kad failas yra teisingas JSON formatas.');
-                                                                }
-                                                            };
-                                                            reader.readAsText(file);
-                                                        }
-                                                        e.target.value = '';
-                                                    }}
-                                                />
-                                            </label>
-                                            <button
-                                                onClick={() => {
-                                                    if (confirm('Ar tikrai norite išvalyti visas spalvas?')) {
-                                                        setCellColors({});
-                                                        localStorage.removeItem('database_cell_colors');
-                                                        localStorage.removeItem('database_cell_colors_backup');
-                                                    }
-                                                }}
-                                                className="px-4 py-2 bg-red-600/60 hover:bg-red-600/80 text-white rounded-lg font-semibold text-sm transition-all"
-                                            >
-                                                🗑️ Išvalyti Visas
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Color Selection Panel */}
-                                    {selectedCell && (
-                                        <div className="bg-purple-950/40 rounded-lg p-4 mb-4">
-                                            <p className="text-white/90 mb-3 text-sm">
-                                                Pasirinkite spalvą langeliui <span className="font-bold text-lg">{selectedCell}</span>:
-                                            </p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {['green', 'red', 'orange', 'yellow', 'blue', 'violet'].map((color) => {
-                                                    const colorClasses = {
-                                                        green: 'bg-green-500 hover:bg-green-600 border-green-400',
-                                                        red: 'bg-red-500 hover:bg-red-600 border-red-400',
-                                                        orange: 'bg-orange-500 hover:bg-orange-600 border-orange-400',
-                                                        yellow: 'bg-yellow-500 hover:bg-yellow-600 border-yellow-400',
-                                                        blue: 'bg-blue-500 hover:bg-blue-600 border-blue-400',
-                                                        violet: 'bg-violet-500 hover:bg-violet-600 border-violet-400'
-                                                    };
-                                                    const isSelected = cellColors[selectedCell] === color;
-                                                    return (
-                                                        <button
-                                                            key={color}
-                                                            onClick={() => {
-                                                                setCellColors(prev => ({
-                                                                    ...prev,
-                                                                    [selectedCell]: isSelected ? null : color
-                                                                }));
-                                                                if (!isSelected) {
-                                                                    setSelectedCell(null);
-                                                                }
-                                                            }}
-                                                            className={`px-4 py-2 rounded-lg font-semibold text-white border-2 transition-all ${
-                                                                isSelected 
-                                                                    ? colorClasses[color] + ' ring-2 ring-white ring-offset-2 ring-offset-purple-900' 
-                                                                    : colorClasses[color] + ' opacity-70'
-                                                            }`}
-                                                        >
-                                                            {color.charAt(0).toUpperCase() + color.slice(1)}
-                                                        </button>
-                                                    );
-                                                })}
-                                                <button
-                                                    onClick={() => {
-                                                        setCellColors(prev => {
-                                                            const newColors = { ...prev };
-                                                            delete newColors[selectedCell];
-                                                            return newColors;
-                                                        });
-                                                        setSelectedCell(null);
-                                                    }}
-                                                    className="px-4 py-2 rounded-lg font-semibold bg-gray-600 hover:bg-gray-700 text-white border-2 border-gray-500 transition-all"
-                                                >
-                                                    Pašalinti
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* 2D Grid Table */}
-                                    <div className="bg-purple-950/20 rounded-lg p-2 sm:p-4 overflow-x-auto -mx-2 sm:mx-0">
-                                        <div className="inline-block min-w-full">
-                                            <table className="border-collapse w-full">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="w-8 h-8 sm:w-10 sm:h-10 border border-purple-500/40 bg-purple-900/40"></th>
-                                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((colNum) => (
-                                                            <th 
-                                                                key={colNum}
-                                                                className="w-8 h-8 sm:w-10 sm:h-10 border border-purple-500/40 bg-purple-900/40 text-white font-bold text-xs sm:text-sm"
-                                                            >
-                                                                {colNum}
-                                                            </th>
-                                                        ))}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((rowNum) => (
-                                                        <tr key={rowNum}>
-                                                            <td className="w-8 h-8 sm:w-10 sm:h-10 border border-purple-500/40 bg-purple-900/40 text-white font-bold text-xs sm:text-sm text-center">
-                                                                {rowNum}
-                                                            </td>
-                                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((colNum) => {
-                                                                const cellKey = `${rowNum}-${colNum}`;
-                                                                const color = cellColors[cellKey];
-                                                                const isSelected = selectedCell === cellKey;
-                                                                
-                                                                const colorStyles = {
-                                                                    green: 'bg-green-500/80 border-green-400',
-                                                                    red: 'bg-red-500/80 border-red-400',
-                                                                    orange: 'bg-orange-500/80 border-orange-400',
-                                                                    yellow: 'bg-yellow-500/80 border-yellow-400',
-                                                                    blue: 'bg-blue-500/80 border-blue-400',
-                                                                    violet: 'bg-violet-500/80 border-violet-400'
-                                                                };
-                                                                
-                                                                return (
-                                                                    <td key={colNum} className="p-0">
-                                                                        <motion.button
-                                                                            whileHover={{ scale: 1.05 }}
-                                                                            whileTap={{ scale: 0.95 }}
-                                                                            onClick={() => setSelectedCell(isSelected ? null : cellKey)}
-                                                                            className={`w-8 h-8 sm:w-10 sm:h-10 border-2 transition-all ${
-                                                                                color 
-                                                                                    ? colorStyles[color] + ' text-white' 
-                                                                                    : 'bg-purple-800/40 border-purple-500/40 hover:border-purple-400/60'
-                                                                            } ${
-                                                                                isSelected ? 'ring-2 ring-white ring-offset-1 ring-offset-purple-900' : ''
-                                                                            }`}
-                                                                        >
-                                                                        </motion.button>
-                                                                    </td>
-                                                                );
-                                                            })}
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                <div className="flex justify-center items-center">
+                                    <NumberMatchImage />
                                 </div>
                             </div>
                         </AccordionSection>
