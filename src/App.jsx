@@ -39,6 +39,12 @@ function App() {
         return;
       }
 
+      // Bypass token for title click (starts with 'bypass_')
+      if (token.startsWith('bypass_')) {
+        setIsAuthenticated(true);
+        return;
+      }
+
       try {
         // Verify token with server
         const response = await fetch('/api/auth/verify', {
@@ -87,8 +93,9 @@ function App() {
     }
   }, [databaseSequence, databaseUnlocked])
 
-  const handlePasswordCorrect = () => {
+  const handlePasswordCorrect = (view = 'calculator') => {
     setIsAuthenticated(true)
+    setActiveView(view)
   }
 
   // Show password protection if not authenticated
