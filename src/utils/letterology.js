@@ -149,36 +149,36 @@ export const calculateWordValue = (word) => {
     const _vals = _lets.map(l => {
         const _letVal = _getLet(l);
         const _isCap = _isUp(l);
-        // For capital letters: split into digits unless it's a master number
+        // For all letters: split into digits for calculation unless it's a master number
         let _finalVal = _letVal;
         let _valDigits = [_letVal]; // Default: use the value itself
         
-        if (_isCap && !masterNumbers.includes(_letVal)) {
-            // Split capital letter value into digits
+        if (!masterNumbers.includes(_letVal)) {
+            // Split letter value into digits for calculation (both lowercase and capital)
             _valDigits = _letVal.toString().split('').map(d => parseInt(d));
             _finalVal = _valDigits.reduce((a, b) => a + b, 0);
         }
         
-        // Handle vowel values for capital letters
+        // Handle vowel values - split into digits unless master number
         const _vowVal = isVowel(l) ? _getVow(l) : 0;
         let _finalVowVal = _vowVal;
         let _vowValDigits = [_vowVal];
         
-        if (_isCap && _vowVal > 0 && !masterNumbers.includes(_vowVal)) {
-            // Split capital vowel value into digits
+        if (_vowVal > 0 && !masterNumbers.includes(_vowVal)) {
+            // Split vowel value into digits for calculation
             _vowValDigits = _vowVal.toString().split('').map(d => parseInt(d));
             _finalVowVal = _vowValDigits.reduce((a, b) => a + b, 0);
         }
         
         return {
             letter: l,
-            value: _finalVal,
-            originalValue: _letVal,
-            valueDigits: _valDigits,
+            value: _finalVal, // Used in calculation (split/summed)
+            originalValue: _letVal, // Original value for display
+            valueDigits: _valDigits, // Digits for display in calculation string
             isVowel: isVowel(l),
-            vowelValue: _finalVowVal,
-            originalVowelValue: _vowVal,
-            vowelValueDigits: _vowValDigits
+            vowelValue: _finalVowVal, // Used in calculation (split/summed)
+            originalVowelValue: _vowVal, // Original value for display
+            vowelValueDigits: _vowValDigits // Digits for display in calculation string
         };
     });
     

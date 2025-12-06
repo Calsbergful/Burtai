@@ -104,11 +104,11 @@ export default function Letterology() {
                                             isVowelLetter ? (isCapital ? 'text-pink-200' : 'text-pink-200') :
                                             isCapital ? 'text-cyan-200' : 'text-purple-200'
                                         }`}>
-                                            {item.value}
+                                            {item.originalValue}
                                         </div>
                                         {isVowelLetter && (
                                             <div className="text-xs text-pink-300/70 mt-0.5">
-                                                balsis: {item.vowelValue}
+                                                balsis: {item.originalVowelValue}
                                             </div>
                                         )}
                                     </motion.div>
@@ -141,12 +141,11 @@ export default function Letterology() {
                                             </div>
                                             <div className="text-xs text-purple-200">
                                                 {results.values.map(item => {
-                                                    const isCapital = isUpperCase(item.letter);
-                                                    if (isCapital && item.originalValue && !masterNumbers.includes(item.originalValue) && item.valueDigits && item.valueDigits.length > 1) {
-                                                        // Show split digits for capital letters
+                                                    // Show split digits for all letters unless master number
+                                                    if (!masterNumbers.includes(item.originalValue) && item.valueDigits && item.valueDigits.length > 1) {
                                                         return item.valueDigits.join(' + ');
                                                     }
-                                                    return item.value;
+                                                    return item.originalValue;
                                                 }).join(' + ')} = {results.total}
                                             </div>
                                         </>
@@ -204,12 +203,11 @@ export default function Letterology() {
                                                     </div>
                                                     <div className="text-xs text-pink-200">
                                                         {results.vowels.map(item => {
-                                                            const isCapital = isUpperCase(item.letter);
-                                                            if (isCapital && item.originalVowelValue && !masterNumbers.includes(item.originalVowelValue) && item.vowelValueDigits && item.vowelValueDigits.length > 1) {
-                                                                // Show split digits for capital vowel values
+                                                            // Show split digits for all vowel values unless master number
+                                                            if (!masterNumbers.includes(item.originalVowelValue) && item.vowelValueDigits && item.vowelValueDigits.length > 1) {
                                                                 return item.vowelValueDigits.join(' + ');
                                                             }
-                                                            return item.vowelValue;
+                                                            return item.originalVowelValue;
                                                         }).join(' + ')} = {results.vowelTotal}
                                                     </div>
                                                 </>
