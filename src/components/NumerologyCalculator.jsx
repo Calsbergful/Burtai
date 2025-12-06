@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Calendar from './Calendar';
-import DayRecommendations from './DayRecommendations';
 import {
     calculateLifePath,
     reduceNumber,
@@ -105,13 +104,6 @@ export default function NumerologyCalculator() {
                                 boxShadow: '0 8px 32px 0 rgba(138, 43, 226, 0.2), inset 0 0 100px rgba(138, 43, 226, 0.1)'
                             }}
                         >
-                            
-                            {/* Day Recommendations */}
-                            <DayRecommendations 
-                                dayNum={results.selectedDay}
-                                fullNum={results.dateSum}
-                                date={results.selectedDate}
-                            />
                         </motion.div>
                     )}
                 </AnimatePresence>
