@@ -14,13 +14,13 @@ function AccordionSection({ id, title, children, isOpen, onToggle, className = "
         <div className={`mb-4 ${className}`} id={id}>
             <button
                 onClick={() => onToggle(id)}
-                className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border border-purple-500/40 rounded-lg hover:border-purple-400/60 transition-all"
+                className="w-full flex items-center justify-between p-3 sm:p-4 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border border-purple-500/40 rounded-lg hover:border-purple-400/60 transition-all"
             >
-                <h4 className="text-left font-bold text-white">{title}</h4>
+                <h4 className="text-left font-bold text-white text-sm sm:text-base break-words flex-1 min-w-0 pr-2">{title}</h4>
                 <motion.div
                     animate={{ rotate: effectiveIsOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
-                    className="text-purple-300"
+                    className="text-purple-300 flex-shrink-0"
                 >
                     ▼
                 </motion.div>
@@ -48,19 +48,9 @@ export default function Database() {
         return saved ? JSON.parse(saved) : {};
     });
     const [cellColors, setCellColors] = useState(() => {
-        try {
-            const saved = localStorage.getItem('database_cell_colors');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                // Merge with defaults (defaults take precedence if both exist)
-                return { ...defaultCellColors, ...parsed };
-            }
-            // If no saved data, use defaults
-            return { ...defaultCellColors };
-        } catch (error) {
-            console.error('Error loading cell colors:', error);
-            return { ...defaultCellColors };
-        }
+        // Initialize with empty object, will be loaded in useEffect
+        // This prevents hydration issues on mobile
+        return {};
     });
     const [selectedCell, setSelectedCell] = useState(null);
 
@@ -96,6 +86,11 @@ export default function Database() {
 
     // Save cell colors to localStorage with error handling and multiple backups
     useEffect(() => {
+        // Don't save if colors object is empty (initial state)
+        if (Object.keys(cellColors).length === 0) {
+            return;
+        }
+        
         try {
             const colorsJson = JSON.stringify(cellColors);
             localStorage.setItem('database_cell_colors', colorsJson);
@@ -111,57 +106,88 @@ export default function Database() {
 
     // Load cell colors on mount and restore from backup if needed
     useEffect(() => {
-        try {
-            const saved = localStorage.getItem('database_cell_colors');
-            const backup = localStorage.getItem('database_cell_colors_backup');
-            const backup2 = localStorage.getItem('database_cell_colors_backup2');
-            
-            let colorsToLoad = null;
-            
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    if (typeof parsed === 'object' && parsed !== null) {
-                        colorsToLoad = parsed;
+        const loadColors = () => {
+            try {
+                const saved = localStorage.getItem('database_cell_colors');
+                const backup = localStorage.getItem('database_cell_colors_backup');
+                const backup2 = localStorage.getItem('database_cell_colors_backup2');
+                
+                let colorsToLoad = null;
+                
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        if (typeof parsed === 'object' && parsed !== null) {
+                            colorsToLoad = parsed;
+                        }
+                    } catch (e) {
+                        console.warn('Failed to parse main colors, trying backup...');
                     }
-                } catch (e) {
-                    console.warn('Failed to parse main colors, trying backup...');
                 }
-            }
-            
-            if (!colorsToLoad && backup) {
-                try {
-                    const parsed = JSON.parse(backup);
-                    if (typeof parsed === 'object' && parsed !== null) {
-                        colorsToLoad = parsed;
+                
+                if (!colorsToLoad && backup) {
+                    try {
+                        const parsed = JSON.parse(backup);
+                        if (typeof parsed === 'object' && parsed !== null) {
+                            colorsToLoad = parsed;
+                        }
+                    } catch (e) {
+                        console.warn('Failed to parse backup colors, trying backup2...');
                     }
-                } catch (e) {
-                    console.warn('Failed to parse backup colors, trying backup2...');
                 }
-            }
-            
-            if (!colorsToLoad && backup2) {
-                try {
-                    const parsed = JSON.parse(backup2);
-                    if (typeof parsed === 'object' && parsed !== null) {
-                        colorsToLoad = parsed;
+                
+                if (!colorsToLoad && backup2) {
+                    try {
+                        const parsed = JSON.parse(backup2);
+                        if (typeof parsed === 'object' && parsed !== null) {
+                            colorsToLoad = parsed;
+                        }
+                    } catch (e) {
+                        console.warn('Failed to parse backup2 colors');
                     }
-                } catch (e) {
-                    console.warn('Failed to parse backup2 colors');
                 }
+                
+                if (colorsToLoad && Object.keys(colorsToLoad).length > 0) {
+                    // Merge with defaults
+                    const merged = { ...defaultCellColors, ...colorsToLoad };
+                    setCellColors(merged);
+                    // Restore to all storage locations
+                    const colorsJson = JSON.stringify(merged);
+                    localStorage.setItem('database_cell_colors', colorsJson);
+                    localStorage.setItem('database_cell_colors_backup', colorsJson);
+                    localStorage.setItem('database_cell_colors_backup2', colorsJson);
+                } else if (Object.keys(defaultCellColors).length > 0) {
+                    // If no saved colors but we have defaults, use defaults
+                    setCellColors({ ...defaultCellColors });
+                }
+            } catch (error) {
+                console.error('Failed to load cell colors from localStorage:', error);
             }
-            
-            if (colorsToLoad && Object.keys(colorsToLoad).length > 0) {
-                setCellColors(colorsToLoad);
-                // Restore to all storage locations
-                const colorsJson = JSON.stringify(colorsToLoad);
-                localStorage.setItem('database_cell_colors', colorsJson);
-                localStorage.setItem('database_cell_colors_backup', colorsJson);
-                localStorage.setItem('database_cell_colors_backup2', colorsJson);
+        };
+
+        // Load immediately
+        loadColors();
+        
+        // Also listen for storage events (for cross-tab sync and mobile issues)
+        const handleStorageChange = (e) => {
+            if (e.key === 'database_cell_colors' || e.key === 'database_cell_colors_backup' || e.key === 'database_cell_colors_backup2') {
+                loadColors();
             }
-        } catch (error) {
-            console.error('Failed to load cell colors from localStorage:', error);
-        }
+        };
+        
+        window.addEventListener('storage', handleStorageChange);
+        
+        // Multiple retry attempts for mobile browsers (localStorage can be slow on mobile)
+        const retryTimer1 = setTimeout(loadColors, 100);
+        const retryTimer2 = setTimeout(loadColors, 500);
+        const retryTimer3 = setTimeout(loadColors, 1000);
+        
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            clearTimeout(retryTimer1);
+            clearTimeout(retryTimer2);
+            clearTimeout(retryTimer3);
+        };
     }, []);
 
 
@@ -244,8 +270,8 @@ export default function Database() {
     };
 
     return (
-        <div className="w-full max-w-6xl mx-auto mb-1 sm:mb-2">
-            <div className="bg-gradient-to-br from-purple-900/20 via-violet-900/15 to-indigo-900/20 backdrop-blur-xl rounded-2xl p-4 sm:p-6 shadow-2xl border border-purple-500/20">
+        <div className="w-full max-w-6xl mx-auto mb-1 sm:mb-2 px-2 sm:px-0">
+            <div className="bg-gradient-to-br from-purple-900/20 via-violet-900/15 to-indigo-900/20 backdrop-blur-xl rounded-2xl p-3 sm:p-6 shadow-2xl border border-purple-500/20">
 
                 {/* All Database Sections */}
                 <motion.div
@@ -385,16 +411,16 @@ export default function Database() {
                                     )}
 
                                     {/* 2D Grid Table */}
-                                    <div className="bg-purple-950/20 rounded-lg p-4 overflow-x-auto">
+                                    <div className="bg-purple-950/20 rounded-lg p-2 sm:p-4 overflow-x-auto -mx-2 sm:mx-0">
                                         <div className="inline-block min-w-full">
-                                            <table className="border-collapse">
+                                            <table className="border-collapse w-full">
                                                 <thead>
                                                     <tr>
-                                                        <th className="w-12 h-12 border border-purple-500/40 bg-purple-900/40"></th>
+                                                        <th className="w-8 h-8 sm:w-10 sm:h-10 border border-purple-500/40 bg-purple-900/40"></th>
                                                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((colNum) => (
                                                             <th 
                                                                 key={colNum}
-                                                                className="w-12 h-12 border border-purple-500/40 bg-purple-900/40 text-white font-bold text-sm"
+                                                                className="w-8 h-8 sm:w-10 sm:h-10 border border-purple-500/40 bg-purple-900/40 text-white font-bold text-xs sm:text-sm"
                                                             >
                                                                 {colNum}
                                                             </th>
@@ -404,7 +430,7 @@ export default function Database() {
                                                 <tbody>
                                                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((rowNum) => (
                                                         <tr key={rowNum}>
-                                                            <td className="w-12 h-12 border border-purple-500/40 bg-purple-900/40 text-white font-bold text-sm text-center">
+                                                            <td className="w-8 h-8 sm:w-10 sm:h-10 border border-purple-500/40 bg-purple-900/40 text-white font-bold text-xs sm:text-sm text-center">
                                                                 {rowNum}
                                                             </td>
                                                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((colNum) => {
@@ -427,7 +453,7 @@ export default function Database() {
                                                                             whileHover={{ scale: 1.05 }}
                                                                             whileTap={{ scale: 0.95 }}
                                                                             onClick={() => setSelectedCell(isSelected ? null : cellKey)}
-                                                                            className={`w-12 h-12 border-2 transition-all ${
+                                                                            className={`w-8 h-8 sm:w-10 sm:h-10 border-2 transition-all ${
                                                                                 color 
                                                                                     ? colorStyles[color] + ' text-white' 
                                                                                     : 'bg-purple-800/40 border-purple-500/40 hover:border-purple-400/60'
