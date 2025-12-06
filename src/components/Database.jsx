@@ -148,7 +148,7 @@ export default function Database() {
                 }
                 
                 if (colorsToLoad && Object.keys(colorsToLoad).length > 0) {
-                    // Merge with defaults
+                    // Merge with defaults (defaults are base, saved colors override)
                     const merged = { ...defaultCellColors, ...colorsToLoad };
                     setCellColors(merged);
                     // Restore to all storage locations
@@ -156,9 +156,16 @@ export default function Database() {
                     localStorage.setItem('database_cell_colors', colorsJson);
                     localStorage.setItem('database_cell_colors_backup', colorsJson);
                     localStorage.setItem('database_cell_colors_backup2', colorsJson);
-                } else if (Object.keys(defaultCellColors).length > 0) {
-                    // If no saved colors but we have defaults, use defaults
-                    setCellColors({ ...defaultCellColors });
+                } else {
+                    // Always use defaults if no saved colors (ensures permanent colors are always available)
+                    if (Object.keys(defaultCellColors).length > 0) {
+                        setCellColors({ ...defaultCellColors });
+                        // Save defaults to localStorage so they persist
+                        const defaultsJson = JSON.stringify(defaultCellColors);
+                        localStorage.setItem('database_cell_colors', defaultsJson);
+                        localStorage.setItem('database_cell_colors_backup', defaultsJson);
+                        localStorage.setItem('database_cell_colors_backup2', defaultsJson);
+                    }
                 }
             } catch (error) {
                 console.error('Failed to load cell colors from localStorage:', error);
