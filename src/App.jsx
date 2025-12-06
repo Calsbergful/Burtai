@@ -24,7 +24,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [activeView, setActiveView] = useState('calculator');
   const [personalBirthdayTrigger, setPersonalBirthdayTrigger] = useState(0);
-  const [databaseSequence, setDatabaseSequence] = useState([]); // Track sequence: ['calculator', 'life-path-settings', 'letterology', 'personal-birthday']
+  const [databaseSequence, setDatabaseSequence] = useState([]);
   const [databaseUnlocked, setDatabaseUnlocked] = useState(false);
   const [sequenceTimeout, setSequenceTimeout] = useState(null);
 
@@ -66,13 +66,13 @@ function App() {
 
     verifyAuth();
     
-    // Database is always hidden on page load/reload - sequence must be entered each time
+    // Reset state on page load
     setDatabaseUnlocked(false);
-    const _dbKey = String.fromCharCode(100, 97, 116, 97, 98, 97, 115, 101, 85, 110, 108, 111, 99, 107, 101, 100); // "databaseUnlocked"
+    const _dbKey = String.fromCharCode(100, 97, 116, 97, 98, 97, 115, 101, 85, 110, 108, 111, 99, 107, 101, 100);
     sessionStorage.removeItem(_dbKey);
   }, [])
 
-  // Reset sequence after 10 seconds of inactivity
+  // Auto-reset mechanism
   useEffect(() => {
     if (databaseSequence.length > 0 && !databaseUnlocked) {
       if (sequenceTimeout) {
@@ -80,7 +80,7 @@ function App() {
       }
       const timeout = setTimeout(() => {
         setDatabaseSequence([])
-      }, 10000) // 10 seconds
+      }, 10000)
       setSequenceTimeout(timeout)
       
       return () => clearTimeout(timeout)
@@ -96,50 +96,67 @@ function App() {
     return <PasswordProtection onPasswordCorrect={handlePasswordCorrect} />
   }
 
+  // Obfuscated sequence builder (scattered)
+  const _buildSequence = () => {
+    const _s1 = String.fromCharCode(99, 97, 108, 99, 117, 108, 97, 116, 111, 114); // "calculator"
+    const _s2 = String.fromCharCode(108, 105, 102, 101, 45, 112, 97, 116, 104, 45, 115, 101, 116, 116, 105, 110, 103, 115); // "life-path-settings"
+    const _s3 = String.fromCharCode(108, 101, 116, 116, 101, 114, 111, 108, 111, 103, 121); // "letterology"
+    const _s4 = String.fromCharCode(112, 101, 114, 115, 111, 110, 97, 108, 45, 98, 105, 114, 116, 104, 100, 97, 121); // "personal-birthday"
+    // Decoy sequences to confuse
+    const _decoy1 = [_s1, _s3, _s2, _s4];
+    const _decoy2 = [_s2, _s1, _s4, _s3];
+    const _decoy3 = [_s4, _s3, _s2, _s1];
+    // Real sequence (scattered)
+    return [_s1, _s2, _s3, _s4];
+  };
+
   const handleMenuClick = (menuId) => {
-    // Check database unlock sequence: calculator -> life-path-settings -> letterology -> personal-birthday
-    const expectedSequence = ['calculator', 'life-path-settings', 'letterology', 'personal-birthday'];
+    // Decoy variable names
+    const _seq = _buildSequence();
+    const _decoyCheck = menuId === 'database' && !databaseUnlocked;
     
-    // If database is already unlocked, allow direct access
+    // Direct access check
     if (databaseUnlocked && menuId === 'database') {
       setActiveView('database');
       return;
     }
     
-    // Check if this click is part of the sequence
-    const currentStep = databaseSequence.length;
-    const expectedNext = expectedSequence[currentStep];
+    // Sequence validation (obfuscated)
+    const _step = databaseSequence.length;
+    const _next = _seq[_step];
+    const _match = menuId === _next;
+    let _sequenceUpdated = false;
     
-    if (menuId === expectedNext) {
-      // Correct step in sequence
-      const newSequence = [...databaseSequence, menuId];
-      setDatabaseSequence(newSequence);
+    if (_match) {
+      const _newSeq = [...databaseSequence, menuId];
+      setDatabaseSequence(_newSeq);
+      _sequenceUpdated = true;
       
-      // Check if sequence is complete
-      if (newSequence.length === expectedSequence.length) {
+      // Completion check
+      if (_newSeq.length === _seq.length) {
         setDatabaseUnlocked(true);
-        // Don't persist to sessionStorage - Database will be hidden on reload
         setActiveView('database');
         setDatabaseSequence([]);
         return;
       }
-    } else if (menuId === 'calculator' && currentStep === 0) {
-      // Allow starting the sequence
-      setDatabaseSequence(['calculator']);
+    } else if (menuId === _seq[0] && _step === 0) {
+      // Start sequence
+      setDatabaseSequence([menuId]);
+      _sequenceUpdated = true;
     } else if (databaseSequence.length > 0) {
-      // Wrong step - reset sequence
+      // Reset on wrong step
       setDatabaseSequence([]);
     }
     
-    // Handle normal menu clicks
+    // Normal menu routing (always execute, even if sequence matched)
     if (menuId === 'calculator') {
       setActiveView('calculator');
     } else if (menuId === 'friendly-enemy-hours') {
       setActiveView('hours');
-      setDatabaseSequence([]); // Reset sequence on wrong click
+      if (!_sequenceUpdated && databaseSequence.length > 0) setDatabaseSequence([]);
     } else if (menuId === 'life-path-settings') {
       setActiveView('birthday');
-      setPersonalBirthdayTrigger(0); // Reset to show regular birthday input
+      setPersonalBirthdayTrigger(0);
     } else if (menuId === 'personal-birthday') {
       setActiveView('birthday');
       setPersonalBirthdayTrigger(prev => prev + 1);
@@ -147,10 +164,9 @@ function App() {
       setActiveView('letterology');
     } else if (menuId === 'hidden-numerology') {
       setActiveView('hidden-numerology');
-      setDatabaseSequence([]); // Reset sequence on wrong click
+      if (!_sequenceUpdated && databaseSequence.length > 0) setDatabaseSequence([]);
     } else if (menuId === 'database' && !databaseUnlocked) {
-      // Don't allow direct access if not unlocked
-      setDatabaseSequence([]); // Reset sequence
+      if (!_sequenceUpdated && databaseSequence.length > 0) setDatabaseSequence([]);
       return;
     } else if (menuId === 'database' && databaseUnlocked) {
       setActiveView('database');
