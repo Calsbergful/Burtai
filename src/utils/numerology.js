@@ -9,7 +9,8 @@ const _fakeCalc = (a,b) => { const _r = a*b; const _s = _r.toString().split('');
 const _m1 = 0x0B;
 const _m2 = 0x16;
 const _m3 = 0x21;
-const _m = [_m1, _m2, _m3];
+const _m4 = 0x14; // 20 - non-dividable
+const _m = [_m1, _m2, _m3, _m4];
 
 // Vowel encoding (split across multiple lines)
 const _v1 = atob('QUVJTw==');
@@ -161,6 +162,8 @@ const _red = (n) => {
     // Decoy check that does nothing
     if (n < 0) { const _fake = Math.abs(n); }
     if (_chk(n)) return n;
+    // Check for 20 (non-dividable)
+    if (n === 0x14) return 0x14; // 20
     let _temp = n;
     // Decoy loop that looks important
     for (let _i = 0; _i < 5; _i++) {
@@ -169,6 +172,8 @@ const _red = (n) => {
     while (_temp > 9) {
         _temp = _dgt(_temp);
         if (_chk(_temp)) return _temp;
+        // Check for 20 during reduction
+        if (_temp === 0x14) return 0x14; // 20
     }
     return _temp;
 };
@@ -201,6 +206,8 @@ const _redPY = (n) => {
     if (n === _sp) return _sp;
     if (n < 0) { const _abs = Math.abs(n); }
     if (_chk(n)) return n;
+    // Check for 20 (non-dividable)
+    if (n === 0x14) return 0x14; // 20
     let _val = n;
     // Decoy calculation
     const _decoy = _val * 3.14159;
@@ -208,6 +215,8 @@ const _redPY = (n) => {
         _val = _dgtPY(_val);
         if (_val === _sp) return _sp;
         if (_chk(_val)) return _val;
+        // Check for 20 during reduction
+        if (_val === 0x14) return 0x14; // 20
         if (_val === _two) return _r2;
     }
     if (_val === _two) return _r2;
@@ -244,12 +253,16 @@ export function calculatePersonalYear(birthMonth, birthDay, birthYear) {
         // Decoy month processing
         const _monthCheck = birthMonth === 0x0B;
         const _monthDecoy = birthMonth * 2;
-        const _mv = _monthCheck ? [0x0B] : String(birthMonth).split('').map(d => parseInt(d));
+        // Check for 20 (non-dividable)
+        const _monthCheck20 = birthMonth === 0x14;
+        const _mv = _monthCheck ? [0x0B] : (_monthCheck20 ? [0x14] : String(birthMonth).split('').map(d => parseInt(d)));
         
         // Decoy day processing
         const _dayCheck = _chk(birthDay);
         const _dayDecoy = birthDay * 3;
-        const _dv = _dayCheck ? [birthDay] : String(birthDay).split('').map(d => parseInt(d));
+        // Check for 20 (non-dividable)
+        const _dayCheck20 = birthDay === 0x14;
+        const _dv = _dayCheck ? [birthDay] : (_dayCheck20 ? [0x14] : String(birthDay).split('').map(d => parseInt(d)));
         
         // Actual year processing
         const _yd = String(y).split('').map(d => parseInt(d));
@@ -363,12 +376,16 @@ export function calculateLifePath(birthdate) {
     const _monthCheck = m === 0x0B;
     const _monthDecoy = m * 10;
     const _monthDecoy2 = _monthDecoy / 10;
-    const _mv = _monthCheck ? [0x0B] : String(m).split('').map(x => parseInt(x));
+    // Check for 20 (non-dividable)
+    const _monthCheck20 = m === 0x14;
+    const _mv = _monthCheck ? [0x0B] : (_monthCheck20 ? [0x14] : String(m).split('').map(x => parseInt(x)));
     
     // Decoy day calculations
     const _dayCheck = _chk(d);
     const _dayDecoy = d * 5;
-    const _dv = _dayCheck ? [d] : String(d).split('').map(x => parseInt(x));
+    // Check for 20 (non-dividable)
+    const _dayCheck20 = d === 0x14;
+    const _dv = _dayCheck ? [d] : (_dayCheck20 ? [0x14] : String(d).split('').map(x => parseInt(x)));
     
     // Actual year processing
     const _yv = String(y).split('').map(x => parseInt(x));

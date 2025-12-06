@@ -149,22 +149,23 @@ export const calculateWordValue = (word) => {
     const _vals = _lets.map(l => {
         const _letVal = _getLet(l);
         const _isCap = _isUp(l);
-        // For all letters: split into digits for calculation unless it's a master number
+        // For all letters: split into digits for calculation unless it's a master number or 20
         let _finalVal = _letVal;
         let _valDigits = [_letVal]; // Default: use the value itself
         
-        if (!masterNumbers.includes(_letVal)) {
+        // Check if it's 20 (non-dividable) or master number
+        if (_letVal !== 20 && !masterNumbers.includes(_letVal)) {
             // Split letter value into digits for calculation (both lowercase and capital)
             _valDigits = _letVal.toString().split('').map(d => parseInt(d));
             _finalVal = _valDigits.reduce((a, b) => a + b, 0);
         }
         
-        // Handle vowel values - split into digits unless master number
+        // Handle vowel values - split into digits unless master number or 20
         const _vowVal = isVowel(l) ? _getVow(l) : 0;
         let _finalVowVal = _vowVal;
         let _vowValDigits = [_vowVal];
         
-        if (_vowVal > 0 && !masterNumbers.includes(_vowVal)) {
+        if (_vowVal > 0 && _vowVal !== 20 && !masterNumbers.includes(_vowVal)) {
             // Split vowel value into digits for calculation
             _vowValDigits = _vowVal.toString().split('').map(d => parseInt(d));
             _finalVowVal = _vowValDigits.reduce((a, b) => a + b, 0);
