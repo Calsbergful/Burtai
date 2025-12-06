@@ -113,7 +113,6 @@ function AccordionSection({ id, title, titleEn, children, isOpen, onToggle, clas
 }
 
 export default function Database() {
-    const [activeTab, setActiveTab] = useState('numbers');
     const [editingItem, setEditingItem] = useState(null);
     const [editData, setEditData] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
@@ -405,66 +404,12 @@ export default function Database() {
                     )}
                 </div>
 
-                {/* Tabs */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setActiveTab('numbers')}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                            activeTab === 'numbers'
-                                ? 'bg-purple-500/40 text-white border border-purple-400/60'
-                                : 'bg-purple-900/20 text-white/70 hover:text-white hover:bg-purple-500/20 border border-transparent'
-                        }`}
-                    >
-                        {t.tabs.numbers}
-                    </motion.button>
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setActiveTab('western')}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                            activeTab === 'western'
-                                ? 'bg-purple-500/40 text-white border border-purple-400/60'
-                                : 'bg-purple-900/20 text-white/70 hover:text-white hover:bg-purple-500/20 border border-transparent'
-                        }`}
-                    >
-                        {t.tabs.western}
-                    </motion.button>
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setActiveTab('chinese')}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                            activeTab === 'chinese'
-                                ? 'bg-purple-500/40 text-white border border-purple-400/60'
-                                : 'bg-purple-900/20 text-white/70 hover:text-white hover:bg-purple-500/20 border border-transparent'
-                        }`}
-                    >
-                        {t.tabs.chinese}
-                    </motion.button>
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setActiveTab('colors')}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                            activeTab === 'colors'
-                                ? 'bg-purple-500/40 text-white border border-purple-400/60'
-                                : 'bg-purple-900/20 text-white/70 hover:text-white hover:bg-purple-500/20 border border-transparent'
-                        }`}
-                    >
-                        {t.tabs.colors}
-                    </motion.button>
-                </div>
-
-                                {/* Numbers Tab */}
-                {(activeTab === 'numbers' || searchQuery.trim()) && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-4"
-                    >
-                        <h3 className="text-xl font-bold text-white mb-4">Numerologijos Skaičiai</h3>
+                {/* All Database Sections */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-4"
+                >
                         
                         <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
                                                     id="detailed-numbers"
@@ -1132,17 +1077,7 @@ export default function Database() {
                                                     </div>
                                                 </AccordionSection>
 
-                    </motion.div>
-                )}
 
-                {/* Western Zodiac Tab */}
-                {(activeTab === 'western' || searchQuery.trim()) && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-4"
-                    >
-                        <h3 className="text-xl font-bold text-white mb-4">Vakarietiškas Zodiakas</h3>
                         
                         <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
                                                     id="beauty-types"
@@ -1660,17 +1595,7 @@ export default function Database() {
                                                     </div>
                                                 </AccordionSection>
 
-                    </motion.div>
-                )}
 
-                {/* Chinese Zodiac Tab */}
-                {(activeTab === 'chinese' || searchQuery.trim()) && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-4"
-                    >
-                        <h3 className="text-xl font-bold text-white mb-4">Kinų Zodiakas</h3>
                         
                         <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
                                                     id="element-relationships"
@@ -2327,8 +2252,7 @@ export default function Database() {
                                                     </div>
                                                 </AccordionSection>
 
-                    </motion.div>
-                )}
+                </motion.div>
             </div>
         </div>
     );
