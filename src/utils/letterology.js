@@ -146,12 +146,41 @@ export const calculateWordValue = (word) => {
     const _decoyLets = _lets.map(l => l.charCodeAt(0));
     const _decoyLetsSum = _decoyLets.reduce((a,b) => a+b, 0);
     
-    const _vals = _lets.map(l => ({
-        letter: l,
-        value: _getLet(l),
-        isVowel: isVowel(l),
-        vowelValue: isVowel(l) ? _getVow(l) : 0
-    }));
+    const _vals = _lets.map(l => {
+        const _letVal = _getLet(l);
+        const _isCap = _isUp(l);
+        // For capital letters: split into digits unless it's a master number
+        let _finalVal = _letVal;
+        let _valDigits = [_letVal]; // Default: use the value itself
+        
+        if (_isCap && !masterNumbers.includes(_letVal)) {
+            // Split capital letter value into digits
+            _valDigits = _letVal.toString().split('').map(d => parseInt(d));
+            _finalVal = _valDigits.reduce((a, b) => a + b, 0);
+        }
+        
+        // Handle vowel values for capital letters
+        const _vowVal = isVowel(l) ? _getVow(l) : 0;
+        let _finalVowVal = _vowVal;
+        let _vowValDigits = [_vowVal];
+        
+        if (_isCap && _vowVal > 0 && !masterNumbers.includes(_vowVal)) {
+            // Split capital vowel value into digits
+            _vowValDigits = _vowVal.toString().split('').map(d => parseInt(d));
+            _finalVowVal = _vowValDigits.reduce((a, b) => a + b, 0);
+        }
+        
+        return {
+            letter: l,
+            value: _finalVal,
+            originalValue: _letVal,
+            valueDigits: _valDigits,
+            isVowel: isVowel(l),
+            vowelValue: _finalVowVal,
+            originalVowelValue: _vowVal,
+            vowelValueDigits: _vowValDigits
+        };
+    });
     
     // Decoy total calculations
     const _decoyTot = _vals.map(v => v.value * 2);

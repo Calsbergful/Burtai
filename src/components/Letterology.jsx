@@ -140,7 +140,14 @@ export default function Letterology() {
                                                 {results.total}
                                             </div>
                                             <div className="text-xs text-purple-200">
-                                                {results.values.map(item => item.value).join(' + ')} = {results.total}
+                                                {results.values.map(item => {
+                                                    const isCapital = isUpperCase(item.letter);
+                                                    if (isCapital && item.originalValue && !masterNumbers.includes(item.originalValue) && item.valueDigits && item.valueDigits.length > 1) {
+                                                        // Show split digits for capital letters
+                                                        return item.valueDigits.join(' + ');
+                                                    }
+                                                    return item.value;
+                                                }).join(' + ')} = {results.total}
                                             </div>
                                         </>
                                     );
@@ -196,7 +203,14 @@ export default function Letterology() {
                                                         {results.vowelTotal}
                                                     </div>
                                                     <div className="text-xs text-pink-200">
-                                                        {results.vowels.map(item => item.vowelValue).join(' + ')} = {results.vowelTotal}
+                                                        {results.vowels.map(item => {
+                                                            const isCapital = isUpperCase(item.letter);
+                                                            if (isCapital && item.originalVowelValue && !masterNumbers.includes(item.originalVowelValue) && item.vowelValueDigits && item.vowelValueDigits.length > 1) {
+                                                                // Show split digits for capital vowel values
+                                                                return item.vowelValueDigits.join(' + ');
+                                                            }
+                                                            return item.vowelValue;
+                                                        }).join(' + ')} = {results.vowelTotal}
                                                     </div>
                                                 </>
                                             );
