@@ -125,11 +125,11 @@ export default function Database() {
         const saved = localStorage.getItem('database_custom');
         return saved ? JSON.parse(saved) : {};
     });
-    const [numberColors, setNumberColors] = useState(() => {
-        const saved = localStorage.getItem('database_number_colors');
+    const [cellColors, setCellColors] = useState(() => {
+        const saved = localStorage.getItem('database_cell_colors');
         return saved ? JSON.parse(saved) : {};
     });
-    const [selectedNumber, setSelectedNumber] = useState(null);
+    const [selectedCell, setSelectedCell] = useState(null);
 
     // Helper function to get English title for sections
     const getEnglishTitle = (ltTitle) => {
@@ -201,10 +201,10 @@ export default function Database() {
         localStorage.setItem('database_custom', JSON.stringify(customData));
     }, [customData]);
 
-    // Save number colors to localStorage
+    // Save cell colors to localStorage
     useEffect(() => {
-        localStorage.setItem('database_number_colors', JSON.stringify(numberColors));
-    }, [numberColors]);
+        localStorage.setItem('database_cell_colors', JSON.stringify(cellColors));
+    }, [cellColors]);
 
     // Save language preference to localStorage
     useEffect(() => {
@@ -433,10 +433,10 @@ export default function Database() {
                             <div className="bg-purple-900/30 border border-purple-500/40 rounded-lg p-4">
                                 <div className="space-y-4">
                                     {/* Color Selection Panel */}
-                                    {selectedNumber && (
+                                    {selectedCell && (
                                         <div className="bg-purple-950/40 rounded-lg p-4 mb-4">
                                             <p className="text-white/90 mb-3 text-sm">
-                                                Pasirinkite spalvą skaičiui <span className="font-bold text-lg">{selectedNumber}</span>:
+                                                Pasirinkite spalvą langeliui <span className="font-bold text-lg">{selectedCell}</span>:
                                             </p>
                                             <div className="flex flex-wrap gap-2">
                                                 {['green', 'red', 'orange', 'yellow', 'blue', 'violet'].map((color) => {
@@ -448,17 +448,17 @@ export default function Database() {
                                                         blue: 'bg-blue-500 hover:bg-blue-600 border-blue-400',
                                                         violet: 'bg-violet-500 hover:bg-violet-600 border-violet-400'
                                                     };
-                                                    const isSelected = numberColors[selectedNumber] === color;
+                                                    const isSelected = cellColors[selectedCell] === color;
                                                     return (
                                                         <button
                                                             key={color}
                                                             onClick={() => {
-                                                                setNumberColors(prev => ({
+                                                                setCellColors(prev => ({
                                                                     ...prev,
-                                                                    [selectedNumber]: isSelected ? null : color
+                                                                    [selectedCell]: isSelected ? null : color
                                                                 }));
                                                                 if (!isSelected) {
-                                                                    setSelectedNumber(null);
+                                                                    setSelectedCell(null);
                                                                 }
                                                             }}
                                                             className={`px-4 py-2 rounded-lg font-semibold text-white border-2 transition-all ${
@@ -473,12 +473,12 @@ export default function Database() {
                                                 })}
                                                 <button
                                                     onClick={() => {
-                                                        setNumberColors(prev => {
+                                                        setCellColors(prev => {
                                                             const newColors = { ...prev };
-                                                            delete newColors[selectedNumber];
+                                                            delete newColors[selectedCell];
                                                             return newColors;
                                                         });
-                                                        setSelectedNumber(null);
+                                                        setSelectedCell(null);
                                                     }}
                                                     className="px-4 py-2 rounded-lg font-semibold bg-gray-600 hover:bg-gray-700 text-white border-2 border-gray-500 transition-all"
                                                 >
@@ -488,38 +488,65 @@ export default function Database() {
                                         </div>
                                     )}
 
-                                    {/* Number Grid Table */}
-                                    <div className="bg-purple-950/20 rounded-lg p-4">
-                                        <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
-                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((num) => {
-                                                const color = numberColors[num];
-                                                const colorStyles = {
-                                                    green: 'bg-green-500/80 border-green-400 text-white',
-                                                    red: 'bg-red-500/80 border-red-400 text-white',
-                                                    orange: 'bg-orange-500/80 border-orange-400 text-white',
-                                                    yellow: 'bg-yellow-500/80 border-yellow-400 text-white',
-                                                    blue: 'bg-blue-500/80 border-blue-400 text-white',
-                                                    violet: 'bg-violet-500/80 border-violet-400 text-white'
-                                                };
-                                                const isSelected = selectedNumber === num;
-                                                return (
-                                                    <motion.button
-                                                        key={num}
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        onClick={() => setSelectedNumber(isSelected ? null : num)}
-                                                        className={`aspect-square rounded-lg border-2 font-bold text-lg transition-all ${
-                                                            color 
-                                                                ? colorStyles[color] 
-                                                                : 'bg-purple-800/40 border-purple-500/40 text-white/90 hover:border-purple-400/60'
-                                                        } ${
-                                                            isSelected ? 'ring-2 ring-white ring-offset-2 ring-offset-purple-900' : ''
-                                                        }`}
-                                                    >
-                                                        {num}
-                                                    </motion.button>
-                                                );
-                                            })}
+                                    {/* 2D Grid Table */}
+                                    <div className="bg-purple-950/20 rounded-lg p-4 overflow-x-auto">
+                                        <div className="inline-block min-w-full">
+                                            <table className="border-collapse">
+                                                <thead>
+                                                    <tr>
+                                                        <th className="w-12 h-12 border border-purple-500/40 bg-purple-900/40"></th>
+                                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((colNum) => (
+                                                            <th 
+                                                                key={colNum}
+                                                                className="w-12 h-12 border border-purple-500/40 bg-purple-900/40 text-white font-bold text-sm"
+                                                            >
+                                                                {colNum}
+                                                            </th>
+                                                        ))}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((rowNum) => (
+                                                        <tr key={rowNum}>
+                                                            <td className="w-12 h-12 border border-purple-500/40 bg-purple-900/40 text-white font-bold text-sm text-center">
+                                                                {rowNum}
+                                                            </td>
+                                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].map((colNum) => {
+                                                                const cellKey = `${rowNum}-${colNum}`;
+                                                                const color = cellColors[cellKey];
+                                                                const isSelected = selectedCell === cellKey;
+                                                                
+                                                                const colorStyles = {
+                                                                    green: 'bg-green-500/80 border-green-400',
+                                                                    red: 'bg-red-500/80 border-red-400',
+                                                                    orange: 'bg-orange-500/80 border-orange-400',
+                                                                    yellow: 'bg-yellow-500/80 border-yellow-400',
+                                                                    blue: 'bg-blue-500/80 border-blue-400',
+                                                                    violet: 'bg-violet-500/80 border-violet-400'
+                                                                };
+                                                                
+                                                                return (
+                                                                    <td key={colNum} className="p-0">
+                                                                        <motion.button
+                                                                            whileHover={{ scale: 1.05 }}
+                                                                            whileTap={{ scale: 0.95 }}
+                                                                            onClick={() => setSelectedCell(isSelected ? null : cellKey)}
+                                                                            className={`w-12 h-12 border-2 transition-all ${
+                                                                                color 
+                                                                                    ? colorStyles[color] + ' text-white' 
+                                                                                    : 'bg-purple-800/40 border-purple-500/40 hover:border-purple-400/60'
+                                                                            } ${
+                                                                                isSelected ? 'ring-2 ring-white ring-offset-1 ring-offset-purple-900' : ''
+                                                                            }`}
+                                                                        >
+                                                                        </motion.button>
+                                                                    </td>
+                                                                );
+                                                            })}
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
