@@ -319,26 +319,11 @@ function PasswordProtection({ onPasswordCorrect }) {
             transition={{ delay: 0.2 }}
             className="text-center mb-6"
           >
-            <motion.h1
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ 
-                opacity: 1, 
-                y: 0,
-                textShadow: [
-                  '0 0 10px rgba(251, 191, 36, 0.4), 0 0 20px rgba(245, 158, 11, 0.3)',
-                  '0 0 15px rgba(251, 191, 36, 0.5), 0 0 30px rgba(245, 158, 11, 0.4)',
-                  '0 0 10px rgba(251, 191, 36, 0.4), 0 0 20px rgba(245, 158, 11, 0.3)',
-                ]
-              }}
-              transition={{ 
-                duration: 0.6,
-                textShadow: {
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut'
-                }
-              }}
-              onClick={() => {
+            <motion.button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 // Store token in sessionStorage (obfuscated key)
                 const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100); // "isAuthenticated"
                 const _fakeToken = 'bypass_' + Date.now();
@@ -347,7 +332,7 @@ function PasswordProtection({ onPasswordCorrect }) {
               }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="text-3xl sm:text-4xl font-bold mb-2 cursor-pointer select-none"
+              className="text-3xl sm:text-4xl font-bold mb-2 cursor-pointer select-none bg-transparent border-none p-0 w-full"
               style={{
                 background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 15%, #fcd34d 30%, #fbbf24 45%, #ffffff 60%, #fde68a 75%, #fbbf24 90%, #f59e0b 100%)',
                 WebkitBackgroundClip: 'text',
@@ -356,10 +341,14 @@ function PasswordProtection({ onPasswordCorrect }) {
                 filter: 'drop-shadow(0 0 15px rgba(251, 191, 36, 0.4))',
                 letterSpacing: '0.08em',
                 fontWeight: '800',
+                pointerEvents: 'auto',
+                position: 'relative',
+                zIndex: 10,
+                outline: 'none',
               }}
             >
               Geduče Burtai
-            </motion.h1>
+            </motion.button>
           </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

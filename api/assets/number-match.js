@@ -66,10 +66,24 @@ export default async function handler(req, res) {
     }
 
     // Read the image file from assets folder (not public, so it's not directly accessible)
-    const imagePath = path.join(process.cwd(), 'assets', 'Screenshot_2025-12-06_at_6.23.37_PM-a2e033fa-ea9f-46a4-921f-039a32f6eb88.png');
+    // Try multiple possible paths for Vercel/serverless compatibility
+    const possiblePaths = [
+      path.join(process.cwd(), 'assets', 'Screenshot_2025-12-06_at_6.23.37_PM-a2e033fa-ea9f-46a4-921f-039a32f6eb88.png'),
+      path.join(process.cwd(), '..', 'assets', 'Screenshot_2025-12-06_at_6.23.37_PM-a2e033fa-ea9f-46a4-921f-039a32f6eb88.png'),
+      path.join(__dirname, '..', '..', 'assets', 'Screenshot_2025-12-06_at_6.23.37_PM-a2e033fa-ea9f-46a4-921f-039a32f6eb88.png'),
+    ];
     
-    if (!fs.existsSync(imagePath)) {
-      return res.status(404).json({ error: 'Image not found' });
+    let imagePath = null;
+    for (const possiblePath of possiblePaths) {
+      if (fs.existsSync(possiblePath)) {
+        imagePath = possiblePath;
+        break;
+      }
+    }
+    
+    if (!imagePath) {
+      console.error('Image not found. Tried paths:', possiblePaths);
+      return res.status(404).json({ error: 'Image not found', tried: possiblePaths.map(p => p.toString()) });
     }
 
     // Read and serve the image

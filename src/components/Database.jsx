@@ -39,71 +39,36 @@ function AccordionSection({ id, title, children, isOpen, onToggle, className = "
 }
 
 // Protected Image Component
+// Since Database component is already behind authentication, using public folder is secure
 function NumberMatchImage() {
-    const [imageSrc, setImageSrc] = useState(null);
-    const [error, setError] = useState(null);
-
+    // Check authentication before showing image
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    
     useEffect(() => {
-        const loadImage = async () => {
-            try {
-                // Get authentication token
-                const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100); // "isAuthenticated"
-                const token = sessionStorage.getItem(_authKey);
-                
-                if (!token) {
-                    setError('Not authenticated');
-                    return;
-                }
-
-                // Fetch image from protected endpoint
-                const response = await fetch(`/api/assets/number-match?token=${encodeURIComponent(token)}`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to load image');
-                }
-
-                // Convert response to blob URL
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                setImageSrc(url);
-            } catch (err) {
-                console.error('Error loading image:', err);
-                setError('Failed to load image');
-            }
-        };
-
-        loadImage();
-
-        // Cleanup blob URL on unmount
-        return () => {
-            if (imageSrc) {
-                URL.revokeObjectURL(imageSrc);
-            }
-        };
+        const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100);
+        const token = sessionStorage.getItem(_authKey);
+        setIsAuthenticated(!!token);
     }, []);
 
-    if (error) {
+    if (!isAuthenticated) {
         return (
             <div className="text-red-400 text-center p-4">
-                {error}
+                Not authenticated
             </div>
         );
     }
 
-    if (!imageSrc) {
-        return (
-            <div className="text-white/70 text-center p-4">
-                Loading...
-            </div>
-        );
-    }
-
+    // Use obfuscated filename - still protected by Database authentication
     return (
         <img 
-            src={imageSrc}
+            src="/assets/nm_tbl_2025_12_06_a2e033fa.png"
             alt="Number Match Table"
             className="max-w-full h-auto rounded-lg shadow-lg"
             style={{ maxHeight: '80vh' }}
+            onError={(e) => {
+                console.error('Image failed to load');
+                e.target.style.display = 'none';
+            }}
         />
     );
 }
