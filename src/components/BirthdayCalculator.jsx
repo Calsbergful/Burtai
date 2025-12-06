@@ -33,42 +33,8 @@ function BirthdayCalculator({ personalBirthdayTrigger = 0 }) {
                     let personalYear;
                     try {
                         personalYear = calculatePersonalYear(parseInt(m), parseInt(d), parseInt(y));
-                        
-                        // Personal hour is always calculated from current device time, not input hour
-                        // The input hour is only used for birth hour animal display
-                        const now = new Date();
-                        const currentHour24 = now.getHours(); // 0-23 from JavaScript
-                        // Convert to 1-24 format for numerology (0 becomes 24, 1-23 stay as 1-23)
-                        const currentHour = currentHour24 === 0 ? 24 : currentHour24;
-                        const personalDayNum = personalYear.day;
-                        const personalHourSum = personalDayNum + currentHour;
-                        const personalHourNum = reducePersonalYear(personalHourSum);
-                        
-                        // Calculate next personal hour (using 1-24 format)
-                        let nextHourNum, nextHourNum24, nextPersonalHourSum, nextPersonalHourNum;
-                        if (currentHour === 24) {
-                            // Current is midnight (24), next is 1:00 (1)
-                            nextHourNum = 1;
-                            nextHourNum24 = 1;
-                            nextPersonalHourSum = personalDayNum + nextHourNum;
-                            nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
-                        } else if (currentHour === 23) {
-                            // Current is 23:00, next is midnight (24)
-                            nextHourNum = 24;
-                            nextHourNum24 = 0; // For display purposes
-                            nextPersonalHourSum = personalYear.nextDay + nextHourNum;
-                            nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
-                        } else {
-                            nextHourNum = currentHour + 1;
-                            nextHourNum24 = nextHourNum === 24 ? 0 : nextHourNum;
-                            nextPersonalHourSum = personalDayNum + nextHourNum;
-                            nextPersonalHourNum = reducePersonalYear(nextPersonalHourSum);
-                        }
-                        
-                        personalYear.hour = personalHourNum;
-                        personalYear.hourNumber = currentHour; // 1-24 format
-                        personalYear.nextHour = nextPersonalHourNum;
-                        personalYear.nextHourNumber = nextHourNum; // 1-24 format
+                        // Personal hour is already calculated in calculatePersonalYear function
+                        // No need to recalculate - use the values from the function
                     } catch (error) {
                         console.error('Error calculating personal year:', error);
                         personalYear = null;
