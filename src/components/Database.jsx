@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { numberDescriptions } from '../utils/numerology';
 import { zodiacSigns, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { zodiacAnimals, zodiacTranslations, zodiacEmojis, enemySigns, trineGroups, specialRelationships, zodiacLyingTypes, zodiacStrongSides, zodiacDislikes } from '../utils/chineseZodiac';
+import { defaultCellColors } from '../utils/defaultCellColors';
 
 
 // Accordion Component for Collapsible Sections
@@ -47,8 +48,19 @@ export default function Database() {
         return saved ? JSON.parse(saved) : {};
     });
     const [cellColors, setCellColors] = useState(() => {
-        const saved = localStorage.getItem('database_cell_colors');
-        return saved ? JSON.parse(saved) : {};
+        try {
+            const saved = localStorage.getItem('database_cell_colors');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Merge with defaults (defaults take precedence if both exist)
+                return { ...defaultCellColors, ...parsed };
+            }
+            // If no saved data, use defaults
+            return { ...defaultCellColors };
+        } catch (error) {
+            console.error('Error loading cell colors:', error);
+            return { ...defaultCellColors };
+        }
     });
     const [selectedCell, setSelectedCell] = useState(null);
 
@@ -82,10 +94,75 @@ export default function Database() {
         localStorage.setItem('database_custom', JSON.stringify(customData));
     }, [customData]);
 
-    // Save cell colors to localStorage
+    // Save cell colors to localStorage with error handling and multiple backups
     useEffect(() => {
-        localStorage.setItem('database_cell_colors', JSON.stringify(cellColors));
+        try {
+            const colorsJson = JSON.stringify(cellColors);
+            localStorage.setItem('database_cell_colors', colorsJson);
+            // Multiple backups for redundancy
+            localStorage.setItem('database_cell_colors_backup', colorsJson);
+            localStorage.setItem('database_cell_colors_backup2', colorsJson);
+            // Also save timestamp
+            localStorage.setItem('database_cell_colors_timestamp', new Date().toISOString());
+        } catch (error) {
+            console.error('Failed to save cell colors to localStorage:', error);
+        }
     }, [cellColors]);
+
+    // Load cell colors on mount and restore from backup if needed
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem('database_cell_colors');
+            const backup = localStorage.getItem('database_cell_colors_backup');
+            const backup2 = localStorage.getItem('database_cell_colors_backup2');
+            
+            let colorsToLoad = null;
+            
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (typeof parsed === 'object' && parsed !== null) {
+                        colorsToLoad = parsed;
+                    }
+                } catch (e) {
+                    console.warn('Failed to parse main colors, trying backup...');
+                }
+            }
+            
+            if (!colorsToLoad && backup) {
+                try {
+                    const parsed = JSON.parse(backup);
+                    if (typeof parsed === 'object' && parsed !== null) {
+                        colorsToLoad = parsed;
+                    }
+                } catch (e) {
+                    console.warn('Failed to parse backup colors, trying backup2...');
+                }
+            }
+            
+            if (!colorsToLoad && backup2) {
+                try {
+                    const parsed = JSON.parse(backup2);
+                    if (typeof parsed === 'object' && parsed !== null) {
+                        colorsToLoad = parsed;
+                    }
+                } catch (e) {
+                    console.warn('Failed to parse backup2 colors');
+                }
+            }
+            
+            if (colorsToLoad && Object.keys(colorsToLoad).length > 0) {
+                setCellColors(colorsToLoad);
+                // Restore to all storage locations
+                const colorsJson = JSON.stringify(colorsToLoad);
+                localStorage.setItem('database_cell_colors', colorsJson);
+                localStorage.setItem('database_cell_colors_backup', colorsJson);
+                localStorage.setItem('database_cell_colors_backup2', colorsJson);
+            }
+        } catch (error) {
+            console.error('Failed to load cell colors from localStorage:', error);
+        }
+    }, []);
 
 
     // Toggle section expansion
@@ -185,6 +262,72 @@ export default function Database() {
                         >
                             <div className="bg-purple-900/30 border border-purple-500/40 rounded-lg p-4">
                                 <div className="space-y-4">
+                                    {/* Export/Import Controls */}
+                                    <div className="bg-purple-950/40 rounded-lg p-3 mb-4">
+                                        <p className="text-white/70 text-xs mb-2">
+                                            💡 Spalvos automatiškai išsaugomos. Eksportuokite, kad išsaugotumėte kopiją, arba importuokite iš failo.
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    const dataStr = JSON.stringify(cellColors, null, 2);
+                                                    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                                                    const url = URL.createObjectURL(dataBlob);
+                                                    const link = document.createElement('a');
+                                                    link.href = url;
+                                                    link.download = 'spalvu-lentele-colors.json';
+                                                    document.body.appendChild(link);
+                                                    link.click();
+                                                    document.body.removeChild(link);
+                                                    URL.revokeObjectURL(url);
+                                                }}
+                                                className="px-4 py-2 bg-green-600/60 hover:bg-green-600/80 text-white rounded-lg font-semibold text-sm transition-all"
+                                            >
+                                                💾 Eksportuoti Spalvas
+                                            </button>
+                                            <label className="px-4 py-2 bg-blue-600/60 hover:bg-blue-600/80 text-white rounded-lg font-semibold text-sm transition-all cursor-pointer">
+                                                📥 Importuoti Spalvas
+                                                <input
+                                                    type="file"
+                                                    accept=".json"
+                                                    className="hidden"
+                                                    onChange={(e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            const reader = new FileReader();
+                                                            reader.onload = (event) => {
+                                                                try {
+                                                                    const imported = JSON.parse(event.target.result);
+                                                                    if (typeof imported === 'object' && imported !== null) {
+                                                                        setCellColors(imported);
+                                                                        localStorage.setItem('database_cell_colors', JSON.stringify(imported));
+                                                                        localStorage.setItem('database_cell_colors_backup', JSON.stringify(imported));
+                                                                    }
+                                                                } catch (error) {
+                                                                    alert('Klaida importuojant failą. Patikrinkite, kad failas yra teisingas JSON formatas.');
+                                                                }
+                                                            };
+                                                            reader.readAsText(file);
+                                                        }
+                                                        e.target.value = '';
+                                                    }}
+                                                />
+                                            </label>
+                                            <button
+                                                onClick={() => {
+                                                    if (confirm('Ar tikrai norite išvalyti visas spalvas?')) {
+                                                        setCellColors({});
+                                                        localStorage.removeItem('database_cell_colors');
+                                                        localStorage.removeItem('database_cell_colors_backup');
+                                                    }
+                                                }}
+                                                className="px-4 py-2 bg-red-600/60 hover:bg-red-600/80 text-white rounded-lg font-semibold text-sm transition-all"
+                                            >
+                                                🗑️ Išvalyti Visas
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     {/* Color Selection Panel */}
                                     {selectedCell && (
                                         <div className="bg-purple-950/40 rounded-lg p-4 mb-4">
