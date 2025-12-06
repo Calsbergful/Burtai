@@ -187,7 +187,9 @@ function App() {
       <CosmicBackground />
       <main className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-180px)]">
         <header className="text-center text-white mb-2 sm:mb-3 md:mb-4 relative z-10 w-full">
-          <motion.h1
+          <motion.button
+            type="button"
+            onClick={() => setActiveView('calculator')}
             initial={{ opacity: 0, y: -20 }}
             animate={{ 
               opacity: 1, 
@@ -206,7 +208,9 @@ function App() {
                 ease: 'easeInOut'
               }
             }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 relative"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 relative cursor-pointer select-none bg-transparent border-none p-0"
             style={{
               background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 15%, #fcd34d 30%, #fbbf24 45%, #ffffff 60%, #fde68a 75%, #fbbf24 90%, #f59e0b 100%)',
               WebkitBackgroundClip: 'text',
@@ -215,10 +219,12 @@ function App() {
               filter: 'drop-shadow(0 0 15px rgba(251, 191, 36, 0.4)) drop-shadow(0 0 30px rgba(245, 158, 11, 0.3)) drop-shadow(0 0 45px rgba(217, 119, 6, 0.2))',
               letterSpacing: '0.08em',
               fontWeight: '800',
+              pointerEvents: 'auto',
+              outline: 'none',
             }}
           >
             Geduče Burtai
-          </motion.h1>
+          </motion.button>
         </header>
         
         <AnimatePresence mode="wait">

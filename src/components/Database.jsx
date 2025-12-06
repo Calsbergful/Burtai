@@ -38,41 +38,6 @@ function AccordionSection({ id, title, children, isOpen, onToggle, className = "
     );
 }
 
-// Protected Image Component
-// Since Database component is already behind authentication, using public folder is secure
-function NumberMatchImage() {
-    // Check authentication before showing image
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    
-    useEffect(() => {
-        const _authKey = String.fromCharCode(105, 115, 65, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100);
-        const token = sessionStorage.getItem(_authKey);
-        setIsAuthenticated(!!token);
-    }, []);
-
-    if (!isAuthenticated) {
-        return (
-            <div className="text-red-400 text-center p-4">
-                Not authenticated
-            </div>
-        );
-    }
-
-    // Use obfuscated filename - still protected by Database authentication
-    return (
-        <img 
-            src="/assets/nm_tbl_2025_12_06_a2e033fa.png"
-            alt="Number Match Table"
-            className="max-w-full h-auto rounded-lg shadow-lg"
-            style={{ maxHeight: '80vh' }}
-            onError={(e) => {
-                console.error('Image failed to load');
-                e.target.style.display = 'none';
-            }}
-        />
-    );
-}
-
 export default function Database() {
     const [editingItem, setEditingItem] = useState(null);
     const [editData, setEditData] = useState({});
@@ -201,20 +166,6 @@ export default function Database() {
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-4"
                 >
-                        {/* Number Color Table */}
-                        <AccordionSection
-                            id="number-match"
-                            title="🔢 Number Match"
-                            isOpen={expandedSections['number-match'] ?? false}
-                            onToggle={toggleSection}
-                        >
-                            <div className="bg-purple-900/30 border border-purple-500/40 rounded-lg p-4">
-                                <div className="flex justify-center items-center">
-                                    <NumberMatchImage />
-                                </div>
-                            </div>
-                        </AccordionSection>
-
                         <AccordionSection
                             id="detailed-numbers"
                             title="📚 Detalūs Skaičių Aprašymai"
