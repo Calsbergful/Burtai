@@ -25,7 +25,6 @@ const calculateDateSum = (day, month, year) => {
 
 export default function Calendar({ onDateSelect }) {
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [selectedDate, setSelectedDate] = useState(null);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -42,16 +41,6 @@ export default function Calendar({ onDateSelect }) {
 
     const dayNames = ['Pr', 'An', 'Tr', 'Kt', 'Pn', 'Št', 'Sk'];
 
-    const handleDateClick = (day) => {
-        const date = new Date(year, month, day);
-        setSelectedDate(date);
-        if (onDateSelect) {
-            // Format date as YYYY-MM-DD directly to avoid timezone issues
-            const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            onDateSelect(formattedDate);
-        }
-    };
-
     const goToPrevMonth = () => {
         setCurrentDate(new Date(year, month - 1, 1));
     };
@@ -66,15 +55,6 @@ export default function Calendar({ onDateSelect }) {
             day === today.getDate() &&
             month === today.getMonth() &&
             year === today.getFullYear()
-        );
-    };
-
-    const isSelected = (day) => {
-        if (!selectedDate) return false;
-        return (
-            day === selectedDate.getDate() &&
-            month === selectedDate.getMonth() &&
-            year === selectedDate.getFullYear()
         );
     };
 
@@ -183,7 +163,6 @@ export default function Calendar({ onDateSelect }) {
                 {/* Current month days */}
                 {days.map((day, index) => {
                     const isTodayDate = isToday(day);
-                    const isSelectedDate = isSelected(day);
                     const dateSum = calculateDateSum(day, month, year);
                     // Highlight master numbers (11, 22, 33), 28, 20 (hidden 11), and 29 (2+9=11) in sum only
                     const isSpecialSum = masterNumbers.includes(dateSum) || dateSum === 28 || dateSum === 20 || dateSum === 29;
@@ -196,14 +175,10 @@ export default function Calendar({ onDateSelect }) {
                     const isWesternZodiacStart = isZodiacSignStart(month + 1, day);
                     
                     return (
-                        <motion.button
+                        <motion.div
                             key={index}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => handleDateClick(day)}
-                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
                             className={`
-                                rounded-lg sm:rounded-xl transition-all text-white cursor-pointer 
+                                rounded-lg sm:rounded-xl transition-all text-white
                                 h-[50px] sm:h-[55px] md:h-[60px] lg:h-[65px] xl:h-[70px]
                                 min-w-[50px] sm:min-w-[55px] md:min-w-[60px] lg:min-w-[65px] xl:min-w-[70px]
                                 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-medium
@@ -212,18 +187,14 @@ export default function Calendar({ onDateSelect }) {
                                     ? 'bg-gradient-to-br from-yellow-500/40 to-orange-500/40 text-white border-2 border-yellow-400/60 shadow-lg'
                                     : isWesternZodiacStart
                                     ? 'bg-gradient-to-br from-cyan-500/35 to-teal-500/35 text-white border-2 border-cyan-400/60 shadow-lg'
-                                    : isSelectedDate
-                                    ? 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg'
                                     : isTodayDate
                                     ? 'bg-purple-500/30 text-white border border-purple-400'
-                                    : 'hover:bg-purple-500/20 active:bg-purple-500/30'
+                                    : 'bg-transparent'
                                 }
                             `}
                             style={{
                                 willChange: 'transform',
-                                boxShadow: isSelectedDate 
-                                    ? '0 0 20px rgba(138, 43, 226, 0.6)' 
-                                    : isTodayDate
+                                boxShadow: isTodayDate
                                     ? '0 0 15px rgba(138, 43, 226, 0.4)'
                                     : 'none'
                             }}
@@ -243,7 +214,7 @@ export default function Calendar({ onDateSelect }) {
                             >
                                 {dateSum}
                             </span>
-                        </motion.button>
+                        </motion.div>
                     );
                 })}
             </div>
