@@ -4,84 +4,10 @@ import { numberDescriptions } from '../utils/numerology';
 import { zodiacSigns, zodiacSignTranslations, zodiacSignEmojis } from '../utils/westernZodiac';
 import { zodiacAnimals, zodiacTranslations, zodiacEmojis, enemySigns, trineGroups, specialRelationships, zodiacLyingTypes, zodiacStrongSides, zodiacDislikes } from '../utils/chineseZodiac';
 
-// Helper component to display bilingual content
-function BilingualText({ lt, en, showEnglish, className = "", inline = false }) {
-    if (!showEnglish || !en) {
-        return <span className={className}>{lt}</span>;
-    }
-    
-    if (inline) {
-        return (
-            <span className={className}>
-                {lt} <span className="text-blue-300/60 text-xs ml-1">({en})</span>
-            </span>
-        );
-    }
-    
-    return (
-        <div className={className}>
-            <div className="text-white/90">{lt}</div>
-            <div className="mt-1 text-xs text-blue-300/70 italic border-l-2 border-blue-500/40 pl-2">
-                <span className="font-semibold text-blue-300/80">[EN]</span> {en}
-            </div>
-        </div>
-    );
-}
-
-// Helper to preserve English technical terms
-function PreserveEnglish({ children, en, showEnglish }) {
-    if (!showEnglish || !en) {
-        return children;
-    }
-    return (
-        <>
-            {children}
-            <span className="text-blue-300/60 text-xs ml-1">({en})</span>
-        </>
-    );
-}
-
-// Wrapper component that shows English when available and showEnglish is true
-function EnglishContent({ children, english, showEnglish, className = "" }) {
-    if (showEnglish && english) {
-        return <div className={className}>{english}</div>;
-    }
-    return <div className={className}>{children}</div>;
-}
 
 // Accordion Component for Collapsible Sections
-function AccordionSection({ id, title, titleEn, children, isOpen, onToggle, className = "", searchMatch = true, searchQuery = '', contentText = '', expandedSearchTerms = [], showEnglish = false, getEnglishTitle }) {
-    const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
-    
-    // Use English title if showEnglish is true and titleEn is provided, or use helper function
-    const englishTitle = titleEn || (getEnglishTitle ? getEnglishTitle(title) : null);
-    const displayTitle = (showEnglish && englishTitle) ? englishTitle : title;
-    
-    // Check if title matches search (supports expanded terms)
-    const titleMatches = !hasSearchQuery || (expandedSearchTerms && expandedSearchTerms.length > 0 
-        ? expandedSearchTerms.some(term => (displayTitle || '').toLowerCase().includes(term))
-        : (displayTitle || '').toLowerCase().includes((searchQuery || '').toLowerCase().trim()));
-    
-    // Check if content text matches search (supports expanded terms)
-    const contentMatches = !hasSearchQuery || !contentText || (expandedSearchTerms && expandedSearchTerms.length > 0
-        ? expandedSearchTerms.some(term => (contentText || '').toLowerCase().includes(term))
-        : (contentText || '').toLowerCase().includes((searchQuery || '').toLowerCase().trim()));
-    
-    // Determine if this section matches the search (title, keywords, or content)
-    const sectionMatches = hasSearchQuery 
-        ? (searchMatch && (titleMatches || contentMatches))
-        : true;
-    
-    // When there's a search query: auto-expand if it matches, otherwise collapse
-    // When there's no search query: only show if manually opened
-    const effectiveIsOpen = hasSearchQuery 
-        ? sectionMatches  // Auto-expand matching sections during search
-        : isOpen;         // Only show manually opened sections when no search
-    
-    // Hide entire section if it doesn't match search
-    if (!sectionMatches) {
-        return null;
-    }
+function AccordionSection({ id, title, children, isOpen, onToggle, className = "" }) {
+    const effectiveIsOpen = isOpen;
     
     return (
         <div className={`mb-4 ${className}`} id={id}>
@@ -89,7 +15,7 @@ function AccordionSection({ id, title, titleEn, children, isOpen, onToggle, clas
                 onClick={() => onToggle(id)}
                 className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border border-purple-500/40 rounded-lg hover:border-purple-400/60 transition-all"
             >
-                <h4 className="text-left font-bold text-white">{displayTitle}</h4>
+                <h4 className="text-left font-bold text-white">{title}</h4>
                 <motion.div
                     animate={{ rotate: effectiveIsOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
@@ -115,12 +41,7 @@ function AccordionSection({ id, title, titleEn, children, isOpen, onToggle, clas
 export default function Database() {
     const [editingItem, setEditingItem] = useState(null);
     const [editData, setEditData] = useState({});
-    const [searchQuery, setSearchQuery] = useState('');
     const [expandedSections, setExpandedSections] = useState({});
-    const [showEnglish, setShowEnglish] = useState(() => {
-        const saved = localStorage.getItem('database_show_english');
-        return saved ? JSON.parse(saved) : false;
-    });
     const [customData, setCustomData] = useState(() => {
         const saved = localStorage.getItem('database_custom');
         return saved ? JSON.parse(saved) : {};
@@ -131,68 +52,28 @@ export default function Database() {
     });
     const [selectedCell, setSelectedCell] = useState(null);
 
-    // Helper function to get English title for sections
-    const getEnglishTitle = (ltTitle) => {
-        const titleMap = {
-            "📖 Numerologijos Įvadas": "📖 Numerology Introduction",
-            "📅 Asmeniniai Metai ir Mėnesiai": "📅 Personal Years and Months",
-            "🔤 Gematria ir Letterology": "🔤 Gematria and Letterology",
-            "🔄 Sinchronizacijos ir Pasikartojantys Skaičiai": "🔄 Synchronizations and Repeating Numbers",
-            "💡 Papildomos Numerologijos Įžvalgos": "💡 Additional Numerology Insights",
-            "📚 Detalūs Skaičių Aprašymai": "📚 Detailed Number Descriptions",
-            "📊 Numerologijos Skaičių Santykių Diagrama": "📊 Numerology Number Relationships Diagram",
-            "🎴 Skaičių Kortelės": "🎴 Number Cards",
-            "♎ Svarstyklės (Libra) ir Maldek": "♎ Scales (Libra) and Maldek",
-            "❓ Kodėl Nėra 2 Gyvenimo Kelio?": "❓ Why Is There No Life Path 2?",
-            "🌐 Matricos Energijos Derlius": "🌐 Matrix Energy Harvesting",
-            "🎨 Spalvos ir Vibracinės Energijos": "🎨 Colors and Vibrational Energies",
-            "♒ Vandenio Amžius (Age of Aquarius)": "♒ Age of Aquarius",
-            "💑 Santykiai ir Suderinamumas": "💑 Relationships and Compatibility",
-            "💻 Technologija ir Dvyniai (Gemini)": "💻 Technology and Twins (Gemini)",
-            "📊 Numerologijos Hierarchija": "📊 Numerology Hierarchy",
-            "⚖️ Karma, Reinkarnacija ir Astrologija": "⚖️ Karma, Reincarnation and Astrology",
-            "🔄 Reinkarnacija ir Sielos": "🔄 Reincarnation and Souls",
-            "🔗 Zodiako Santykiai": "🔗 Zodiac Relationships",
-            "🐉 Detalūs Kinų Zodiako Ženklų Aprašymai": "🐉 Detailed Chinese Zodiac Sign Descriptions",
-            "📖 Didžioji Lenktynių Istorija": "📖 The Great Race Story",
-            "⚠️ Svarbu: Kinų Naujieji Metai": "⚠️ Important: Chinese New Year",
-        };
-        return titleMap[ltTitle] || ltTitle;
-    };
-
     // Translation system for UI text
     const t = {
-        searchPlaceholder: showEnglish ? "🔍 Search information (e.g., '11', 'Rat', 'Karma', 'Matrix'...)" : "🔍 Ieškoti informacijos (pvz., '11', 'Rat', 'Karma', 'Matrix'...)",
-        searching: showEnglish ? "Searching:" : "Ieškoma:",
-        searchingRelated: showEnglish ? "(Searching related terms:" : "(Ieškoma susijusių terminų:",
-        showEnglishNote: showEnglish ? "📝 Showing all content in original English text" : "📝 Rodo originalų anglų tekstą kartu su lietuvių vertimu",
-        toggleTitle: showEnglish ? "Show Lithuanian only" : "Rodyti originalų anglų tekstą",
-        tabs: {
-            numbers: showEnglish ? "Numbers" : "Skaičiai",
-            western: showEnglish ? "Western Zodiac" : "Vakarietiškas Zodiakas",
-            chinese: showEnglish ? "Chinese Zodiac" : "Kinų Zodiakas",
-            colors: showEnglish ? "Colors" : "Spalvos"
-        },
-        edit: showEnglish ? "✏️ Edit" : "✏️ Redaguoti",
-        save: showEnglish ? "💾 Save" : "💾 Išsaugoti",
-        cancel: showEnglish ? "❌ Cancel" : "❌ Atšaukti",
-        noDescription: showEnglish ? "No description. Click \"Edit\" to add." : "Nėra aprašymo. Spustelėkite \"Redaguoti\" norėdami pridėti.",
-        description: showEnglish ? "Description" : "Aprašymas",
+        edit: "✏️ Redaguoti",
+        save: "💾 Išsaugoti",
+        cancel: "❌ Atšaukti",
+        noDescription: "Nėra aprašymo. Spustelėkite \"Redaguoti\" norėdami pridėti.",
+        description: "Aprašymas",
         placeholder: {
-            description: showEnglish ? "Description, what to expect on a day when this number is active..." : "Aprašymas, ką tikėtis dieną, kai aktyvus šis skaičius...",
-            enterDescription: showEnglish ? "Enter or paste description..." : "Įveskite arba įklijuokite aprašymą...",
-            lyingType: showEnglish ? "E.g: half truths, gaslight, manipulation..." : "Pvz: half truths, gaslight, manipulation...",
-            strongSide: showEnglish ? "E.g: manipulation, leader, smart..." : "Pvz: manipulation, leader, smart...",
-            dislike: showEnglish ? "E.g: can't keep a secret, bossy, annoying..." : "Pvz: can't keep a secret, bossy, annoying..."
+            description: "Aprašymas, ką tikėtis dieną, kai aktyvus šis skaičius...",
+            enterDescription: "Įveskite arba įklijuokite aprašymą...",
+            lyingType: "Pvz: half truths, gaslight, manipulation...",
+            strongSide: "Pvz: manipulation, leader, smart...",
+            dislike: "Pvz: can't keep a secret, bossy, annoying..."
         },
         relationship: {
-            enemy: showEnglish ? "Enemy" : "Priešas",
-            bad: showEnglish ? "Bad" : "Blogas",
-            neutral: showEnglish ? "50/50 (Neutral)" : "50/50 (Neutralus)",
-            good: showEnglish ? "Good" : "Geras",
-            best: showEnglish ? "Best" : "Geriausias",
-            ms: showEnglish ? "Master/Slave" : "Master/Slave",
-            empty: showEnglish ? "Empty" : "Tuščia"
+            enemy: "Priešas",
+            bad: "Blogas",
+            neutral: "50/50 (Neutralus)",
+            good: "Geras",
+            best: "Geriausias",
+            ms: "Master/Slave",
+            empty: "Tuščia"
         }
     };
 
@@ -206,10 +87,6 @@ export default function Database() {
         localStorage.setItem('database_cell_colors', JSON.stringify(cellColors));
     }, [cellColors]);
 
-    // Save language preference to localStorage
-    useEffect(() => {
-        localStorage.setItem('database_show_english', JSON.stringify(showEnglish));
-    }, [showEnglish]);
 
     // Toggle section expansion
     const toggleSection = (sectionId) => {
@@ -217,79 +94,6 @@ export default function Database() {
             ...prev,
             [sectionId]: !prev[sectionId]
         }));
-    };
-
-    // Search term associations - when word. is typed, search for related terms
-    const searchAssociations = {
-        'karma': ['karma', 'karminė', 'karminis', 'reinkarnacija', 'siela', 'sielos', 'emocijos', 'emocinis', 'ryšys', 'pririštas', 'pririšti', 'aktyvuojate', 'aktyvuoti', 'skola', 'apribojimai'],
-        'numerologija': ['numerologija', 'numerologijos', 'skaičiai', 'skaičius', 'lifepath', 'gyvenimo kelias', 'likimas', 'asmenybė', 'sielos skaičius', 'asmeniniai metai', 'personal year'],
-        'zodiakas': ['zodiakas', 'zodiako', 'ženklai', 'ženklas', 'astrologija', 'astrologijos', 'vakarietiškas', 'kinų', 'vakarietiškas zodiakas', 'kinų zodiakas'],
-        'astrologija': ['astrologija', 'astrologijos', 'zodiakas', 'zodiako', 'ženklai', 'planeta', 'planetos', 'namai', 'vedinė', 'vedinės', 'vakarietiškas'],
-        'reinkarnacija': ['reinkarnacija', 'reinkarnacijos', 'siela', 'sielos', 'karma', 'karminė', 'gyvenimas', 'gyvenimai', 'kraujotaka', 'kraujotakos'],
-        'siela': ['siela', 'sielos', 'reinkarnacija', 'karma', 'mėnulis', 'gaudyklė', 'atmintis', 'karminė'],
-        'skaičiai': ['skaičiai', 'skaičius', 'numerologija', 'lifepath', 'gyvenimo kelias', 'likimas', 'asmenybė', 'sielos skaičius', '1', '2', '3', '4', '5', '6', '7', '8', '9', '11', '22', '33'],
-        'spalvos': ['spalvos', 'spalvų', 'spalva', 'raudona', 'mėlyna', 'žalia', 'geltona', 'violetinė', 'indigo', 'oranžinė', 'vibracija', 'vibracinės'],
-        'matrix': ['matrix', 'matrica', 'matricos', 'energija', 'energijos', 'derlius', 'harvesting', 'sistema', 'sistemos'],
-        'elementai': ['elementai', 'elementas', 'oro', 'žemės', 'vandens', 'ugnies', 'kinų', 'santykiai', 'priešai', 'draugai'],
-        'gyvenimo kelias': ['gyvenimo kelias', 'lifepath', 'lp', 'skaičiai', 'numerologija', 'kelias', 'gyvenimas'],
-        'emocijos': ['emocijos', 'emocinis', 'ryšys', 'pririštas', 'karma', 'karminė', 'aktyvuojate'],
-        'mėnulis': ['mėnulis', 'mėnulio', 'siela', 'gaudyklė', 'atmintis', 'ciklai', 'fazės'],
-        'planeta': ['planeta', 'planetos', 'saulė', 'saturnas', 'venus', 'marsas', 'jupiteris', 'merkūras', 'rahu', 'ketu'],
-    };
-
-    // Expand search query if it ends with a dot
-    const expandSearchQuery = (query) => {
-        if (!query || !query.endsWith('.')) {
-            return query ? [query.toLowerCase().trim()] : [];
-        }
-        
-        const baseTerm = query.slice(0, -1).toLowerCase().trim();
-        const associations = searchAssociations[baseTerm] || [baseTerm];
-        
-        // Return all associated terms
-        return associations.map(term => term.toLowerCase());
-    };
-
-    // Check if text matches any of the expanded search terms
-    const matchesExpandedQuery = (text, expandedTerms) => {
-        if (!text || !expandedTerms || expandedTerms.length === 0) return false;
-        const textLower = text.toLowerCase();
-        return expandedTerms.some(term => textLower.includes(term));
-    };
-
-    // Calculate expanded search terms (for dot expansion) - must be after expandSearchQuery is defined
-    const expandedSearchTerms = searchQuery.trim() 
-        ? expandSearchQuery(searchQuery.trim())
-        : [];
-
-    // Check if section matches search query (checks both title and keywords, with expansion)
-    const matchesSearch = (title, keywords = '') => {
-        if (!searchQuery || !searchQuery.trim()) return true;
-        try {
-            const expandedTerms = expandSearchQuery(searchQuery.trim());
-            const titleLower = (title || '').toLowerCase();
-            const keywordsLower = (keywords || '').toLowerCase();
-            const combinedText = `${titleLower} ${keywordsLower}`;
-            return matchesExpandedQuery(combinedText, expandedTerms);
-        } catch (error) {
-            console.error('Search error:', error);
-            return false;
-        }
-    };
-
-    // Check if a category should be shown (has matching sections or no search)
-    const categoryHasMatches = (categoryName, categoryKeywords = '') => {
-        if (!searchQuery || !searchQuery.trim()) return true;
-        try {
-            const expandedTerms = expandSearchQuery(searchQuery.trim());
-            const nameLower = (categoryName || '').toLowerCase();
-            const keywordsLower = (categoryKeywords || '').toLowerCase();
-            const combinedText = `${nameLower} ${keywordsLower}`;
-            return matchesExpandedQuery(combinedText, expandedTerms);
-        } catch (error) {
-            console.error('Category search error:', error);
-            return false;
-        }
     };
 
 
@@ -365,54 +169,6 @@ export default function Database() {
     return (
         <div className="w-full max-w-6xl mx-auto mb-1 sm:mb-2">
             <div className="bg-gradient-to-br from-purple-900/20 via-violet-900/15 to-indigo-900/20 backdrop-blur-xl rounded-2xl p-4 sm:p-6 shadow-2xl border border-purple-500/20">
-                {/* Search Bar and Language Toggle */}
-                <div className="mb-6">
-                    <div className="flex gap-3 mb-3">
-                        <div className="relative flex-1">
-                            <input
-                                type="text"
-                                placeholder={t.searchPlaceholder}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full px-4 py-3 bg-purple-900/40 border border-purple-500/40 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20"
-                            />
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-                        <button
-                            onClick={() => setShowEnglish(!showEnglish)}
-                            className={`px-4 py-3 rounded-lg border transition-all ${
-                                showEnglish 
-                                    ? 'bg-blue-600/40 border-blue-500/60 text-white' 
-                                    : 'bg-purple-900/40 border-purple-500/40 text-white/70 hover:border-purple-400/60'
-                            }`}
-                            title={t.toggleTitle}
-                        >
-                            {showEnglish ? '🇬🇧 EN' : '🇱🇹 LT'}
-                        </button>
-                    </div>
-                    {searchQuery && (
-                        <p className="mt-2 text-sm text-white/70">
-                            {t.searching} <span className="font-semibold text-purple-300">"{searchQuery}"</span>
-                            {searchQuery.trim().endsWith('.') && expandedSearchTerms.length > 1 && (
-                                <span className="ml-2 text-xs text-purple-400">
-                                    {t.searchingRelated} {expandedSearchTerms.slice(0, 3).join(', ')}{expandedSearchTerms.length > 3 ? '...' : ''})
-                                </span>
-                            )}
-                        </p>
-                    )}
-                    {showEnglish && (
-                        <p className="mt-2 text-xs text-blue-300/70">
-                            {t.showEnglishNote}
-                        </p>
-                    )}
-                </div>
 
                 {/* All Database Sections */}
                 <motion.div
@@ -421,14 +177,11 @@ export default function Database() {
                     className="space-y-4"
                 >
                         {/* Number Color Table */}
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                        <AccordionSection
                             id="number-color-table"
                             title="🎨 Skaičių Spalvų Lentelė"
                             isOpen={expandedSections['number-color-table'] ?? false}
                             onToggle={toggleSection}
-                            searchQuery={searchQuery}
-                            expandedSearchTerms={expandedSearchTerms}
-                            searchMatch={matchesSearch('Skaičių Spalvų Lentelė Number Color Table')}
                         >
                             <div className="bg-purple-900/30 border border-purple-500/40 rounded-lg p-4">
                                 <div className="space-y-4">
@@ -553,16 +306,12 @@ export default function Database() {
                             </div>
                         </AccordionSection>
 
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
-                                                    id="detailed-numbers"
-                                                    title="📚 Detalūs Skaičių Aprašymai"
-                                                    isOpen={expandedSections['detailed-numbers'] ?? false}
-                                                    onToggle={toggleSection}
-                                                    searchQuery={searchQuery}
-                                                    expandedSearchTerms={expandedSearchTerms}
-                                                    searchMatch={matchesSearch('Detalūs Skaičių Aprašymai skaičiai 1 2 3 4 5 6 7 8 9 11 22 33')}
-                                                    contentText="skaičius 1 2 3 4 5 6 7 8 9 11 22 33 numerologija lifepath gyvenimo kelias"
-                                                >
+                        <AccordionSection
+                            id="detailed-numbers"
+                            title="📚 Detalūs Skaičių Aprašymai"
+                            isOpen={expandedSections['detailed-numbers'] ?? false}
+                            onToggle={toggleSection}
+                        >
                                                     <div className="bg-teal-900/30 border border-teal-500/40 rounded-lg p-4">
                                                     <div className="text-sm text-white/90 space-y-6 max-h-[800px] overflow-y-auto">
                                                         
@@ -1041,14 +790,14 @@ export default function Database() {
                                                     </div>
                                                 </AccordionSection>
 
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                        <AccordionSection 
                                                     id="colors-vibrations"
                                                     title="🎨 Spalvos ir Vibracinės Energijos"
                                                     isOpen={expandedSections['colors-vibrations'] ?? false}
                                                     onToggle={toggleSection}
-                                                    searchQuery={searchQuery}
-                                                    expandedSearchTerms={expandedSearchTerms}
-                                                    searchMatch={matchesSearch('Spalvos Vibracinės Energijos Colors')}
+                                                    
+                                                    
+                                                    
                                                 >
                                                     <div className="bg-emerald-900/30 border border-emerald-500/40 rounded-lg p-4">
                                                         <div className="text-sm text-white/90 space-y-4">
@@ -1221,14 +970,14 @@ export default function Database() {
 
 
                         
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                        <AccordionSection 
                                                     id="beauty-types"
                                                     title="✨ Astrologinės Grožio Rūšys (Planetų Dominavimas Moterims)"
                                                     isOpen={expandedSections['beauty-types'] ?? false}
                                                     onToggle={toggleSection}
-                                                    searchQuery={searchQuery}
-                                                    expandedSearchTerms={expandedSearchTerms}
-                                                    searchMatch={matchesSearch('Astrologinės Grožio Rūšys Beauty Types')}
+                                                    
+                                                    
+                                                    
                                                 >
                                                     <div className="bg-pink-900/30 border border-pink-500/40 rounded-lg p-4">
                                                         <div className="text-sm text-white/90 space-y-6">
@@ -1378,14 +1127,14 @@ export default function Database() {
                                                     </div>
                                                 </AccordionSection>
 
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                        <AccordionSection 
                                                     id="astrology-101"
                                                     title="⭐ Astrologijos 101 - Detalūs Zodiako Ženklų Aprašymai"
                                                     isOpen={expandedSections['astrology-101'] ?? false}
                                                     onToggle={toggleSection}
-                                                    searchQuery={searchQuery}
-                                                    expandedSearchTerms={expandedSearchTerms}
-                                                    searchMatch={matchesSearch('Astrologijos 101 Zodiako Ženklų Aprašymai')}
+                                                    
+                                                    
+                                                    
                                                 >
                                                     <div className="bg-pink-900/30 border border-pink-500/40 rounded-lg p-4">
                                                         <div className="text-sm text-white/90 space-y-6 max-h-[1000px] overflow-y-auto">
@@ -1739,14 +1488,14 @@ export default function Database() {
 
 
                         
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                        <AccordionSection 
                                                     id="element-relationships"
                                                     title="🌊🔥💨🌍 Elementų Santykiai"
                                                     isOpen={expandedSections['element-relationships'] ?? false}
                                                     onToggle={toggleSection}
-                                                    searchQuery={searchQuery}
-                                                    expandedSearchTerms={expandedSearchTerms}
-                                                    searchMatch={matchesSearch('Elementų Santykiai Elements')}
+                                                    
+                                                    
+                                                    
                                                 >
                                                     <div className="bg-amber-900/30 border border-amber-500/40 rounded-lg p-4">
                                                         <div className="text-sm text-white/90 space-y-4">
@@ -1919,15 +1668,15 @@ export default function Database() {
                                                     </div>
                                                 </AccordionSection>
 
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                        <AccordionSection 
                                                     id="great-race"
                                                     title="📖 Didžioji Lenktynių Istorija"
                                                     isOpen={expandedSections['great-race'] ?? false}
                                                     onToggle={toggleSection}
-                                                    searchQuery={searchQuery}
-                                                    expandedSearchTerms={expandedSearchTerms}
-                                                    searchMatch={matchesSearch('Didžioji Lenktynių Istorija Great Race žiurkė Rat Jautis Ox lenktynės')}
-                                                    contentText="žiurkė rat jautis ox lenktynės istorija pirmasis ženklas finišas"
+                                                    
+                                                    
+                                                    
+                                                    
                                                 >
                                                     <div className="bg-purple-900/30 border border-purple-500/40 rounded-lg p-4">
                                                         <div className="text-sm text-white/90 space-y-3">
@@ -1964,14 +1713,14 @@ export default function Database() {
                                                     </div>
                                                 </AccordionSection>
 
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                        <AccordionSection 
                                                     id="feng-shui"
                                                     title="💰 Feng Shui: Turto Kampas (Xun)"
                                                     isOpen={expandedSections['feng-shui'] ?? false}
                                                     onToggle={toggleSection}
-                                                    searchQuery={searchQuery}
-                                                    expandedSearchTerms={expandedSearchTerms}
-                                                    searchMatch={matchesSearch('Feng Shui Turto Kampas Xun')}
+                                                    
+                                                    
+                                                    
                                                 >
                                                     <div className="bg-green-900/30 border border-green-500/40 rounded-lg p-4">
                                                         <div className="text-sm text-white/90 space-y-3">
@@ -2010,15 +1759,15 @@ export default function Database() {
                                                     </div>
                                                 </AccordionSection>
 
-                        <AccordionSection showEnglish={showEnglish} getEnglishTitle={getEnglishTitle}
+                        <AccordionSection 
                                                     id="detailed-chinese-signs"
                                                     title="🐉 Detalūs Kinų Zodiako Ženklų Aprašymai"
                                                     isOpen={expandedSections['detailed-chinese-signs'] ?? false}
                                                     onToggle={toggleSection}
-                                                    searchQuery={searchQuery}
-                                                    expandedSearchTerms={expandedSearchTerms}
-                                                    searchMatch={matchesSearch('Detalūs Kinų Zodiako Ženklų Aprašymai Chinese Zodiac žiurkė Rat Tigras Drakonas Gyvatė Arklys Ožka Beždžionė Gaidys Šuo Kiaulė Katė Jautis')}
-                                                    contentText="žiurkė rat pirmasis ženklas 12 mėnuo bailus negali konfrontuoti mažiausiai nukentėjęs nuo karmos draugai drakonas beždžionė jautis priešai arklys protingi maitinasi žiniomis geri tėvai manipuliatoriai matrix vanduo izraelis mossad tigras drakonas gyvatė arklys ožka beždžionė gaidys šuo kiaulė katė jautis kinų zodiakas ženklai charakteristikos draugai priešai fizinės charakteristikos dantys aukšti liekni"
+                                                    
+                                                    
+                                                    
+                                                    
                                                 >
                                                     <div className="bg-indigo-900/30 border border-indigo-500/40 rounded-lg p-4">
                                                         <div className="text-sm text-white/90 space-y-6 max-h-[1000px] overflow-y-auto">
